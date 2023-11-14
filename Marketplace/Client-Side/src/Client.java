@@ -1,3 +1,6 @@
+import pages.OnboardingPage;
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,6 +23,12 @@ public class Client {
 
             PrintWriter stringToEcho = new PrintWriter(socket.getOutputStream(), true);
 
+            // Initialize GUI for Program
+            SwingUtilities.invokeLater(() -> {
+                OnboardingPage onboardingPage = new OnboardingPage();
+                onboardingPage.show();
+            });
+
             Scanner scanner = new Scanner(System.in);
             String echoString;
             String reponse;
@@ -28,6 +37,7 @@ public class Client {
                 System.out.println("Enter string to be echoed: ");
                 echoString = scanner.nextLine();
 
+                // Send input result to server
                 stringToEcho.println(echoString);
 
                 if (!echoString.equals("exit")) {
