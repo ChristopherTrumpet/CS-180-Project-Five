@@ -21,8 +21,22 @@ public class Seller extends User {
     }
 
     // SETTERS
-
     public void setStores(Set<Store> stores) {
         this.stores = stores;
+    }
+
+    public String[] getSalesByStore() {
+
+        return null;
+    }
+
+    public String[] getStoresStatistics() {
+
+        return null;
+    }
+
+    public Store[] getStoresByProductsSold() {
+
+        return null;
     }
 }

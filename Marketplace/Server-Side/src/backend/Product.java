@@ -3,9 +3,13 @@ package backend;
 public class Product {
 
     // FIELDS
+    private Store store;
     private String name;
     private String description;
     private double price;
+    private int quantity;
+    // For OPTIONAL feature, limits quantity a customer can buy at a time
+    private int quantityLimit;
     private int amountSold;
 
     // GETTERS
@@ -19,6 +23,10 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     public int getAmountSold() {
@@ -41,6 +49,10 @@ public class Product {
 
     public void setAmountSold(int amountSold) {
         this.amountSold = amountSold;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     // CONDITIONALS

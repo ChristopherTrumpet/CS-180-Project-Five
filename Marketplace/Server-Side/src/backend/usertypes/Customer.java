@@ -1,6 +1,7 @@
 package backend.usertypes;
 
 import backend.Product;
+import backend.Store;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -13,7 +14,7 @@ public class Customer extends User {
     // Stored in arraylist for dynamic adding, allows duplicates
     private ArrayList<Product> purchaseHistory;
 
-    // GETTERS
+    // GETTER METHODS
 
     public double getBalance() {
         return balance;
@@ -27,7 +28,7 @@ public class Customer extends User {
         return purchaseHistory;
     }
 
-    // SETTERS
+    // SETTER METHODS
 
     public void setBalance(double balance) {
         this.balance = balance;
@@ -39,5 +40,73 @@ public class Customer extends User {
 
     public void setPurchaseHistory(ArrayList<Product> purchaseHistory) {
         this.purchaseHistory = purchaseHistory;
+    }
+
+    /**
+     * <p>
+     *     Clears the cart set, typically after checkout has been completed
+     * </p>
+     * @return the status of the method operation, true means successful, false means failure
+     */
+    public boolean clearCart() {
+        /*
+        TODO: Clear the cart set
+         ensure change is synced with customer record
+         ensure change updates the customer array of affected stores
+         */
+
+        return false;
+    }
+
+    /**
+     * <p>
+     *     Adds a product to the customers cart set. Does not allow duplicates; instead, the
+     *     "duplicate" product should get added onto an existing stack.
+     * </p>
+     * @param product Product to be added to the cart set
+     * @return the status of the method operation, true means successful, false means failure
+     */
+    public boolean addToCart(Product product) {
+        /*
+        TODO: Add specified product to cart
+         ensure change is synced with customer record
+         ensure change updates the customer array of affected stores
+         */
+
+        return false;
+    }
+
+    /**
+     * <p>
+     *     Removes a product from the customers cart set.
+     * </p>
+     * @param product Product to be removed from the cart set
+     * @return the status of the method operation, true means successful, false means failure
+     */
+    public boolean removeFromCart(Product product) {
+        /*
+        TODO: Remove specified product from cart
+         ensure change is synced with customer record
+         ensure change updates the customer array of affected stores
+         */
+
+        return false;
+    }
+
+    /**
+     * <p>
+     *     Sorts a stores array by product amount purchased by customer from least to greatest by default
+     * </p>
+     * @param stores Unsorted stores array that needs sorted by product amount purchased
+     * @param inverse Sorts array from least to greatest instead of greatest to least which is default
+     * @return A sorted stores array
+     */
+    private Store[] sortStoresByAmountPurchased(Store[] stores, boolean inverse) {
+        /*
+        TODO: Implement sorting algorithm which sorts an array from least value to greatest value,
+         or the opposite if the inverse condition is true.
+         */
+
+        return null;
     }
 }
