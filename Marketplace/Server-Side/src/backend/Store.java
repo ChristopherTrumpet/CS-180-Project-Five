@@ -71,32 +71,78 @@ public class Store {
     }
 
     // CONDITIONALS
+
+    /**
+     * Checks if store has either an empty or null product list.
+     * @return True if products array is not empty or null, False otherwise
+     */
     public boolean hasProducts() {
+        /*
+        TODO: Implement null check and utilize .isEmpty() function
+         */
 
         return false;
     }
 
-    public boolean addCustomer() {
+    /**
+     * Adds customer object to customers set, added when customer adds one of the stores products to their cart
+     * @param customer Customer to be added to customers set
+     * @return True if operation was successful, False otherwise
+     */
+    public boolean addCustomer(Customer customer) {
+        /*
+        TODO: Add customer object to set, update database accordingly, ensure seller client has up-to-date data
+         */
 
         return false;
     }
 
-    public boolean removeCustomer() {
+    /**
+     * Removes customer object from customers set, removed when customer either check out or remove item from cart
+     * @param customer Customer to be removed from customers set
+     * @return True if operation was successful, False otherwise
+     */
+    public boolean removeCustomer(Customer customer) {
+        /*
+        TODO: Remove customer object from set, update database accordingly, ensure seller client has up-to-date data
+         */
 
         return false;
     }
 
-    public boolean addProduct() {
+    /**
+     * Add product to the store, stored in a set
+     * @param product Product to be added to store
+     * @return True if operation was successful, False otherwise
+     */
+    public boolean addProduct(Product product) {
+        /*
+        TODO: Add a product to the store within products set, ensure data is saved in file, and that set and file exists
+         */
 
         return false;
     }
 
-    public boolean removeProduct() {
+    /**
+     * Remove product from the store, removed from a set
+     * @param product Product to be removed from store
+     * @return True if operation was successful, False otherwise
+     */
+    public boolean removeProduct(Product product) {
+        /*
+        TODO: Remove a product from the store within products set, ensure data is removed from file, and that set and file exists
+         */
 
         return false;
     }
 
-    public boolean editProduct(Product productToReplace) {
+    /**
+     * Remove product from the store, removed from a set
+     * @param productToReplace Product that is going to be replaced
+     * @param newProduct Product with new information to override old product information
+     * @return True if operation was successful, False otherwise
+     */
+    public boolean editProduct(Product productToReplace, Product newProduct) {
 
         return false;
     }
