@@ -1,3 +1,14 @@
+/**
+ * Marketplace: Validation Class
+ *
+ * <p>
+ *     Static validation checks actions within program.
+ * </p>
+ *
+ * @author [INSERT NAME], CS 180 Lab
+ *
+ * @version v0.0.1
+ */
 public class Validation {
 
     /**
@@ -73,6 +84,21 @@ public class Validation {
     public static boolean validQuantity(int quantity, int limit) {
         /*
         TODO: Implement check that quantity is greater than 0 and does not reach specified limit
+         */
+
+        return false;
+    }
+
+    /**
+     * <p>
+     *     Validates purchase, checks if there are any issues with purchasing a product by customer
+     * </p>
+     *
+     * @return True if valid quantity, False otherwise
+     */
+    public static boolean validPurchase() {
+        /*
+        TODO: Ensure purchase by customer has correct funding, and that quantity is correct
          */
 
         return false;

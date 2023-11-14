@@ -5,6 +5,20 @@ import backend.usertypes.Seller;
 
 import java.util.Set;
 
+/**
+ * Marketplace: Store Class
+ *
+ * <p>
+ *     Store object for marketplace application, contains all functionality related to store level actions:
+ *     including making a purchase, managing available products of store,
+ *     manages displaying customer carts that contain products of the store.
+ * </p>
+ *
+ * @author [INSERT NAME], CS 180 Lab
+ *
+ * @version v0.0.1
+ */
+
 public class Store {
 
     // FIELDS

@@ -1,5 +1,17 @@
 package backend;
 
+/**
+ * Marketplace: Product Class
+ *
+ * <p>
+ *     Product object stores all information referring to a store product. Intended for mostly read-only data,
+ *     stays parallel to the file version of a product, stored within a CSV
+ * </p>
+ *
+ * @author [INSERT NAME], CS 180 Lab
+ *
+ * @version v0.0.1
+ */
 public class Product {
 
     // FIELDS
@@ -33,6 +45,9 @@ public class Product {
         return amountSold;
     }
 
+    public Store getStore() {
+        return store;
+    }
 
     // SETTERS
     public void setName(String name) {
@@ -55,7 +70,16 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
     // CONDITIONALS
+
+    /**
+     * Conditional for if product has been sold before
+     * @return True if product has been sold, False if otherwise
+     */
     public boolean sold() {
 
         return false;

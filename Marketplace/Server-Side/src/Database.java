@@ -4,6 +4,18 @@ import backend.usertypes.Customer;
 import backend.usertypes.Seller;
 import backend.usertypes.User;
 
+/**
+ * Marketplace: Database Class
+ *
+ * <p>
+ *     Database for marketplace application, handles file writing and reading.
+ *     Class is utilized for data persistence of application.
+ * </p>
+ *
+ * @author [INSERT NAME], CS 180 Lab
+ *
+ * @version v0.0.1
+ */
 public class Database {
 
     // Root file path to all database storage
