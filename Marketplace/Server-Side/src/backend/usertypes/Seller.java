@@ -1,5 +1,6 @@
 package backend.usertypes;
 
+import backend.Product;
 import backend.Store;
 
 import java.util.Set;
@@ -38,5 +39,10 @@ public class Seller extends User {
     public Store[] getStoresByProductsSold() {
 
         return null;
+    }
+
+    public boolean handlePurchase(Product product, int quantity) {
+
+        return false;
     }
 }

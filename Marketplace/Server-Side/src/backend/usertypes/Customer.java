@@ -60,6 +60,22 @@ public class Customer extends User {
 
     /**
      * <p>
+     *     Ensures customer has proper funds to purchase all products in cart,
+     *     Updates store stock of product,
+     *     Adds cart items to customer purchase history,
+     *     utilizes clearCart(),
+     *     Update database
+     * </p>
+     * @return the status of the method operation, true means successful, false means failure
+     */
+    public boolean checkout() {
+        // TODO: Implement features described in javadoc
+
+        return false;
+    }
+
+    /**
+     * <p>
      *     Adds a product to the customers cart set. Does not allow duplicates; instead, the
      *     "duplicate" product should get added onto an existing stack.
      * </p>
