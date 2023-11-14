@@ -1,15 +1,15 @@
 package backend;
 
-import backend.usertypes.Customer;
-import backend.usertypes.Seller;
+import usertypes.Customer;
+import usertypes.Seller;
 
 import java.util.Set;
 
 /**
- * Marketplace: Store Class
+ * Marketplace: backend.Store Class
  *
  * <p>
- *     Store object for marketplace application, contains all functionality related to store level actions:
+ *     backend.Store object for marketplace application, contains all functionality related to store level actions:
  *     including making a purchase, managing available products of store,
  *     manages displaying customer carts that contain products of the store.
  * </p>
@@ -48,7 +48,7 @@ public class Store {
     /**
      * Retrieves specified product using product name
      * @param productName Name of product to be searched
-     * @return Product matching name, null if product was not found
+     * @return backend.Product matching name, null if product was not found
      */
     public Product getProduct(String productName) {
         /*
@@ -126,7 +126,7 @@ public class Store {
 
     /**
      * Add product to the store, stored in a set
-     * @param product Product to be added to store
+     * @param product backend.Product to be added to store
      * @return True if operation was successful, False otherwise
      */
     public boolean addProduct(Product product) {
@@ -139,7 +139,7 @@ public class Store {
 
     /**
      * Remove product from the store, removed from a set
-     * @param product Product to be removed from store
+     * @param product backend.Product to be removed from store
      * @return True if operation was successful, False otherwise
      */
     public boolean removeProduct(Product product) {
@@ -152,8 +152,8 @@ public class Store {
 
     /**
      * Remove product from the store, removed from a set
-     * @param productToReplace Product that is going to be replaced
-     * @param newProduct Product with new information to override old product information
+     * @param productToReplace backend.Product that is going to be replaced
+     * @param newProduct backend.Product with new information to override old product information
      * @return True if operation was successful, False otherwise
      */
     public boolean editProduct(Product productToReplace, Product newProduct) {

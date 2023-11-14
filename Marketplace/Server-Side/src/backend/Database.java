@@ -1,14 +1,14 @@
-import backend.Product;
-import backend.Store;
-import backend.usertypes.Customer;
-import backend.usertypes.Seller;
-import backend.usertypes.User;
+package backend;
+
+import usertypes.Customer;
+import usertypes.Seller;
+import usertypes.User;
 
 /**
- * Marketplace: Database Class
+ * Marketplace: backend.Database Class
  *
  * <p>
- *     Database for marketplace application, handles file writing and reading.
+ *     backend.Database for marketplace application, handles file writing and reading.
  *     Class is utilized for data persistence of application.
  * </p>
  *
@@ -219,7 +219,7 @@ public class Database {
      * <p>
      *     Updates existing seller store directories with updated information
      * </p>
-     * @param stores Store array with new information to update to old reference
+     * @param stores backend.Store array with new information to update to old reference
      * @return True if operation was successful, False otherwise
      */
     private boolean updateSellerStores(Store[] stores) {
@@ -328,7 +328,7 @@ public class Database {
     /**
      * Retrieves store products from csv file
      * @param filePath File path of the store's products.csv file
-     * @return Product array of store's products
+     * @return backend.Product array of store's products
      */
     public Product[] getProductsFromCSV(String filePath) {
 
@@ -338,7 +338,7 @@ public class Database {
     /**
      * Retrieves customer cart information from csv file
      * @param filePath File path of the customer's cart.csv file
-     * @return Product array of customer's cart
+     * @return backend.Product array of customer's cart
      */
     public Product[] getCartFromCSV(String filePath) {
 
@@ -348,7 +348,7 @@ public class Database {
     /**
      * Retrieves customer purchase history information from csv file
      * @param filePath File path of the customer's account history csv file
-     * @return Product array of customer product history
+     * @return backend.Product array of customer product history
      */
     public Product[] getPurchaseHistoryFromCSV(String filePath) {
 

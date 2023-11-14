@@ -1,4 +1,4 @@
-package backend.usertypes;
+package usertypes;
 
 import backend.Product;
 import backend.Store;

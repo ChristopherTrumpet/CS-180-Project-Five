@@ -1,4 +1,4 @@
-package backend.usertypes;
+package usertypes;
 
 import backend.Product;
 import backend.Store;
@@ -79,7 +79,7 @@ public class Customer extends User {
      *     Adds a product to the customers cart set. Does not allow duplicates; instead, the
      *     "duplicate" product should get added onto an existing stack.
      * </p>
-     * @param product Product to be added to the cart set
+     * @param product backend.Product to be added to the cart set
      * @return the status of the method operation, true means successful, false means failure
      */
     public boolean addToCart(Product product) {
@@ -96,7 +96,7 @@ public class Customer extends User {
      * <p>
      *     Removes a product from the customers cart set.
      * </p>
-     * @param product Product to be removed from the cart set
+     * @param product backend.Product to be removed from the cart set
      * @return the status of the method operation, true means successful, false means failure
      */
     public boolean removeFromCart(Product product) {

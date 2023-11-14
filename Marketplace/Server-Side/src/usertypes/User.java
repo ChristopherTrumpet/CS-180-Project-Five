@@ -1,4 +1,4 @@
-package backend.usertypes;
+package usertypes;
 
 public class User {
     private String email;

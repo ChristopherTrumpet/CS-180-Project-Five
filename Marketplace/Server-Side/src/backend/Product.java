@@ -1,10 +1,10 @@
 package backend;
 
 /**
- * Marketplace: Product Class
+ * Marketplace: backend.Product Class
  *
  * <p>
- *     Product object stores all information referring to a store product. Intended for mostly read-only data,
+ *     backend.Product object stores all information referring to a store product. Intended for mostly read-only data,
  *     stays parallel to the file version of a product, stored within a CSV
  * </p>
  *
