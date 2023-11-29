@@ -61,7 +61,7 @@ public class AccountService {
         return getUserByEmail(email, userObj) != null;
     }
 
-    private JSONObject getUser(String userId, JSONObject userObj) {
+    private JSONObject getUserById(String userId, JSONObject userObj) {
         for (Object user : userObj.getJSONArray("users")) {
             if (((JSONObject) user).get("id").toString().equals(userId)) {
                 return (JSONObject) user;
@@ -79,7 +79,28 @@ public class AccountService {
         return null;
     }
 
-    public boolean removeAccount(String userId) {
+    public boolean removeAccount(String userId) throws IOException {
+        String userFile = Files.readString(Paths.get("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json"));
+        JSONObject userObj = new JSONObject(userFile);
+        JSONArray users = userObj.getJSONArray("users");
+        for (int i = 0; i < users.length(); i++) {
+            if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
+                users.remove(i);
+                try {
+
+                    FileWriter file = new FileWriter("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json");
+                    file.write(userObj.toString());
+                    file.flush();
+                    file.close();
+                    return true;
+
+
+                } catch (IOException e) {
+                    System.out.println("Error occurred writing json object to file...");
+                }
+                return true;
+            }
+        }
 
         return false;
     }
@@ -115,7 +136,7 @@ public class AccountService {
         String[] accountDetails = new String[6];
 
         JSONObject obj = new JSONObject(userFile);
-        JSONObject user = getUser(userId, obj);
+        JSONObject user = getUserById(userId, obj);
 
         if (user == null)
             return null;
