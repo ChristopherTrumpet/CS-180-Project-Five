@@ -3,20 +3,15 @@ package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class AccountService {
-
-    public static void main(String[] args) {
-        AccountService accountService = new AccountService();
-
-        if (accountService.createAccount('b',"ctrumpet","passwrod","email@email.com","chris","trumpet")) {
-            System.out.println("Success!");
-        } else
-            System.out.println("Fail");
-    }
 
     public boolean createAccount(
 
@@ -31,6 +26,7 @@ public class AccountService {
 
         JSONArray users = new JSONArray();
         JSONObject user = new JSONObject();
+
         user.put("id", generateUserId(accountType));
         user.put("username", userName);
         user.put("password", password);
@@ -89,9 +85,27 @@ public class AccountService {
         return false;
     }
 
-    public String[] getAccountDetails(String userId) {
+    public String[] getAccountDetails(String userId) throws IOException {
 
-        return null;
+        String userFile = Files.readString(Paths.get("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json"));
+        String[] accountDetails = new String[6];
+
+        JSONObject obj = new JSONObject(userFile);
+        JSONArray arr = obj.getJSONArray("users");
+
+        for (Object user : arr) {
+            if (((JSONObject) user).get("id").toString().equals(userId)) {
+                String id = ((JSONObject) user).get("id").toString();
+                accountDetails[0] = ((JSONObject) user).get("username").toString();
+                accountDetails[1] = ((JSONObject) user).get("password").toString();
+                accountDetails[2] = ((JSONObject) user).get("email").toString();
+                accountDetails[3] = ((JSONObject) user).get("first_name").toString();
+                accountDetails[4] = ((JSONObject) user).get("last_name").toString();
+                accountDetails[5] = id.charAt(id.length()-1) == 'b' ? "Buyer" : "Seller";
+            }
+        }
+
+        return accountDetails;
     }
 
     public String generateUserId(char AccountType) {
