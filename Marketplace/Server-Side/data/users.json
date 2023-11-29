@@ -1,58 +1,20 @@
 {
   "users": [
     {
-      "id": "2q342345jk345b",
-      "username": "CTrumpet",
-      "password": "password",
-      "email": "ctrumpet@purdue.edu",
-      "first_name": "Christopher",
-      "last_name": "Trumpet",
-      "cart": [
-        {
-          "items": [
-            {
-              "item_id": "3452345klj52345234",
-              "store_id": "2034vas2345234",
-              "quantity": 1,
-              "price": 999.99
-            },
-            {
-              "item_id": "3452b45klj5234j3924",
-              "store_id": "2034vas2345234",
-              "quantity": 1,
-              "price": 1499.99
-            }
-          ],
-          "total_amt": 2500.00,
-          "taxes": 137.53,
-          "total_order_amt": 2637.53
-        }
-      ],
-      "product_history": [
-        {
-          "item_id": "3452345klj52345234",
-          "store_id": "2034vas2345234",
-          "quantity": 3,
-          "paid_amt": 3000.00
-        },
-        {
-          "item_id": "3452b45klj5234j3924",
-          "store_id": "2034vas2345234",
-          "quantity": 1,
-          "paid_amt": 2000.00
-        }
-      ]
+      "password": "pass",
+      "last_name": "Doe",
+      "id": "idb",
+      "first_name": "Jane",
+      "email": "jjdoee@purdue.edu",
+      "username": "JJane"
     },
     {
-      "id": "2q3423j2956jk345s",
-      "username": "JDoe",
       "password": "password",
-      "email": "jdoe@purdue.edu",
-      "first_name": "John",
-      "last_name": "Doe",
-      "stores": [
-        "2034vas2345234"
-      ]
+      "last_name": "Trumpet",
+      "id": "eCeh1EZdWflMKd5rSTb",
+      "first_name": "Christopher",
+      "email": "ctrumpet@purdue.edu",
+      "username": "CTrumpet"
     }
   ]
 }
