@@ -1,12 +1,20 @@
 {
   "users": [
     {
-      "password": "pass",
+      "password": "old password",
       "last_name": "Doe",
       "id": "idb",
       "first_name": "Jane",
       "email": "jjdoee@purdue.edu",
       "username": "JJane"
+    },
+    {
+      "password": "password",
+      "last_name": "Trumpet",
+      "id": "huGYhXCJjiz83Lxwa0b",
+      "first_name": "Christopher",
+      "email": "ctrumpet@purdue.edu",
+      "username": "new username"
     }
   ]
 }

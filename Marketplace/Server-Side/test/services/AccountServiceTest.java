@@ -17,12 +17,12 @@ class AccountServiceTest {
     void createAccount() throws IOException {
         AccountService accountService = new AccountService();
         Assertions.assertTrue(accountService.createAccount(
-                'b',
-                "CTrumpet",
-                "password",
-                "ctrumpet@purdue.edu",
-                "Christopher",
-                "Trumpet"
+            'b',
+            "CTrumpet",
+            "password",
+            "ctrumpet@purdue.edu",
+            "Christopher",
+            "Trumpet"
         ));
     }
 

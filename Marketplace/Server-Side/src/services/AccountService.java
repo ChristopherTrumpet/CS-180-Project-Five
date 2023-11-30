@@ -6,10 +6,18 @@ import org.json.JSONObject;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Random;
 
 public class AccountService {
+
+    private final String userFileDirectory;
+
+    public AccountService() throws IOException {
+        this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "\\Marketplace\\Server-Side\\data\\users.json").toString();
+    }
 
     public boolean createAccount(
 
@@ -18,11 +26,13 @@ public class AccountService {
             String password,
             String email,
             String firstName,
-            String lastName) throws IOException {
+            String lastName) {
 
-        String userFile = Files.readString(Paths.get("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json"));
         String userId = generateUserId(accountType);
-        JSONObject userObj = new JSONObject(userFile);
+        JSONObject userObj = new JSONObject();
+
+        if (getUserFile() != null)
+            userObj = new JSONObject(getUserFile());
 
         if (userExists(email, userObj))
             return false;
@@ -41,28 +51,16 @@ public class AccountService {
 
         userObj.put("users", users);
 
-        try {
+        return writeUserToFile(userObj);
 
-            FileWriter file = new FileWriter("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json");
-            file.write(userObj.toString());
-            file.flush();
-            file.close();
-            return true;
-
-
-        } catch (IOException e) {
-            System.out.println("Error occurred writing json object to file...");
-        }
-
-        return false;
     }
 
     private boolean userExists(String email, JSONObject userObj) {
         return getUserByEmail(email, userObj) != null;
     }
 
-    private JSONObject getUserById(String userId, JSONObject userObj) {
-        for (Object user : userObj.getJSONArray("users")) {
+    private JSONObject getUserById(String userId) {
+        for (Object user : new JSONObject(Objects.requireNonNull(getUserFile())).getJSONArray("users")) {
             if (((JSONObject) user).get("id").toString().equals(userId)) {
                 return (JSONObject) user;
             }
@@ -79,25 +77,14 @@ public class AccountService {
         return null;
     }
 
-    public boolean removeAccount(String userId) throws IOException {
-        String userFile = Files.readString(Paths.get("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json"));
-        JSONObject userObj = new JSONObject(userFile);
-        JSONArray users = userObj.getJSONArray("users");
-        for (int i = 0; i < users.length(); i++) {
-            if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
-                users.remove(i);
-                try {
+    private boolean updateUserDetails(String userId, String key, String value) {
 
-                    FileWriter file = new FileWriter("E:\\dev\\CS-180-Project-Five\\Marketplace\\Server-Side\\data\\users.json");
-                    file.write(userObj.toString());
-                    file.flush();
-                    file.close();
-                    return true;
+        JSONObject users = new JSONObject(Objects.requireNonNull(getUserFile()));
 
-
-                } catch (IOException e) {
-                    System.out.println("Error occurred writing json object to file...");
-                }
+        for (Object user : users.getJSONArray("users")) {
+            if (((JSONObject) user).get("id").toString().equals(userId)) {
+                ((JSONObject) user).put(key, value);
+                writeUserToFile(users);
                 return true;
             }
         }
@@ -105,27 +92,43 @@ public class AccountService {
         return false;
     }
 
-    public boolean updateUsername(String userId, String newUserName) {
+    public boolean removeAccount(String userId) {
+
+        JSONObject userObj = new JSONObject(Objects.requireNonNull(getUserFile()));
+        JSONArray users = userObj.getJSONArray("users");
+        for (int i = 0; i < users.length(); i++) {
+            if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
+
+                users.remove(i);
+                return writeUserToFile(userObj);
+            }
+        }
 
         return false;
     }
 
-    public boolean updatePassword(String userId, String newPassword) {
+    private String getUserFile() {
+        try {
+            return Files.readString(Path.of(userFileDirectory));
+        } catch (IOException e) {
+            System.out.println("Error occurred retrieving user file...");
+        }
 
-        return false;
+        return null;
     }
 
-    public boolean updateEmail(String userId, String newUserEmail) {
+    private boolean writeUserToFile(JSONObject userObj) {
+        try {
+            FileWriter file = new FileWriter(userFileDirectory);
+            file.write(userObj.toString());
+            file.flush();
+            file.close();
+            return true;
 
-        return false;
-    }
 
-    public boolean updateFirstName(String userId, String newFirstName) {
-
-        return false;
-    }
-
-    public boolean updateLastName(String userId, String newLastName) {
+        } catch (IOException e) {
+            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
+        }
 
         return false;
     }
@@ -136,7 +139,7 @@ public class AccountService {
         String[] accountDetails = new String[6];
 
         JSONObject obj = new JSONObject(userFile);
-        JSONObject user = getUserById(userId, obj);
+        JSONObject user = getUserById(userId);
 
         if (user == null)
             return null;
