@@ -11,10 +11,11 @@
     {
       "password": "password",
       "last_name": "Trumpet",
-      "id": "huGYhXCJjiz83Lxwa0b",
+      "id": "PztsCpytYcTxgAKCJVb",
       "first_name": "Christopher",
       "email": "ctrumpet@purdue.edu",
-      "username": "new username"
+      "cart": [],
+      "username": "CTrumpet"
     }
   ]
 }

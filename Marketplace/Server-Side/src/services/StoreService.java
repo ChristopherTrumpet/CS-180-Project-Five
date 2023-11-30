@@ -2,7 +2,7 @@ package services;
 
 import java.io.File;
 
-public class SellerService {
+public class StoreService {
 
     public boolean addStore(String storeId) {
 
