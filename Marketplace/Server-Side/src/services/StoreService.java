@@ -1,11 +1,22 @@
 package services;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.util.ArrayList;
 
 public class StoreService {
 
-    public boolean addStore(String storeId) {
-
+    public boolean addStore(String userId, String storeId) {
+        AccountService as = new AccountService();
+        if (as.isSeller(userId)) {
+            JSONObject seller = as.getUserById(userId);
+            JSONArray idList = (JSONArray) seller.get("stores");
+            idList.put(storeId);
+            seller.put("stores", idList);
+            return true;
+        }
         return false;
     }
 
