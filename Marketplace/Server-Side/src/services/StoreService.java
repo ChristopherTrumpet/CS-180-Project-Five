@@ -4,19 +4,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 public class StoreService {
+    private String storeFileDirectory;
 
-    public boolean addStore(String userId, String storeId) {
-        AccountService as = new AccountService();
-        if (as.isSeller(userId)) {
-            JSONObject seller = as.getUserById(userId);
-            JSONArray idList = (JSONArray) seller.get("stores");
-            idList.put(storeId);
-            seller.put("stores", idList);
-            return true;
-        }
+    public StoreService() {
+
+        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
+
+    }
+
+
+    public boolean addStore(String storeId) {
+
         return false;
     }
 
@@ -26,8 +28,15 @@ public class StoreService {
     }
 
     public boolean createStore(String name) {
-
-        return false;
+        String store_id = generateStoreId();
+        JSONObject StoreObj = new JSONObject();
+        JSONObject store = new JSONObject();
+        JSONArray products = new JSONArray();
+        store.put("store_id", store_id);
+        store.put("name", name);
+        store.put("products", products);
+        AccountService as = new AccountService();
+        return as.writeJSONObjectToFile(store, storeFileDirectory);
     }
 
     public boolean updateStoreName(String storeId, String newName) {
@@ -45,19 +54,41 @@ public class StoreService {
         return false;
     }
 
+    public boolean createProduct(String productId, int qty, double price) {
+//        JSONObject product = new JSONObject();
+//        product.put("productID", productId);
+//        product.put("qty", qty);
+//        product.put("price", price);
+//        AccountService as = new AccountService();
+//        return as.writeJSONObjectToFile(product, storeFileDirectory);
+//
+//        return false;
+    }
     public boolean addProduct(String storeId, String productId, int qty, double price) {
+        JSONObject product = new JSONObject();
+        product.put("productID", productId);
+        product.put("qty", qty);
+        AccountService as = new AccountService();
 
-        return false;
+        return as.writeJSONObjectToFile(product, storeFileDirectory);
+
     }
 
     public boolean removeProduct(String storeId, String productId) {
-
+        JSONObject storeObj = new JSONObject(Objects.requireNonNull())
         return false;
     }
 
     public boolean createProduct(String name, String description, String itemType) {
-
-        return false;
+        JSONObject product = new JSONObject();
+        String product_id = generateProductId();
+        product.put("product_id", product_id);
+        product.put("name", name);
+        product.put("description", description);
+        product.put("item", itemType);
+        String productFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
+        AccountService as =  new AccountService();
+        return as.writeJSONObjectToFile(product, productFileDirectory);
     }
 
     public boolean updateProductName(String productId, String newName) {

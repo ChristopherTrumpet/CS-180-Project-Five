@@ -62,8 +62,8 @@ public class AccountService {
         JSONObject userObj = new JSONObject();
 
         // Ensures users.json file exists
-        if (getUserFile() != null)
-            userObj = new JSONObject(getUserFile());
+        if (getJSONFile(getUserFileDirectory()) != null)
+            userObj = new JSONObject(getJSONFile(getUserFileDirectory()));
 
         // Uses user email as it is unique, user id cannot be used as it generated upon creation
         if (userExists(email))
@@ -82,6 +82,7 @@ public class AccountService {
         // Create an empty cart if the user is a buyer
         if (accountType == 'b') {
             user.put("cart", new JSONArray());
+            user.put("product_history", new JSONArray());
             user.put("funds", 0.0f);
         }
 
@@ -132,7 +133,7 @@ public class AccountService {
     }
 
     public JSONObject getUserById(String userId) {
-        for (Object user : new JSONObject(Objects.requireNonNull(getUserFile())).getJSONArray("users")) {
+        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray("users")) {
             if (((JSONObject) user).get("id").toString().equals(userId)) {
                 return (JSONObject) user;
             }
@@ -141,8 +142,8 @@ public class AccountService {
     }
 
     private JSONObject getUserByEmail(String email) {
-        System.out.println(getUserFile());
-        for (Object user : new JSONObject(Objects.requireNonNull(getUserFile())).getJSONArray("users")) {
+        System.out.println(getJSONFile(getUserFileDirectory()));
+        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray("users")) {
             if (((JSONObject) user).get("email").toString().equals(email)) {
                 return (JSONObject) user;
             }
@@ -152,7 +153,7 @@ public class AccountService {
 
     public boolean updateUserDetails(String userId, String key, Object value) {
 
-        JSONObject users = new JSONObject(Objects.requireNonNull(getUserFile()));
+        JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
 
         for (Object user : users.getJSONArray("users")) {
             if (((JSONObject) user).get("id").toString().equals(userId)) {
@@ -167,7 +168,7 @@ public class AccountService {
 
     public boolean removeAccount(String userId) {
 
-        JSONObject userObj = new JSONObject(Objects.requireNonNull(getUserFile()));
+        JSONObject userObj = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
         JSONArray users = userObj.getJSONArray("users");
         for (int i = 0; i < users.length(); i++) {
             if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
@@ -180,10 +181,10 @@ public class AccountService {
         return false;
     }
 
-    private String getUserFile() {
+    private String getJSONFile(String fileDirectory) {
         try {
             System.out.println(getUserFileDirectory());
-            return Files.readString(Path.of(getUserFileDirectory()));
+            return Files.readString(Path.of(fileDirectory));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving user file...");
         }
