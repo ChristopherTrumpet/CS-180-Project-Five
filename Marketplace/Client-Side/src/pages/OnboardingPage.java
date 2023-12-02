@@ -1,8 +1,10 @@
 package pages;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class OnboardingPage {
+public class OnboardingPage extends JFrame implements ActionListener {
 
     private final JFrame window;
 
@@ -24,6 +26,11 @@ public class OnboardingPage {
 
     public void show() {
         window.setVisible(true);
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
     }
 }

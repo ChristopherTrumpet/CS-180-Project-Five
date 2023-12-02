@@ -84,10 +84,14 @@ public class AccountService {
             user.put("cart", new JSONArray());
         }
 
+        if (accountType == 's') {
+            user.put("stores", new JSONArray());
+        }
+
         users.put(user);
         userObj.put("users", users);
 
-        return writeUserToFile(userObj);
+        return writeJSONObjectToFile(userObj, getUserFileDirectory());
 
     }
 
@@ -152,7 +156,7 @@ public class AccountService {
         for (Object user : users.getJSONArray("users")) {
             if (((JSONObject) user).get("id").toString().equals(userId)) {
                 ((JSONObject) user).put(key, value);
-                writeUserToFile(users);
+                writeJSONObjectToFile(users, getUserFileDirectory());
                 return true;
             }
         }
@@ -168,7 +172,7 @@ public class AccountService {
             if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
 
                 users.remove(i);
-                return writeUserToFile(userObj);
+                return writeJSONObjectToFile(userObj, getUserFileDirectory());
             }
         }
 
@@ -186,11 +190,11 @@ public class AccountService {
         return null;
     }
 
-    public boolean writeUserToFile(JSONObject userObj) {
+    public boolean writeJSONObjectToFile(JSONObject userObj, String fileDirectory) {
 
         try {
 
-            FileWriter file = new FileWriter(getUserFileDirectory());
+            FileWriter file = new FileWriter(fileDirectory);
             file.write(userObj.toString());
             file.flush();
             file.close();
