@@ -82,6 +82,7 @@ public class AccountService {
         // Create an empty cart if the user is a buyer
         if (accountType == 'b') {
             user.put("cart", new JSONArray());
+            user.put("funds", 0.0f);
         }
 
         if (accountType == 's') {
