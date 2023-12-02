@@ -6,9 +6,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Random;
 
 public class StoreService {
-    private String storeFileDirectory;
+
+    private final String storeFileDirectory;
 
     public StoreService() {
 
@@ -16,9 +22,15 @@ public class StoreService {
 
     }
 
-
-    public boolean addStore(String storeId) {
-
+    public boolean addStore(String userId, String storeId) {
+        AccountService as = new AccountService();
+        if (as.isSeller(userId)) {
+            JSONObject seller = as.getUserById(userId);
+            JSONArray idList = (JSONArray) seller.get("stores");
+            idList.put(storeId);
+            seller.put("stores", idList);
+            return true;
+        }
         return false;
     }
 
@@ -107,17 +119,83 @@ public class StoreService {
     }
 
     public boolean updateProductQuantity(String storeId, String productId, int newQuantity) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                for (Object product : ((JSONObject) store).getJSONArray("products")) {
+                    if (((JSONObject) product).get("id").toString().equals(productId)) {
+                        ((JSONObject) product).put("qty", newQuantity);
+                        writeJSONObjectToFile(stores, storeFileDirectory);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
 
     public String generateProductId() {
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"; // Potential characters for id
+        StringBuilder productId = new StringBuilder();
+        Random rnd = new Random();
+
+        while (productId.length() < 18) { // Creates a product id 18 characters long
+            int index = (int) (rnd.nextFloat() * chars.length());
+            productId.append(chars.charAt(index));
+        }
+
+        return productId.toString();
+    }
+
+    public String generateStoreId() {
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"; // Potential characters for id
+        StringBuilder storeId = new StringBuilder();
+        Random rnd = new Random();
+
+        while (storeId.length() < 20) { // Creates a store id 20 characters long
+            int index = (int) (rnd.nextFloat() * chars.length());
+            storeId.append(chars.charAt(index));
+        }
+
+        return storeId.toString();
+    }
+
+    public JSONObject getStoreById(String storeId) {
+        for (Object store : new JSONObject(Objects.requireNonNull(getStoreFile())).getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                return (JSONObject) store;
+            }
+        }
+        return null;
+    }
+
+    private String getStoreFile() {
+        try {
+            System.out.println(storeFileDirectory);
+            return Files.readString(Path.of(storeFileDirectory));
+        } catch (IOException e) {
+            System.out.println("Error occurred retrieving store file...");
+        }
 
         return null;
     }
 
-    public String generateStoreId() {
+    public boolean writeJSONObjectToFile(JSONObject userObj, String fileDirectory) {
 
-        return null;
+        try {
+
+            FileWriter file = new FileWriter(fileDirectory);
+            file.write(userObj.toString());
+            file.flush();
+            file.close();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
+        }
+
+        return false;
     }
 }
