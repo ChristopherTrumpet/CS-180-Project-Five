@@ -74,7 +74,7 @@ public class StoreService {
 //        AccountService as = new AccountService();
 //        return as.writeJSONObjectToFile(product, storeFileDirectory);
 //
-//        return false;
+        return false;
     }
     public boolean addProduct(String storeId, String productId, int qty, double price) {
         JSONObject product = new JSONObject();
@@ -87,7 +87,6 @@ public class StoreService {
     }
 
     public boolean removeProduct(String storeId, String productId) {
-        JSONObject storeObj = new JSONObject(Objects.requireNonNull())
         return false;
     }
 

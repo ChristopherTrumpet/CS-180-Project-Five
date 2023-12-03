@@ -21,13 +21,10 @@ public class Client {
                     new InputStreamReader(socket.getInputStream())
             );
 
-            PrintWriter stringToEcho = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter stringToServer = new PrintWriter(socket.getOutputStream(), true);
 
             // Initialize GUI for Program
-            SwingUtilities.invokeLater(() -> {
-                OnboardingPage onboardingPage = new OnboardingPage();
-                onboardingPage.show();
-            });
+            SwingUtilities.invokeLater(() -> new OnboardingPage(null));
 
             Scanner scanner = new Scanner(System.in);
             String echoString;
@@ -38,7 +35,7 @@ public class Client {
                 echoString = scanner.nextLine();
 
                 // Send input result to server
-                stringToEcho.println(echoString);
+                stringToServer.println(echoString);
 
                 if (!echoString.equals("exit")) {
                     reponse = echoes.readLine();
