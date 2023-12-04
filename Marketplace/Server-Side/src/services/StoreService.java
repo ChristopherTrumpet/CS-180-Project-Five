@@ -87,7 +87,35 @@ public class StoreService {
     }
 
     public boolean removeProduct(String storeId, String productId) {
-        return false;
+        boolean removed = false;
+        JSONArray storeList = (JSONArray) new JSONObject("stores.json").get("stores");
+        JSONObject storeObj = new JSONObject();
+        for(int i = 0; i < storeList.length(); i++) {
+            JSONObject store = (JSONObject) storeList.get(i);
+            if(store.get("id").equals(storeId)) {
+                storeObj = store;
+                break;
+            }
+        }
+        JSONArray productList = (JSONArray) storeObj.get("products");
+        for(int i = 0; i < productList.length(); i++) {
+            JSONObject product = (JSONObject) productList.get(i);
+            if(product.get("id").equals(productId)) {
+                productList.remove(i);
+                removed = true;
+                break;
+            }
+        }
+        JSONArray products = (JSONArray) new JSONObject("products.json").get("products");
+        for(int i = 0; i < products.length(); i++) {
+            JSONObject product = (JSONObject) products.get(i);
+            if(product.get("id").equals(productId)) {
+                products.remove(i);
+                removed = true;
+                break;
+            }
+        }
+        return removed;
     }
 
     public boolean createProduct(String name, String description, String itemType) {
