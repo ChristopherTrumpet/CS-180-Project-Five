@@ -39,7 +39,7 @@ public class OnboardingPage extends JFrame implements ActionListener {
 
         this.setBackground(Color.decode("#f4f4f4"));
 
-        JLabel welcomeMessage = new JLabel("Marketplace");
+        JLabel welcomeMessage = new JLabel("Purdue Marketplace");
         welcomeMessage.setFont(new Font("Serif", Font.PLAIN, 36));
         welcomeMessage.setBounds(250, start-48, 300, 36);
 
@@ -84,7 +84,6 @@ public class OnboardingPage extends JFrame implements ActionListener {
             this.dispose();
             new SellerPage(identifier);
 
-            System.out.printf("User details:\nIdentifier: %s\nPassword: %s\n", identifier, password);
 //            if (accountType == 'b') {
 //                CustomerPage customerPage = new CustomerPage(identifier);
 //            } else {
