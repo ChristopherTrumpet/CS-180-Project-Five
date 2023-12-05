@@ -61,6 +61,15 @@ public class StoreService {
     }
 
     public boolean updateStoreName(String storeId, String newName) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                ((JSONObject) store).put("name", newName);
+                writeJSONObjectToFile(stores, storeFileDirectory);
+                return true;
+            }
+        }
 
         return false;
     }
@@ -139,17 +148,56 @@ public class StoreService {
         return as.writeJSONObjectToFile(product, productFileDirectory);
     }
 
-    public boolean updateProductName(String productId, String newName) {
+    public boolean updateProductName(String storeId, String productId, String newName) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                for (Object product : ((JSONObject) store).getJSONArray("products")) {
+                    if (((JSONObject) product).get("id").toString().equals(productId)) {
+                        ((JSONObject) product).put("name", newName);
+                        writeJSONObjectToFile(stores, storeFileDirectory);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
 
-    public boolean updateProductDescription(String productId, String newDescription) {
+    public boolean updateProductDescription(String storeId, String productId, String newDescription) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                for (Object product : ((JSONObject) store).getJSONArray("products")) {
+                    if (((JSONObject) product).get("id").toString().equals(productId)) {
+                        ((JSONObject) product).put("description", newDescription);
+                        writeJSONObjectToFile(stores, storeFileDirectory);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
 
     public boolean updateProductPrice(String storeId, String productId, double newPrice) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                for (Object product : ((JSONObject) store).getJSONArray("products")) {
+                    if (((JSONObject) product).get("id").toString().equals(productId)) {
+                        ((JSONObject) product).put("price", newPrice);
+                        writeJSONObjectToFile(stores, storeFileDirectory);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
@@ -213,6 +261,7 @@ public class StoreService {
             return Files.readString(Path.of(storeFileDirectory));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving store file...");
+            e.printStackTrace();
         }
 
         return null;
