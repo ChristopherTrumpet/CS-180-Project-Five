@@ -61,6 +61,15 @@ public class StoreService {
     }
 
     public boolean updateStoreName(String storeId, String newName) {
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                ((JSONObject) store).put("name", newName);
+                writeJSONObjectToFile(stores, storeFileDirectory);
+                return true;
+            }
+        }
 
         return false;
     }
