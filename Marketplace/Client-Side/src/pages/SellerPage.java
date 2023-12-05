@@ -272,7 +272,11 @@ public class SellerPage extends JFrame {
         usernameField.setText("JDoe");
 
         JButton usernameButton = new JButton("Change Username");
-        usernameButton.setBounds(300, 84, 150, 24);
+        usernameButton.setOpaque(true);
+        usernameButton.setBorderPainted(false);
+        usernameButton.setBackground(Color.black);
+        usernameButton.setForeground(Color.white);
+        usernameButton.setBounds(300, 84, 174, 24);
 
         settingsPanel.add(usernameLabel);
         settingsPanel.add(usernameField);
@@ -286,7 +290,12 @@ public class SellerPage extends JFrame {
         emailField.setText("jdoe@purdue.edu");
 
         JButton emailButton = new JButton("Change Email");
-        emailButton.setBounds(300, 132, 150, 24);
+        emailButton.setOpaque(true);
+        emailButton.setBackground(Color.black);
+        emailButton.setForeground(Color.white);
+        emailButton.setBorderPainted(false);
+
+        emailButton.setBounds(300, 132, 174, 24);
 
         settingsPanel.add(emailLabel);
         settingsPanel.add(emailField);
@@ -300,14 +309,18 @@ public class SellerPage extends JFrame {
         passwordField.setText("secret_password");
 
         JButton passwordButton = new JButton("Change Password");
-        passwordButton.setBounds(300, 180, 150, 24);
+        passwordButton.setBorderPainted(false);
+        passwordButton.setOpaque(true);
+        passwordButton.setBackground(Color.black);
+        passwordButton.setForeground(Color.white);
+        passwordButton.setBounds(300, 180, 174, 24);
 
         settingsPanel.add(passwordLabel);
         settingsPanel.add(passwordField);
         settingsPanel.add(passwordButton);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setBounds(0, 228, 450, 1);
+        accountDetailsDivider.setBounds(24, 228, 450,24);
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
 
