@@ -2,11 +2,16 @@ package pages;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.SeparatorUI;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class SellerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -161,13 +166,13 @@ public class SellerPage extends JFrame {
         model.addColumn("Stores");
         model.addColumn("Sales");
 
-        model.addRow(new Object[]{"Apple", "$20"});
-        model.addRow(new Object[]{"Five Guy's Burgers and Fries", "$25.32"});
-        model.addRow(new Object[]{"Barnes and Noble", "$35.11"});
-        model.addRow(new Object[]{"Keller Williams", "$503,494,240,240.34"});
-        model.addRow(new Object[]{"Raising Cane's", "$9384.67"});
-        model.addRow(new Object[]{"Blackberry Farms", "$9384.24"});
-        model.addRow(new Object[]{"General Electric", "$9384.52"});
+        model.addRow(new Object[]{"Apple", 20});
+        model.addRow(new Object[]{"Five Guy's Burgers and Fries", 25.32});
+        model.addRow(new Object[]{"Barnes and Noble", 35.11});
+        model.addRow(new Object[]{"Keller Williams", 9534.45});
+        model.addRow(new Object[]{"Raising Cane's", 9384.67});
+        model.addRow(new Object[]{"Blackberry Farms", 9384.24});
+        model.addRow(new Object[]{"General Electric", 9384.52});
 
         // Create a JTable using the model
         table = new JTable(model);
@@ -191,6 +196,13 @@ public class SellerPage extends JFrame {
             }
         });
 
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+        table.setRowSorter(sorter);
+
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+
         JScrollPane scrollPane= new  JScrollPane(table);
         scrollPane.setBounds(24, 66, 400, 330);
 
@@ -198,18 +210,18 @@ public class SellerPage extends JFrame {
         if (defaults.get("Table.alternateRowColor") == null)
             defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
 
+        JButton sortStoreButton = new JButton("Select Store");
+        sortStoreButton.setBounds(24, 404, 400/3 - 4, 24);
+        sortStoreButton.addActionListener(e -> {
+            if(!table.getSelectionModel().isSelectionEmpty()) {
+                editStore(table.getValueAt(table.getSelectedRow(), 0).toString());
+            }
+
+        });
 
         JButton addStore = new JButton("Add Store");
-        addStore.setBounds(24, 404, 400/3 - 4, 24);
-        addStore.addActionListener(e -> {
-            addStore();
-        });
-
-        JButton sortStoreButton = new JButton("Sort Stores");
-        sortStoreButton.setBounds(24 + 400/3 + 4, 404, 400/3 - 8, 24);
-        sortStoreButton.addActionListener(e -> {
-            System.out.println("Sorting stores...");
-        });
+        addStore.setBounds(24 + 400/3 + 4, 404, 400/3 - 8, 24);
+        addStore.addActionListener(e -> addStore());
 
         JButton removeStore = new JButton("Remove Store");
         removeStore.setBounds(24 + 400/3 * 2 + 4, 404, 400/3 - 4, 24);
@@ -424,9 +436,7 @@ public class SellerPage extends JFrame {
 
         JButton closeProduct = new JButton("Close");
         closeProduct.setBounds(24, 397, 185, 24);
-        closeProduct.addActionListener(e -> {
-            storePage.dispose();
-        });
+        closeProduct.addActionListener(e -> storePage.dispose());
 
         JScrollPane sp= new  JScrollPane(productTable);
         sp.setBounds(233, 56, 365, 365);
