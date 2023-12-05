@@ -35,8 +35,17 @@ public class StoreService {
     }
 
     public boolean removeStore(String storeId) {
-
-        return false;
+        boolean removed = false;
+        JSONArray storeList = (JSONArray) new JSONObject("stores.json").get("stores");
+        for(int i = 0; i < storeList.length(); i++) {
+            JSONObject store = (JSONObject) storeList.get(i);
+            if(store.get("id").equals(storeId)) {
+                storeList.remove(i);
+                removed = true;
+                break;
+            }
+        }
+        return removed;
     }
 
     public boolean createStore(String name) {
