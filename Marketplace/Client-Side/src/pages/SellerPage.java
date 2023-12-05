@@ -187,6 +187,12 @@ public class SellerPage extends JFrame {
         // Create a dialog box with a text field and a button
         String storeName = JOptionPane.showInputDialog("Enter store name", "Store");
         System.out.println("User created store: " + storeName);
+
+        // Create a DefaultTableModel
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.addRow(new Object[]{storeName, "$0.00"});
+
+
     }
 
     public void editStore(String storeName) {
