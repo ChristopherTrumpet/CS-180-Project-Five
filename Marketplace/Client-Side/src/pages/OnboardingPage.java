@@ -50,6 +50,7 @@ public class OnboardingPage extends JFrame {
 
     public class LoginPanel extends JPanel {
         JLabel applicationNameLabel = new JLabel("Purdue Marketplace");
+        JLabel loginLabel = new JLabel("Welcome back!");
         JLabel identifierLabel = new JLabel("Email or Username");
         JTextField identifierField = new JTextField(16);
         JLabel passwordLabel = new JLabel("Password");
@@ -62,7 +63,10 @@ public class OnboardingPage extends JFrame {
             this.setLayout(null);
 
             applicationNameLabel.setFont(new Font("Serif", Font.PLAIN, 36));
-            applicationNameLabel.setBounds(250, 130-48, 300, 36);
+            applicationNameLabel.setBounds(250, 54, 300, 36);
+
+            loginLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+            loginLabel.setBounds(250, 90, 300, 24);
 
             int start = 130;
 
@@ -80,7 +84,7 @@ public class OnboardingPage extends JFrame {
 
             loginButton.addActionListener(e -> {
                 reference.dispose();
-                new SellerPage("John Doe");
+                new SellerPage();
                 cardLayout.next(container);
             });
 
@@ -96,6 +100,7 @@ public class OnboardingPage extends JFrame {
             });
 
             this.add(applicationNameLabel);
+            this.add(loginLabel);
             this.add(identifierLabel);
             this.add(identifierField);
             this.add(passwordLabel);
@@ -107,6 +112,7 @@ public class OnboardingPage extends JFrame {
 
     public class SignUpPanel extends JPanel {
         JLabel applicationNameLabel = new JLabel("Purdue Marketplace");
+        JLabel signUpLabel = new JLabel("Let's create an account!");
         JLabel emailLabel = new JLabel("Email");
         JTextField emailField = new JTextField(16);
         JLabel passwordLabel = new JLabel("Password");
@@ -115,6 +121,7 @@ public class OnboardingPage extends JFrame {
         JTextField usernameField = new JTextField(16);
         JButton signUpButton = new JButton("Sign up");
         JButton existingAccountButton = new JButton("Login to existing account");
+        JRadioButton buyerType, sellerType;
 
         public SignUpPanel() {
 
@@ -123,7 +130,10 @@ public class OnboardingPage extends JFrame {
             int start = 130;
 
             applicationNameLabel.setFont(new Font("Serif", Font.PLAIN, 36));
-            applicationNameLabel.setBounds(250, start-48, 300, 36);
+            applicationNameLabel.setBounds(250, 54, 300, 36);
+
+            signUpLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+            signUpLabel.setBounds(250, 90, 300, 24);
 
             emailLabel.setBounds(250,start,300,24);
             emailField.setBounds(250, start + 24, 300, 24); // 24
@@ -134,33 +144,53 @@ public class OnboardingPage extends JFrame {
             passwordLabel.setBounds(250, start + 96, 300, 24);
             passwordField.setBounds(250, start + 120, 300, 24);
 
+            ButtonGroup accountType = new ButtonGroup();
+
+            buyerType = new JRadioButton();
+            sellerType = new JRadioButton();
+
+            accountType.add(buyerType);
+            accountType.add(sellerType);
+
+            JLabel accountTypeLabel = new JLabel("Account Type");
+            accountTypeLabel.setBounds(250, 274, 300, 24);
+
+            buyerType.setText("Buyer");
+            buyerType.setBounds(250, 294, 65, 24);
+            sellerType.setText("Seller");
+            sellerType.setBounds(250+65,294, 65, 24);
+
             signUpButton.setBackground(Color.decode("#A77F20"));
             signUpButton.setForeground(Color.white);
             signUpButton.setBorder(null);
-            signUpButton.setBounds(250, start + 160, 300, 24); // 48
+            signUpButton.setBounds(250, 326, 300, 24); // 48
             signUpButton.setFocusable(false);
             signUpButton.addActionListener(e -> {
                 reference.dispose();
-                new SellerPage("John Doe");
+                new SellerPage();
             });
 
             existingAccountButton.setBackground(Color.decode("#f4f4f4"));
             existingAccountButton.setForeground(Color.decode("#A77F20"));
             existingAccountButton.setBorder(null);
             existingAccountButton.setOpaque(false);
-            existingAccountButton.setBounds(250, start + 160 + 32, 300, 24); // 48
+            existingAccountButton.setBounds(250, 326 + 32, 300, 24); // 48
             existingAccountButton.setFocusable(false);
             existingAccountButton.addActionListener(e -> {
                 cardLayout.next(container);
             });
 
             this.add(applicationNameLabel);
+            this.add(signUpLabel);
             this.add(emailLabel);
             this.add(emailField);
             this.add(usernameLabel);
             this.add(usernameField);
             this.add(passwordLabel);
             this.add(passwordField);
+            this.add(accountTypeLabel);
+            this.add(buyerType);
+            this.add(sellerType);
             this.add(existingAccountButton);
             this.add(signUpButton);
         }

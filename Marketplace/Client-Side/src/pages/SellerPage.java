@@ -2,27 +2,24 @@ package pages;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.SeparatorUI;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class SellerPage extends JFrame {
-
-    JButton removeStore = new JButton("Remove Store");
-    JButton exitButton = new JButton("Exit");
-    JButton logoutButton = new JButton("Logout");
-    JButton accountDetailsButton = new JButton("Account Details");
-    JButton importProductsButton = new JButton("Import Products");
-    JButton statisticsButton = new JButton("Statistics");
-    JButton storesButton = new JButton("Stores");
-
+    CardLayout cardLayout = new CardLayout();
+    Container container = new Container();
+    JFrame reference;
     JTable table;
 
-    public SellerPage(String username) {
+    public SellerPage() {
+
+        this.reference = this;
 
         // Set title of window
-        this.setTitle("Marketplace");
+        this.setTitle("Purdue Marketplace (SELLER)");
 
         // Set behavior to "destroy" window when closed
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -36,63 +33,126 @@ public class SellerPage extends JFrame {
         // Set window to open in the center of the screen
         this.setLocationRelativeTo(null);
 
-        this.setLayout(null);
+        this.setLayout(new BorderLayout());
+
+        container.setLayout(cardLayout);
+        container.add("stores", Stores());
+        container.add("settings", settings());
+        container.add("statistics", statistics());
+        container.setVisible(true);
+
+
+        this.add(SidePanel(), BorderLayout.WEST);
+        this.add(container, BorderLayout.CENTER);
+        this.setVisible(true);
+    }
+
+    public JPanel SidePanel() {
+
+        JPanel panel = new JPanel();
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(0,80,0,24);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTH;
+        panel.setLayout(gridLayout);
 
         JLabel welcomeMessage = new JLabel("Purdue Marketplace");
         welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
-        welcomeMessage.setBounds(100, 8, 200, 24);
+        c.gridy = 0;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(welcomeMessage, c);
+        panel.add(welcomeMessage);
 
-        JLabel nameMessage = new JLabel("Hey, " + username);
+        c.insets = new Insets(0,80,8,24);
+
+        JLabel nameMessage = new JLabel("Hey, John Doe");
         nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
-        nameMessage.setBounds(100, 24, 200, 24);
+        c.gridy = 1;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(nameMessage,c);
+        nameMessage.setMaximumSize(new Dimension(300, 24));
+        panel.add(nameMessage);
 
-        storesButton.setBounds(100, 56, 200, 24);
-        storesButton.addActionListener(e -> {
+        c.insets = new Insets(4,80,4,24);
 
-        });
+        JButton storesButton = new JButton("Stores");
+        storesButton.addActionListener(e -> cardLayout.show(container, "stores"));
+        c.gridy = 2;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(storesButton, c);
+        panel.add(storesButton);
 
-        statisticsButton.setBounds(100, 88, 200, 25);
-        statisticsButton.addActionListener(e -> {
+        JButton settingsButton = new JButton("Settings");
+        settingsButton.addActionListener(e -> cardLayout.show(container, "settings"));
+        c.gridy = 3;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(settingsButton, c);
+        panel.add(settingsButton);
 
-        });
+        JButton statisticsButton = new JButton("Statistics");
+        statisticsButton.addActionListener(e -> cardLayout.show(container, "statistics"));
+        c.gridy = 4;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(statisticsButton, c);
+        panel.add(statisticsButton);
 
-        accountDetailsButton.setBounds(100, 120, 200, 25);
-        accountDetailsButton.addActionListener(e -> {
-
-        });
-
-        importProductsButton.setBounds(100, 152, 200, 25);
+        JButton importProductsButton = new JButton("Import Products");
         importProductsButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv","csv");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
             chooser.setFileFilter(filter);
-            chooser.showSaveDialog(null);
+            chooser.showOpenDialog(null);
         });
+        c.gridy = 5;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(importProductsButton, c);
+        panel.add(importProductsButton);
 
-        logoutButton.setBounds(100, 416, 96, 25);
+        JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(e -> {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout");
             if (input == 0) {
-                this.dispose();
+                reference.dispose();
                 new OnboardingPage(null, true);
             }
         });
+        c.gridy = 6;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.insets = new Insets(4,80,4,4);
+        gridLayout.setConstraints(logoutButton, c);
+        panel.add(logoutButton);
 
-        exitButton.setBounds(204, 416, 96, 25);
+        JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit");
             if (input == 0) {
-                this.dispose();
+                reference.dispose();
             }
         });
+        c.gridy = 6;
+        c.gridx = 2;
+        c.gridwidth = 2;
+        c.insets = new Insets(4,4,4,24);
+        gridLayout.setConstraints(exitButton, c);
+        panel.add(exitButton);
+
+        return panel;
+    }
+
+    public JPanel Stores() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel storesPanel = new JPanel();
+        storesPanel.setLayout(null);
 
         JLabel storesLabel = new JLabel("Your Stores");
         storesLabel.setFont(new Font("Serif", Font.BOLD, 18));
-        storesLabel.setBounds(325,8, 375, 24);
+        storesLabel.setBounds(24, 16, 400, 24);
 
         JLabel helpfulLabel = new JLabel("Select a store to view");
-        helpfulLabel.setFont(new Font("Serif", Font.PLAIN, 14));
-        helpfulLabel.setBounds(325, 24, 200, 24);
+        helpfulLabel.setFont(new Font("serif", Font.PLAIN, 14));
+        helpfulLabel.setBounds(24, 36, 400, 24);
 
         // Create a DefaultTableModel
         DefaultTableModel model = new DefaultTableModel();
@@ -118,8 +178,8 @@ public class SellerPage extends JFrame {
             table.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        table.getColumnModel().getColumn(1).setPreferredWidth(135);
-        table.getColumnModel().getColumn(1).setMaxWidth(135);
+        table.getColumnModel().getColumn(1).setPreferredWidth(175);
+        table.getColumnModel().getColumn(1).setMaxWidth(175);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         table.addMouseListener(new MouseAdapter() {
@@ -132,66 +192,173 @@ public class SellerPage extends JFrame {
         });
 
         JScrollPane scrollPane= new  JScrollPane(table);
-        scrollPane.setBounds(325, 56, 375, 350);
+        scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         if (defaults.get("Table.alternateRowColor") == null)
             defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
 
-        int padding = 8;
-        int width = 375 / 3 - 4;
 
         JButton addStore = new JButton("Add Store");
-        addStore.setBounds(325, 416, width, 24);
+        addStore.setBounds(24, 404, 400/3 - 4, 24);
         addStore.addActionListener(e -> {
             addStore();
         });
 
         JButton sortStoreButton = new JButton("Sort Stores");
-        sortStoreButton.setBounds(325 + width + padding, 416, width, 24);
+        sortStoreButton.setBounds(24 + 400/3 + 4, 404, 400/3 - 8, 24);
         sortStoreButton.addActionListener(e -> {
             System.out.println("Sorting stores...");
         });
 
+        JButton removeStore = new JButton("Remove Store");
+        removeStore.setBounds(24 + 400/3 * 2 + 4, 404, 400/3 - 4, 24);
         removeStore.addActionListener(e -> {
-            int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete");
-            if (input == 0) {
-                ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
+            if(!table.getSelectionModel().isSelectionEmpty()) {
+                int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + table.getValueAt(table.getSelectedRow(), 0).toString() + "?");
+                if (input == 0) {
+                    ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
+                }
             }
         });
 
-        removeStore.setBounds(325 + width * 2 + padding * 2, 416, width, 24);
+        storesPanel.add(storesLabel);
+        storesPanel.add(helpfulLabel);
+        storesPanel.add(scrollPane);
 
-        this.add(storesLabel);
-        this.add(helpfulLabel);
-        this.add(scrollPane);
+        storesPanel.add(addStore);
+        storesPanel.add(sortStoreButton);
+        storesPanel.add(removeStore);
 
-        this.add(welcomeMessage);
-        this.add(nameMessage);
+        panel.add(storesPanel, BorderLayout.CENTER);
+        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
+        divider.setBackground(Color.decode("#dbdbdb"));
+        divider.setForeground(Color.decode("#dbdbdb"));
+        panel.add(divider, BorderLayout.LINE_START);
 
-        this.add(addStore);
-        this.add(sortStoreButton);
-        this.add(removeStore);
-        this.add(storesButton);
-        this.add(statisticsButton);
-        this.add(accountDetailsButton);
-        this.add(importProductsButton);
-        this.add(logoutButton);
-        this.add(exitButton);
+        return panel;
+    }
 
-        this.setVisible(true);
+    public JPanel settings() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel settingsPanel = new JPanel();
+        settingsPanel.setLayout(null);
+
+        JLabel accountDetailsLabel = new JLabel("Account Details");
+        accountDetailsLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        accountDetailsLabel.setBounds(24, 16, 200, 24);
+
+        JLabel supportLabel = new JLabel("View your account details");
+        supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
+        supportLabel.setBounds(24, 36, 400, 24);
+
+        JLabel usernameLabel = new JLabel("Username");
+        usernameLabel.setBounds(24, 60, 200, 24);
+
+        JTextField usernameField = new JTextField(12);
+        usernameField.setBounds(24, 84, 268, 24);
+        usernameField.setText("JDoe");
+
+        JButton usernameButton = new JButton("Change Username");
+        usernameButton.setBounds(300, 84, 150, 24);
+
+        settingsPanel.add(usernameLabel);
+        settingsPanel.add(usernameField);
+        settingsPanel.add(usernameButton);
+
+        JLabel emailLabel = new JLabel("Email");
+        emailLabel.setBounds(24, 108, 200, 24);
+
+        JTextField emailField = new JTextField(12);
+        emailField.setBounds(24, 132, 268, 24);
+        emailField.setText("jdoe@purdue.edu");
+
+        JButton emailButton = new JButton("Change Email");
+        emailButton.setBounds(300, 132, 150, 24);
+
+        settingsPanel.add(emailLabel);
+        settingsPanel.add(emailField);
+        settingsPanel.add(emailButton);
+
+        JLabel passwordLabel = new JLabel("Password");
+        passwordLabel.setBounds(24, 156, 200, 24);
+
+        JPasswordField passwordField = new JPasswordField(12);
+        passwordField.setBounds(24, 180, 268, 24);
+        passwordField.setText("secret_password");
+
+        JButton passwordButton = new JButton("Change Password");
+        passwordButton.setBounds(300, 180, 150, 24);
+
+        settingsPanel.add(passwordLabel);
+        settingsPanel.add(passwordField);
+        settingsPanel.add(passwordButton);
+
+        JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
+        accountDetailsDivider.setBounds(0, 228, 450, 1);
+        accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
+        accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
+
+        JButton deleteAccountButton = new JButton("Delete Account");
+        deleteAccountButton.setBackground(Color.decode("#f4f4f4"));
+        deleteAccountButton.setOpaque(false);
+        deleteAccountButton.setForeground(Color.decode("#d11111"));
+        deleteAccountButton.setBounds(24, 253, 150, 24);
+
+        settingsPanel.add(accountDetailsDivider);
+        settingsPanel.add(deleteAccountButton);
+
+        settingsPanel.add(accountDetailsLabel);
+        settingsPanel.add(supportLabel);
+
+        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
+        divider.setBackground(Color.decode("#dbdbdb"));
+        divider.setForeground(Color.decode("#dbdbdb"));
+
+        panel.add(settingsPanel, BorderLayout.CENTER);
+        panel.add(divider, BorderLayout.LINE_START);
+
+        return panel;
+    }
+
+    public JPanel statistics() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel statisticsPanel = new JPanel();
+        statisticsPanel.setLayout(null);
+
+        JLabel statisticsLabel = new JLabel("Seller Statistics");
+        statisticsLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        statisticsLabel.setBounds(24, 16, 200, 24);
+
+        JLabel supportLabel = new JLabel("View your sales statistics");
+        supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
+        supportLabel.setBounds(24, 36, 400, 24);
+
+        statisticsPanel.add(statisticsLabel);
+        statisticsPanel.add(supportLabel);
+
+        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
+        divider.setBackground(Color.decode("#dbdbdb"));
+        divider.setForeground(Color.decode("#dbdbdb"));
+
+        panel.add(statisticsPanel, BorderLayout.CENTER);
+        panel.add(divider, BorderLayout.LINE_START);
+
+        return panel;
     }
 
     public void addStore() {
 
         // Create a dialog box with a text field and a button
         String storeName = JOptionPane.showInputDialog("Enter store name", "Store");
-        System.out.println("User created store: " + storeName);
 
-        // Create a DefaultTableModel
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.addRow(new Object[]{storeName, "$0.00"});
+        if(storeName != null) {
+            System.out.println("User created store: " + storeName);
 
+            // Create a DefaultTableModel
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.addRow(new Object[]{storeName, "$0.00"});
+        }
 
     }
 
@@ -274,7 +441,7 @@ public class SellerPage extends JFrame {
 
         storePage.setVisible(true);
 
-
-
     }
 }
+
+
