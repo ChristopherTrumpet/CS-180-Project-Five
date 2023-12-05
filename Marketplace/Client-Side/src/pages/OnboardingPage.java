@@ -77,6 +77,7 @@ public class OnboardingPage extends JFrame {
             passwordField.setBounds(250, start + 72, 300, 24); // 24
 
             loginButton.setBackground(Color.decode("#A77F20"));
+            loginButton.setOpaque(true);
             loginButton.setForeground(Color.white);
             loginButton.setBorder(null);
             loginButton.setBounds(250, start + 112, 300, 24); // 48
@@ -156,11 +157,12 @@ public class OnboardingPage extends JFrame {
             accountTypeLabel.setBounds(250, 274, 300, 24);
 
             buyerType.setText("Buyer");
-            buyerType.setBounds(250, 294, 65, 24);
+            buyerType.setBounds(250, 294, 75, 24);
             sellerType.setText("Seller");
-            sellerType.setBounds(250+65,294, 65, 24);
+            sellerType.setBounds(250+75,294, 75, 24);
 
             signUpButton.setBackground(Color.decode("#A77F20"));
+            signUpButton.setOpaque(true);
             signUpButton.setForeground(Color.white);
             signUpButton.setBorder(null);
             signUpButton.setBounds(250, 326, 300, 24); // 48
