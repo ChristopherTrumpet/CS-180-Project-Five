@@ -105,7 +105,7 @@ public class StoreService {
         String fileContents = "";
         for (Object product : products) {
             JSONObject productObj = getProduct((String) product);
-            fileContents.concat(String.format("%s, %s, %s", productObj.get("name"), productObj.get("description"), productObj.get("item")))
+            fileContents.concat(String.format("%s, %s, %s", productObj.get("name"), productObj.get("description"), productObj.get("item")));
         }
 
         try {
