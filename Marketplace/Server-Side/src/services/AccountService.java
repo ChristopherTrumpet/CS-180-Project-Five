@@ -181,7 +181,7 @@ public class AccountService {
         return false;
     }
 
-    private String getJSONFile(String fileDirectory) {
+    public String getJSONFile(String fileDirectory) {
         try {
             System.out.println(getUserFileDirectory());
             return Files.readString(Path.of(fileDirectory));
