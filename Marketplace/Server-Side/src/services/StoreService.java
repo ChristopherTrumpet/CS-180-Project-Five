@@ -15,12 +15,14 @@ import java.util.Random;
 public class StoreService {
 
     private final String storeFileDirectory;
+    private final String productFileDirectory;
     private final AccountService accountService = new AccountService();
 
 
     public StoreService() {
 
         this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
+        this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
 
     }
 
@@ -97,9 +99,37 @@ public class StoreService {
         return false;
     }
 
-    public boolean exportProducts() {
+    public boolean exportProducts(String storeId, File exportToFile) {
+        JSONObject store = getStoreById(storeId);
+        JSONArray products = store.getJSONArray("products");
+        String fileContents = "";
+        for (Object product : products) {
+            JSONObject productObj = getProduct((String) product);
+            fileContents.concat(String.format("%s, %s, %s", productObj.get("name"), productObj.get("description"), productObj.get("item")));
+        }
+
+        try {
+
+            FileWriter file = new FileWriter(exportToFile);
+            file.write(fileContents);
+            file.flush();
+            file.close();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
+        }
 
         return false;
+    }
+
+    public JSONObject getProduct(String productId) {
+        for (Object store : new JSONObject(Objects.requireNonNull(getProductFile())).getJSONArray("products")) {
+            if (((JSONObject) store).get("id").toString().equals(productId)) {
+                return (JSONObject) store;
+            }
+        }
+        return null;
     }
 
     public boolean createProduct(String productId, int qty, double price) {
@@ -249,6 +279,18 @@ public class StoreService {
         try {
             System.out.println(storeFileDirectory);
             return Files.readString(Path.of(storeFileDirectory));
+        } catch (IOException e) {
+            System.out.println("Error occurred retrieving store file...");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private String getProductFile() {
+        try {
+            System.out.println(productFileDirectory);
+            return Files.readString(Path.of(productFileDirectory));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving store file...");
             e.printStackTrace();
