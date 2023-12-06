@@ -24,31 +24,31 @@ import java.util.Random;
 
 public class AccountService {
 
-    // Directory of the users.json file which stores all user data
-    public final String userFileDirectory;
+            // Directory of the users.json file which stores all user data
+            public final String userFileDirectory;
 
-    /**
-     * Constructor initializes user file directory, creates a new one if one does not exist.
-     */
+            /**
+             * Constructor initializes user file directory, creates a new one if one does not exist.
+             */
     public AccountService() {
 
-        // TODO: Check if file exists, create a new one if it does not
+                // TODO: Check if file exists, create a new one if it does not
 
-        this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\users.json").toString();
-    }
+                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\users.json").toString();
+            }
 
-    /**
-     * Creates a new user object in the users.json, populated by the parameters.
-     *
-     * @param accountType Indicates whether user is a buyer or seller
-     * @param userName    Stores user's username
-     * @param password    Stores user's password, may encrypt later
-     * @param email       Stores user's email
-     * @param firstName   Stores user's first name
-     * @param lastName    Stores user's last name
-     * @return True if account was successfully created, false otherwise
-     */
-    public boolean createAccount(
+            /**
+             * Creates a new user object in the users.json, populated by the parameters.
+             *
+             * @param accountType Indicates whether user is a buyer or seller
+             * @param userName    Stores user's username
+             * @param password    Stores user's password, may encrypt later
+             * @param email       Stores user's email
+             * @param firstName   Stores user's first name
+             * @param lastName    Stores user's last name
+             * @return True if account was successfully created, false otherwise
+             */
+            public boolean createAccount(
             char accountType,
             String userName,
             String password,
@@ -56,13 +56,13 @@ public class AccountService {
             String firstName,
             String lastName) {
 
-        // Creates a new user id
-        String userId = generateUserId(accountType);
+                // Creates a new user id
+                String userId = generateUserId(accountType);
 
-        JSONObject userObj = new JSONObject();
+                JSONObject userObj = new JSONObject();
 
-        // Ensures users.json file exists
-        if (getJSONFile(getUserFileDirectory()) != null)
+                // Ensures users.json file exists
+                if (getJSONFile(getUserFileDirectory()) != null)
             userObj = new JSONObject(getJSONFile(getUserFileDirectory()));
 
         // Uses user email as it is unique, user id cannot be used as it generated upon creation

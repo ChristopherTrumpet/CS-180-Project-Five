@@ -15,6 +15,8 @@ import java.util.Random;
 public class StoreService {
 
     private final String storeFileDirectory;
+    private final AccountService accountService = new AccountService();
+
 
     public StoreService() {
 
@@ -46,6 +48,22 @@ public class StoreService {
             }
         }
         return removed;
+    }
+    public boolean checkQuantity(String storeId, String productId, int quantity) {
+        JSONObject store = accountService.getUserById(storeId);
+        for (Object product : ((JSONObject) store).getJSONArray("products")) {
+            if (((JSONObject) product).get("id").toString().equals(productId)) {
+                JSONObject theProduct = (JSONObject) ((JSONObject) product).get("id");
+                if (theProduct.getInt("qty") < 1) {
+                    return false;
+                } else if (theProduct.getInt("qty") >= quantity) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean createStore(String name) {
@@ -105,35 +123,7 @@ public class StoreService {
     }
 
     public boolean removeProduct(String storeId, String productId) {
-        boolean removed = false;
-        JSONArray storeList = (JSONArray) new JSONObject("stores.json").get("stores");
-        JSONObject storeObj = new JSONObject();
-        for(int i = 0; i < storeList.length(); i++) {
-            JSONObject store = (JSONObject) storeList.get(i);
-            if(store.get("id").equals(storeId)) {
-                storeObj = store;
-                break;
-            }
-        }
-        JSONArray productList = (JSONArray) storeObj.get("products");
-        for(int i = 0; i < productList.length(); i++) {
-            JSONObject product = (JSONObject) productList.get(i);
-            if(product.get("id").equals(productId)) {
-                productList.remove(i);
-                removed = true;
-                break;
-            }
-        }
-        JSONArray products = (JSONArray) new JSONObject("products.json").get("products");
-        for(int i = 0; i < products.length(); i++) {
-            JSONObject product = (JSONObject) products.get(i);
-            if(product.get("id").equals(productId)) {
-                products.remove(i);
-                removed = true;
-                break;
-            }
-        }
-        return removed;
+        return false;
     }
 
     public boolean createProduct(String name, String description, String itemType) {
