@@ -14,15 +14,17 @@
       "id": "PztsCpytYcTxgAKCJVb",
       "first_name": "Christopher",
       "email": "ctrumpet@purdue.edu",
-      "cart": [
-        {
-          "product_id": "sdfasdf",
-          "quantity": v,
-          "price":
-
-        }
-      ],
+      "cart": [],
       "username": "CTrumpet"
+    },
+    {
+      "password": "password",
+      "stores": [],
+      "last_name": "",
+      "id": "2a04K9K99TRMu8pvs",
+      "first_name": "",
+      "email": "email",
+      "username": "user"
     }
   ]
 }
