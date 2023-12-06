@@ -112,6 +112,7 @@ public class StoreService {
             for (Object store : stores.getJSONArray("stores")) {
                 if (((JSONObject) store).get("store_id").toString().equals(sellerStoreId)) {
                     JSONArray products = (JSONArray) ((JSONObject) store).get("products");
+
                     return true;
                 }
             }
@@ -120,14 +121,13 @@ public class StoreService {
     }
 
     public boolean createProduct(String productId, int qty, double price) {
-//        JSONObject product = new JSONObject();
-//        product.put("productID", productId);
-//        product.put("qty", qty);
-//        product.put("price", price);
-//        AccountService as = new AccountService();
-//        return as.writeJSONObjectToFile(product, storeFileDirectory);
+        JSONObject product = new JSONObject();
+        product.put("productID", productId);
+        product.put("qty", qty);
+        product.put("price", price);
+        AccountService as = new AccountService();
+        return as.writeJSONObjectToFile(product, storeFileDirectory);
 //
-        return false;
     }
     public boolean addProduct(String storeId, String productId, int qty, double price) {
         JSONObject product = new JSONObject();
