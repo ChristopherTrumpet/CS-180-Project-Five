@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
+
 public class StoreService {
 
     private final String storeFileDirectory;
@@ -97,8 +98,24 @@ public class StoreService {
         return false;
     }
 
-    public boolean exportProducts() {
-
+    public boolean exportProducts(String sellerId, String sellerStoreId) {
+//        if (accountService.isSeller(sellerId)) {
+//
+//            JSONArray stores = new JSONObject(accountService.getJSONFile(storeFileDirectory)).getJSONArray("stores");
+//            for (int i = 0; i < stores.length(); i++) {
+//                if (sellerStoreId.equals())
+//            }
+//        }
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+        JSONObject sellerStore = null;
+        if (accountService.isSeller((sellerId))) {
+            for (Object store : stores.getJSONArray("stores")) {
+                if (((JSONObject) store).get("store_id").toString().equals(sellerStoreId)) {
+                    JSONArray products = (JSONArray) ((JSONObject) store).get("products");
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
