@@ -1,7 +1,6 @@
-package pages;
-
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OnboardingPage extends JFrame {
@@ -168,8 +167,30 @@ public class OnboardingPage extends JFrame {
             signUpButton.setBounds(250, 326, 300, 24); // 48
             signUpButton.setFocusable(false);
             signUpButton.addActionListener(e -> {
-                reference.dispose();
-                new SellerPage();
+                String password = String.valueOf(passwordField.getPassword());
+                if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
+                    if (sellerType.isSelected() || buyerType.isSelected()) {
+                        ArrayList<String> data = new ArrayList<>();
+                        data.add("signUpButton");
+                        if (sellerType.isSelected()) {
+                            data.add("s");
+                        } else {
+                            data.add("b");
+                        }
+                        data.add(usernameField.getText());
+                        data.add(password);
+                        data.add(emailField.getText());
+
+                        Client.sendToClient(data);
+
+                        reference.dispose();
+                        if (sellerType.isSelected()) {
+                            new SellerPage();
+                        } else {
+                            new CustomerPage(usernameField.getText());
+                        }
+                    }
+                }
             });
 
             existingAccountButton.setBackground(Color.decode("#f4f4f4"));

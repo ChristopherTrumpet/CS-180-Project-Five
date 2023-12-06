@@ -1,5 +1,3 @@
-import pages.OnboardingPage;
-
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +5,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
+
+    private static BufferedReader echoes;
+    private static PrintWriter stringToServer;
+
     public static void main(String[] args) {
 
         // MAKE SURE the port number is IDENTICAL to that of the server
@@ -17,11 +20,11 @@ public class Client {
 
             socket.setSoTimeout(5000);
 
-            BufferedReader echoes = new BufferedReader(
+            echoes = new BufferedReader(
                     new InputStreamReader(socket.getInputStream())
             );
 
-            PrintWriter stringToServer = new PrintWriter(socket.getOutputStream(), true);
+            stringToServer = new PrintWriter(socket.getOutputStream(), false);
 
             // Initialize GUI for Program
             SwingUtilities.invokeLater(() -> new OnboardingPage(null, true));
@@ -50,4 +53,12 @@ public class Client {
             System.err.println("Client Error: " + e.getMessage());
         }
     }
+
+    public static void sendToClient(ArrayList<String> lines) {
+        for (String line : lines) {
+            stringToServer.println(line);
+        }
+        stringToServer.flush();
+    }
+
 }

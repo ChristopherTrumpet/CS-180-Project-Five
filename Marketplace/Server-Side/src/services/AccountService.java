@@ -91,8 +91,6 @@ public class AccountService {
         }
 
         users.put(user);
-        userObj.put("users", users);
-
         return writeJSONObjectToFile(userObj, getUserFileDirectory());
 
     }
@@ -143,7 +141,7 @@ public class AccountService {
 
     private JSONObject getUserByEmail(String email) {
         System.out.println(getJSONFile(getUserFileDirectory()));
-        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray("users")) {
+        for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("email").toString().equals(email)) {
                 return (JSONObject) user;
             }
