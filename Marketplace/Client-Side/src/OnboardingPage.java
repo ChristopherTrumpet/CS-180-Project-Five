@@ -200,12 +200,15 @@ public class OnboardingPage extends JFrame {
                 if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
                     if (sellerType.isSelected() || buyerType.isSelected()) {
                         ArrayList<String> data = new ArrayList<>();
+
                         data.add("[signUpButton]");
+
                         if (sellerType.isSelected()) {
                             data.add("s");
                         } else {
                             data.add("b");
                         }
+
                         data.add(usernameField.getText());
                         data.add(password);
                         data.add(emailField.getText());
@@ -213,6 +216,7 @@ public class OnboardingPage extends JFrame {
                         Client.sendToServer(data);
 
                         reference.dispose();
+
                         if (sellerType.isSelected()) {
                             new SellerPage(null);
                         } else {

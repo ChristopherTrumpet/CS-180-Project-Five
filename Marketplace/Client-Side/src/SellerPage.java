@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -168,13 +170,30 @@ public class SellerPage extends JFrame {
         model.addColumn("Stores");
         model.addColumn("Sales");
 
-        model.addRow(new Object[]{"Apple", 20});
-        model.addRow(new Object[]{"Five Guy's Burgers and Fries", 25.32});
-        model.addRow(new Object[]{"Barnes and Noble", 35.11});
-        model.addRow(new Object[]{"Keller Williams", 9534.45});
-        model.addRow(new Object[]{"Raising Cane's", 9384.67});
-        model.addRow(new Object[]{"Blackberry Farms", 9384.24});
-        model.addRow(new Object[]{"General Electric", 9384.52});
+        JSONArray stores = seller.getJSONArray("stores");
+
+        Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+
+        String allStoresString = Client.readFromServer(1).get(0);
+
+        if (allStoresString.equals("empty"))
+            System.out.println("User has no stores");
+        else {
+            JSONArray allStores = new JSONArray(allStoresString);
+            for (Object storeGeneric : allStores) {
+                JSONObject storeGenericObj = (JSONObject) storeGeneric;
+                String storeGenericId = storeGenericObj.getString("id");
+
+                for (Object store : stores) {
+                    String storeId = (String) store;
+
+                    if (storeId.equals(storeGenericId)) {
+                        model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales")});
+                    }
+
+                }
+            }
+        }
 
         // Create a JTable using the model
         table = new JTable(model);

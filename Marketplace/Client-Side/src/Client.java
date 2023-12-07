@@ -50,10 +50,10 @@ public class Client {
         }
         stringToServer.flush();
     }
-
     public static ArrayList<String> readFromServer(int numLines) {
         try {
             ArrayList<String> data = new ArrayList<>();
+
             for (int i = 0; i < numLines; i++) {
                 data.add(reader.readLine());
             }

@@ -1,7 +1,9 @@
 package server;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import services.AccountService;
+import services.StoreService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +30,9 @@ public class ClientThread extends Thread {
             );
 
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
+
             AccountService as = new AccountService();
+            StoreService ss = new StoreService();
 
             while (true) {
 
@@ -67,6 +71,16 @@ public class ClientThread extends Thread {
                         else {
                             writer.println("false"); // False - could not validate user
                             writer.println("False"); // False - There is no user to pass
+                        }
+                        writer.flush();
+                    }
+                    case "[getStores]" -> {
+                        System.out.println("Receiving stores...");
+                        JSONObject storeFile = new JSONObject(ss.getStoreFile());
+                        if (!storeFile.isEmpty()) {
+                            writer.println(storeFile.getJSONArray("stores"));
+                        } else {
+                            writer.println("empty");
                         }
                         writer.flush();
                     }

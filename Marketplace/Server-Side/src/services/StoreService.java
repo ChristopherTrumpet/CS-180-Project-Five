@@ -21,7 +21,7 @@ public class StoreService {
 
     public StoreService() {
 
-        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
+        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "\\Marketplace\\Server-Side\\data\\stores.json").toString();
         this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
 
     }
@@ -275,9 +275,8 @@ public class StoreService {
         return null;
     }
 
-    private String getStoreFile() {
+    public String getStoreFile() {
         try {
-            System.out.println(storeFileDirectory);
             return Files.readString(Path.of(storeFileDirectory));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving store file...");

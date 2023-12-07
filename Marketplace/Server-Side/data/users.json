@@ -10,7 +10,7 @@
     },
     {
       "password": "testPassword",
-      "stores": [],
+      "stores": ["2034vas2345234", "4084vas2345234"],
       "id": "oJZiWpiDwmCYqaans",
       "email": "test@test.edu",
       "username": "Test Account"
