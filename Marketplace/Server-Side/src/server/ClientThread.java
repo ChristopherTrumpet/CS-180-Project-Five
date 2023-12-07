@@ -53,6 +53,7 @@ public class ClientThread extends Thread {
                         String password = data.get(3);
                         String email = data.get(4);
                         as.createAccount(accountType, username, password, email);
+                        data.clear();
                     }
                     case "[loginButton]" -> {
 
@@ -73,9 +74,11 @@ public class ClientThread extends Thread {
                             writer.println("False"); // False - There is no user to pass
                         }
                         writer.flush();
+                        data.clear();
+
                     }
                     case "[getStores]" -> {
-                        System.out.println("Receiving stores...");
+                        System.out.println("[SERVER] Receiving stores...");
                         JSONObject storeFile = new JSONObject(ss.getStoreFile());
                         if (!storeFile.isEmpty()) {
                             writer.println(storeFile.getJSONArray("stores"));
@@ -83,6 +86,20 @@ public class ClientThread extends Thread {
                             writer.println("empty");
                         }
                         writer.flush();
+                        data.clear();
+
+                    }
+                    case "[getProducts]" -> {
+                        System.out.println("[SERVER] Receiving products...");
+                        JSONObject productFile = new JSONObject(ss.getProductFile());
+                        if (!productFile.isEmpty()) {
+                            writer.println(productFile.getJSONArray("products"));
+                        } else {
+                            writer.println("empty");
+                        }
+                        writer.flush();
+                        data.clear();
+
                     }
                 }
             }

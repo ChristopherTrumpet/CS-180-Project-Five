@@ -4,12 +4,12 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,6 +21,7 @@ public class SellerPage extends JFrame {
     JFrame reference;
     JTable table;
     JSONObject seller;
+    JSONObject currentStore;
 
     public SellerPage(JSONObject seller) {
 
@@ -169,6 +170,7 @@ public class SellerPage extends JFrame {
         // Add some data to the model
         model.addColumn("Stores");
         model.addColumn("Sales");
+        model.addColumn("Id");
 
         JSONArray stores = seller.getJSONArray("stores");
 
@@ -188,7 +190,7 @@ public class SellerPage extends JFrame {
                     String storeId = (String) store;
 
                     if (storeId.equals(storeGenericId)) {
-                        model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales")});
+                        model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales"), storeGenericObj.toString()});
                     }
 
                 }
@@ -197,6 +199,9 @@ public class SellerPage extends JFrame {
 
         // Create a JTable using the model
         table = new JTable(model);
+
+        TableColumnModel tcm = table.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(2) );
 
         for (int c = 0; c < table.getColumnCount(); c++)
         {
@@ -212,7 +217,7 @@ public class SellerPage extends JFrame {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    editStore(table.getValueAt(table.getSelectedRow(), 0).toString());
+                    editStore(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()));
                 }
             }
         });
@@ -228,14 +233,14 @@ public class SellerPage extends JFrame {
         scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-        if (defaults.get("Table.alternateRowColor") == null)
-            defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
+        defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
 
         JButton sortStoreButton = new JButton("Select Store");
         sortStoreButton.setBounds(24, 404, 400/3 - 4, 24);
         sortStoreButton.addActionListener(e -> {
             if(!table.getSelectionModel().isSelectionEmpty()) {
-                editStore(table.getValueAt(table.getSelectedRow(), 0).toString());
+                String storeName = table.getValueAt(table.getSelectedRow(), 0).toString();
+                editStore(null);
             }
 
         });
@@ -408,7 +413,7 @@ public class SellerPage extends JFrame {
 
     }
 
-    public void editStore(String storeName) {
+    public void editStore(JSONObject store) {
 
         JFrame storePage = new JFrame();
 
@@ -436,14 +441,36 @@ public class SellerPage extends JFrame {
         model.addColumn("Quantity");
         model.addColumn("Price");
 
-        model.addRow(new Object[]{"iPhone", "1000", "$999.99"});
-        model.addRow(new Object[]{"MacBook", "75", "$1499.99"});
-        model.addRow(new Object[]{"AirPods", "225", "199.99"});
+        JSONArray products = store.getJSONArray("products");
+
+        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+
+        String allProductsString = Client.readFromServer(1).get(0);
+
+        if (allProductsString.equals("empty"))
+            System.out.println("Store has no products");
+        else {
+            JSONArray allProducts = new JSONArray(allProductsString);
+            for (Object productGeneric : allProducts) {
+                JSONObject productGenericObj = (JSONObject) productGeneric;
+                String storeGenericId = productGenericObj.getString("id");
+
+                for (Object product : products) {
+                    JSONObject productObj = (JSONObject) product;
+                    String productId = productObj.getString("id");
+
+                    if (productId.equals(storeGenericId)) {
+                        model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price"))});
+                    }
+
+                }
+            }
+        }
 
         // Create a JTable using the model
         JTable productTable = new JTable(model);
 
-        JLabel titleMessage = new JLabel(storeName + "'s Products");
+        JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
         titleMessage.setFont(new Font("serif", Font.BOLD, 18));
         titleMessage.setBounds(233, 24, 365, 24);
 
