@@ -99,7 +99,15 @@ public class ClientThread extends Thread {
                         }
                         writer.flush();
                         data.clear();
+                    }
+                    case "[changeStoreName]" -> {
 
+                        data.add(input.readLine());
+                        data.add(input.readLine());
+
+                        ss.updateStoreName(data.get(1), data.get(2));
+                        System.out.println("Changed store name");
+                        data.clear();
                     }
                 }
             }

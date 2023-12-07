@@ -200,9 +200,6 @@ public class SellerPage extends JFrame {
         // Create a JTable using the model
         table = new JTable(model);
 
-        TableColumnModel tcm = table.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(2) );
-
         for (int c = 0; c < table.getColumnCount(); c++)
         {
             Class<?> col_class = table.getColumnClass(c);
@@ -225,9 +222,13 @@ public class SellerPage extends JFrame {
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
         table.setRowSorter(sorter);
 
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-        sorter.setSortKeys(sortKeys);
+        // SORTING BROKEN FIX THIS LATER
+//        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+//        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+//        sorter.setSortKeys(sortKeys);
+
+        TableColumnModel tcm = table.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(2) );
 
         JScrollPane scrollPane= new  JScrollPane(table);
         scrollPane.setBounds(24, 66, 400, 330);
@@ -239,8 +240,7 @@ public class SellerPage extends JFrame {
         sortStoreButton.setBounds(24, 404, 400/3 - 4, 24);
         sortStoreButton.addActionListener(e -> {
             if(!table.getSelectionModel().isSelectionEmpty()) {
-                String storeName = table.getValueAt(table.getSelectedRow(), 0).toString();
-                editStore(null);
+                editStore(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()));
             }
 
         });
@@ -462,7 +462,6 @@ public class SellerPage extends JFrame {
                     if (productId.equals(storeGenericId)) {
                         model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price"))});
                     }
-
                 }
             }
         }
@@ -480,6 +479,15 @@ public class SellerPage extends JFrame {
 
         JButton changeStoreName = new JButton("Change Store Name");
         changeStoreName.setBounds(24, 56, 185, 24);
+        changeStoreName.addActionListener(e -> {
+            String storeName = javax.swing.JOptionPane.showInputDialog("What would you like to change the name to?");
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[changeStoreName]");
+            data.add(store.getString("id"));
+            data.add(storeName);
+            Client.sendToServer(data);
+            titleMessage.setText(storeName + "'s Products");
+        });
 
         JButton addProduct = new JButton("Add Product");
         addProduct.setBounds(24, 88, 185, 24);
