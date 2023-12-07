@@ -1,3 +1,5 @@
+import org.json.JSONObject;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -16,9 +18,11 @@ public class SellerPage extends JFrame {
     Container container = new Container();
     JFrame reference;
     JTable table;
+    JSONObject seller;
 
-    public SellerPage() {
+    public SellerPage(JSONObject seller) {
 
+        this.seller = seller;
         this.reference = this;
 
         // Set title of window
@@ -69,7 +73,7 @@ public class SellerPage extends JFrame {
 
         c.insets = new Insets(0,80,8,24);
 
-        JLabel nameMessage = new JLabel("Hey, John Doe");
+        JLabel nameMessage = new JLabel("Hey, " + seller.getString("username"));
         nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
         c.gridy = 1;
         c.gridwidth = 4;

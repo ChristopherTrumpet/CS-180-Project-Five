@@ -26,45 +26,52 @@ public class ClientThread extends Thread {
             BufferedReader input = new BufferedReader(
                 new InputStreamReader(socket.getInputStream())
             );
+
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
             AccountService as = new AccountService();
 
             while (true) {
+
                 String clientData = input.readLine();
                 ArrayList<String> data = new ArrayList<>();
+
                 if (clientData != null) {
                     data.add(clientData);
                 }
-                String action = data.get(0);
-                if(action.equals("[signUpButton]")) {
-                    for(int i = 0; i < 4; i++) {
+
+                switch (data.get(0)) {
+                    case "[signUpButton]" -> {
+                        for(int i = 0; i < 4; i++) {
+                            data.add(input.readLine());
+                        }
+                        char accountType = data.get(1).charAt(0);
+                        String username = data.get(2);
+                        String password = data.get(3);
+                        String email = data.get(4);
+                        as.createAccount(accountType, username, password, email);
+                    }
+                    case "[loginButton]" -> {
+
                         data.add(input.readLine());
+                        data.add(input.readLine());
+
+                        String usernameOrEmail = data.get(1);
+                        String password = data.get(2);
+
+                        JSONObject user = as.validateLogin(usernameOrEmail, password);
+
+                        if(user != null) {
+                            writer.println("true");
+                            writer.println(user);
+                        }
+                        else {
+                            writer.println("false"); // False - could not validate user
+                            writer.println("False"); // False - There is no user to pass
+                        }
+                        writer.flush();
                     }
-                    char accountType = data.get(1).charAt(0);
-                    String username = data.get(2);
-                    String password = data.get(3);
-                    String email = data.get(4);
-                    as.createAccount(accountType, username, password, email);
-                }
-                else if(action.equals("[loginButton]")) {
-                    data.add(input.readLine());
-                    data.add(input.readLine());
-                    String usernameOrEmail = data.get(1);
-                    String password = data.get(2);
-                    JSONObject user = as.validateLogin(usernameOrEmail, password);
-                    if(user != null) {
-                        String userID = user.get("id").toString();
-                        writer.println("True");
-                        writer.println(userID.substring(userID.length() - 1));
-                    }
-                    else {
-                        writer.println("False");
-                        writer.println("False"); //this is intentionally here twice don't delete
-                    }
-                    writer.flush();
                 }
             }
-
 
 
         } catch (IOException e) {
