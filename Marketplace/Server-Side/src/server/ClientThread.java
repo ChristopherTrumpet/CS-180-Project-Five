@@ -111,14 +111,26 @@ public class ClientThread extends Thread {
                     }
                     case "[removeProduct]" -> {
 
-                        data.add(input.readLine());
-                        data.add(input.readLine());
+                        data.add(input.readLine()); // Store Id
+                        data.add(input.readLine()); // Product Id
 
                         if (ss.removeProduct(data.get(1), data.get(2)))
                             System.out.println("[SERVER] Removed product name...");
                         else
                             System.out.println("[SERVER] Product could not be removed...");
                         data.clear();
+                    }
+                    case "[addProduct]" -> {
+                        data.add(input.readLine()); // Store id
+                        data.add(input.readLine()); // Product id
+                        data.add(input.readLine()); // Quantity
+                        data.add(input.readLine()); // Price
+
+                        if (ss.addProduct(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
+                            System.out.println("[SERVER] Added product");
+                        } else {
+                            System.out.println("[SERVER] Could not add product...");
+                        }
                     }
                 }
             }

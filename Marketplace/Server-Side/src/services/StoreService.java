@@ -132,24 +132,23 @@ public class StoreService {
         return null;
     }
 
-    public boolean createProduct(String productId, int qty, double price) {
-//        JSONObject product = new JSONObject();
-//        product.put("productID", productId);
-//        product.put("qty", qty);
-//        product.put("price", price);
-//        AccountService as = new AccountService();
-//        return as.writeJSONObjectToFile(product, storeFileDirectory);
-//
-        return false;
-    }
     public boolean addProduct(String storeId, String productId, int qty, double price) {
-        JSONObject product = new JSONObject();
-        product.put("productID", productId);
-        product.put("qty", qty);
-        AccountService as = new AccountService();
 
-        return as.writeJSONObjectToFile(product, storeFileDirectory);
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+        JSONArray storeArray = stores.getJSONArray("stores");
 
+        for (Object store : storeArray) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                JSONObject product = new JSONObject();
+                product.put("id", productId);
+                product.put("qty", qty);
+                product.put("price", price);
+                ((JSONObject) store).getJSONArray("products").put(product);
+                stores.put("stores", storeArray);
+                return writeJSONObjectToFile(stores, storeFileDirectory);
+            }
+        }
+        return false;
     }
 
     public boolean removeProduct(String storeId, String productId) {
@@ -170,18 +169,14 @@ public class StoreService {
             }
         }
 
-
-
-
-
-
-
         return false;
     }
 
-    public boolean createProduct(String name, String description, String itemType) {
+    public boolean createProduct(String storeId, String name, String description, String itemType) {
+
         JSONObject product = new JSONObject();
         String product_id = generateProductId();
+
         product.put("product_id", product_id);
         product.put("name", name);
         product.put("description", description);

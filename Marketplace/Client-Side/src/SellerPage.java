@@ -14,6 +14,7 @@ import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SellerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -21,7 +22,6 @@ public class SellerPage extends JFrame {
     JFrame reference;
     JTable table;
     JSONObject seller;
-    JSONObject currentStore;
 
     public SellerPage(JSONObject seller) {
 
@@ -446,21 +446,25 @@ public class SellerPage extends JFrame {
 
         Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
 
-        String allProductsString = Client.readFromServer(1).get(0);
+        String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
+        JSONArray allProducts = new JSONArray(allProductsString);
+        ArrayList<String> productNames = new ArrayList<>();
 
         if (allProductsString.equals("empty"))
             System.out.println("Store has no products");
         else {
-            JSONArray allProducts = new JSONArray(allProductsString);
             for (Object productGeneric : allProducts) {
                 JSONObject productGenericObj = (JSONObject) productGeneric;
                 String storeGenericId = productGenericObj.getString("id");
+
+                productNames.add(productGenericObj.getString("name"));
 
                 for (Object product : products) {
                     JSONObject productObj = (JSONObject) product;
                     String productId = productObj.getString("id");
 
                     if (productId.equals(storeGenericId)) {
+                        productNames.remove(productGenericObj.getString("name"));
                         model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price")), productObj.getString("id")});
                     }
                 }
@@ -484,7 +488,7 @@ public class SellerPage extends JFrame {
         JButton changeStoreName = new JButton("Change Store Name");
         changeStoreName.setBounds(24, 56, 185, 24);
         changeStoreName.addActionListener(e -> {
-            String storeName = javax.swing.JOptionPane.showInputDialog("What would you like to change the name to?");
+            String storeName = JOptionPane.showInputDialog("What would you like to change the name to?");
             ArrayList<String> data = new ArrayList<>();
             data.add("[changeStoreName]");
             data.add(store.getString("id"));
@@ -495,6 +499,53 @@ public class SellerPage extends JFrame {
 
         JButton addProduct = new JButton("Add Product");
         addProduct.setBounds(24, 88, 185, 24);
+        addProduct.addActionListener(e -> {
+
+            String[] array = new String[productNames.size()];
+            for(int i = 0; i < array.length; i++) {
+                array[i] = productNames.get(i);
+            }
+            JComboBox productList = new JComboBox(array);
+            productList.setEditable(true);
+            AutoCompletion.enable(productList);
+
+            JTextField quantity = new JTextField();
+            JTextField price = new JTextField();
+            Object[] message = {
+                    "Select a Product: ", productList,
+                    "Quantity:", quantity,
+                    "Price: $", price
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Add a product", JOptionPane.OK_CANCEL_OPTION);
+
+            String productId = "";
+
+            if (option == JOptionPane.OK_OPTION) {
+
+                String productName = Objects.requireNonNull(productList.getSelectedItem()).toString();
+
+                for (Object product : allProducts) {
+                    JSONObject productObj = (JSONObject) product;
+                    if (productObj.getString("name").equals(productName))
+                        productId = productObj.getString("id");
+                }
+
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[addProduct]");
+                data.add(store.getString("id"));
+                data.add(productId);
+                data.add(quantity.getText());
+                data.add(price.getText());
+                Client.sendToServer(data);
+
+                model.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText())), productId});
+
+
+            } else {
+                System.out.println("Product addition canceled");
+            }
+        });
 
         JButton removeProduct = new JButton("Remove Product");
         removeProduct.setBounds(24, 120, 185, 24);
