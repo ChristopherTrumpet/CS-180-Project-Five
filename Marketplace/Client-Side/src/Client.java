@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
-
-    private static BufferedReader echoes;
     private static PrintWriter stringToServer;
 
     public static void main(String[] args) {
@@ -20,10 +18,6 @@ public class Client {
 
             socket.setSoTimeout(5000);
 
-            echoes = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream())
-            );
-
             stringToServer = new PrintWriter(socket.getOutputStream(), false);
 
             // Initialize GUI for Program
@@ -31,19 +25,13 @@ public class Client {
 
             Scanner scanner = new Scanner(System.in);
             String echoString;
-            String reponse;
 
             do {
-                System.out.println("Enter string to be echoed: ");
                 echoString = scanner.nextLine();
 
                 // Send input result to server
                 stringToServer.println(echoString);
 
-                if (!echoString.equals("exit")) {
-                    reponse = echoes.readLine();
-                    System.out.println(reponse);
-                }
             } while (!echoString.equals("exit"));
 
         } catch (SocketTimeoutException e) {

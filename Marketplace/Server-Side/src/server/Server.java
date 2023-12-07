@@ -6,10 +6,13 @@ import java.net.ServerSocket;
 public class Server {
     public static void main(String[] args) {
 
+        System.out.println("[SERVER] Server initialized...");
+
         // Arbitrary port number
         try (ServerSocket serverSocket = new ServerSocket(5000)) {
 
             while (true) {
+                System.out.println("[SERVER] Client connected!");
                 new ClientThread(serverSocket.accept()).start();
             }
 

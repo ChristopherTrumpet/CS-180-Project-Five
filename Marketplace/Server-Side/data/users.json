@@ -9,22 +9,11 @@
       "username": "JJane"
     },
     {
-      "password": "password",
-      "last_name": "Trumpet",
-      "id": "PztsCpytYcTxgAKCJVb",
-      "first_name": "Christopher",
-      "email": "ctrumpet@purdue.edu",
-      "cart": [],
-      "username": "CTrumpet"
-    },
-    {
-      "password": "password",
+      "password": "testPassword",
       "stores": [],
-      "last_name": "",
-      "id": "2a04K9K99TRMu8pvs",
-      "first_name": "",
-      "email": "email",
-      "username": "user"
+      "id": "oJZiWpiDwmCYqaans",
+      "email": "test@test.edu",
+      "username": "Test Account"
     }
   ]
 }

@@ -34,7 +34,7 @@ public class AccountService {
 
                 // TODO: Check if file exists, create a new one if it does not
 
-                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\users.json").toString();
+                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "\\Marketplace\\Server-Side\\data\\users.json").toString();
             }
 
             /**
@@ -44,17 +44,13 @@ public class AccountService {
              * @param userName    Stores user's username
              * @param password    Stores user's password, may encrypt later
              * @param email       Stores user's email
-             * @param firstName   Stores user's first name
-             * @param lastName    Stores user's last name
              * @return True if account was successfully created, false otherwise
              */
             public boolean createAccount(
             char accountType,
             String userName,
             String password,
-            String email,
-            String firstName,
-            String lastName) {
+            String email) {
 
                 // Creates a new user id
                 String userId = generateUserId(accountType);
@@ -76,8 +72,6 @@ public class AccountService {
         user.put("username", userName);
         user.put("password", password);
         user.put("email", email);
-        user.put("first_name", firstName);
-        user.put("last_name", lastName);
 
         // Create an empty cart if the user is a buyer
         if (accountType == 'b') {
