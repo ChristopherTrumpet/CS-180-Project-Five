@@ -1,7 +1,7 @@
 {
   "stores": [
     {
-      "name": "Better Apple",
+      "name": "Apple",
       "id": "2034vas2345234",
       "sales": 39248234.24,
       "products": [
@@ -26,11 +26,6 @@
           "price": 999.99,
           "qty": 150,
           "id": "3452345klj52345234"
-        },
-        {
-          "price": 1499.99,
-          "qty": 75,
-          "id": "3452b45klj5234j3924"
         },
         {
           "price": 24.99,

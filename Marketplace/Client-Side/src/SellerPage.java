@@ -440,6 +440,7 @@ public class SellerPage extends JFrame {
         model.addColumn("Product Name");
         model.addColumn("Quantity");
         model.addColumn("Price");
+        model.addColumn("Id");
 
         JSONArray products = store.getJSONArray("products");
 
@@ -460,7 +461,7 @@ public class SellerPage extends JFrame {
                     String productId = productObj.getString("id");
 
                     if (productId.equals(storeGenericId)) {
-                        model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price"))});
+                        model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price")), productObj.getString("id")});
                     }
                 }
             }
@@ -468,6 +469,9 @@ public class SellerPage extends JFrame {
 
         // Create a JTable using the model
         JTable productTable = new JTable(model);
+
+//        TableColumnModel tcm = productTable.getColumnModel();
+//        tcm.removeColumn( tcm.getColumn(3) );
 
         JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
         titleMessage.setFont(new Font("serif", Font.BOLD, 18));
@@ -495,9 +499,15 @@ public class SellerPage extends JFrame {
         JButton removeProduct = new JButton("Remove Product");
         removeProduct.setBounds(24, 120, 185, 24);
         removeProduct.addActionListener(e -> {
+
             if (!productTable.getSelectionModel().isSelectionEmpty()) {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + productTable.getValueAt(productTable.getSelectedRow(), 0) + "?");
                 if (input == 0) {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[removeProduct]");
+                    data.add(store.getString("id"));
+                    data.add(productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString());
+                    Client.sendToServer(data);
                     ((DefaultTableModel)productTable.getModel()).removeRow(productTable.getSelectedRow());
                 }
             }

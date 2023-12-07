@@ -106,7 +106,18 @@ public class ClientThread extends Thread {
                         data.add(input.readLine());
 
                         ss.updateStoreName(data.get(1), data.get(2));
-                        System.out.println("Changed store name");
+                        System.out.println("[SERVER] Changed store name...");
+                        data.clear();
+                    }
+                    case "[removeProduct]" -> {
+
+                        data.add(input.readLine());
+                        data.add(input.readLine());
+
+                        if (ss.removeProduct(data.get(1), data.get(2)))
+                            System.out.println("[SERVER] Removed product name...");
+                        else
+                            System.out.println("[SERVER] Product could not be removed...");
                         data.clear();
                     }
                 }

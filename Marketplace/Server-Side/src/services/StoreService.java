@@ -153,6 +153,29 @@ public class StoreService {
     }
 
     public boolean removeProduct(String storeId, String productId) {
+
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
+        JSONArray storeArray = stores.getJSONArray("stores");
+        for (Object store : storeArray) {
+            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+                JSONArray storeProducts = ((JSONObject) store).getJSONArray("products");
+                for (int i = 0; i < storeProducts.length(); i++) {
+                    JSONObject product = (JSONObject) storeProducts.get(i);
+                    if (product.getString("id").equals(productId)) {
+                        ((JSONObject) store).getJSONArray("products").remove(i);
+                        stores.put("stores", storeArray);
+                        return writeJSONObjectToFile(stores, storeFileDirectory);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
         return false;
     }
 
@@ -297,12 +320,12 @@ public class StoreService {
         return null;
     }
 
-    public boolean writeJSONObjectToFile(JSONObject userObj, String fileDirectory) {
+    public boolean writeJSONObjectToFile(JSONObject jsonObj, String fileDirectory) {
 
         try {
 
             FileWriter file = new FileWriter(fileDirectory);
-            file.write(userObj.toString());
+            file.write(jsonObj.toString());
             file.flush();
             file.close();
             return true;
