@@ -14,6 +14,22 @@
       "id": "oJZiWpiDwmCYqaans",
       "email": "test@test.edu",
       "username": "Test Account"
+    },
+    {
+      "password": "mypassword",
+      "stores": [],
+      "id": "EwBBAtrbRYRrNckNs",
+      "email": "hello",
+      "username": "matthew"
+    },
+    {
+      "product_history": [],
+      "password": "matthew",
+      "funds": 0,
+      "id": "ezkuXF7ZZo58BjmOb",
+      "email": "lee4607@purdue.edu",
+      "cart": [],
+      "username": "lee4607"
     }
   ]
 }

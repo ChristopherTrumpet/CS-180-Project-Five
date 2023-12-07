@@ -83,9 +83,25 @@ public class OnboardingPage extends JFrame {
             loginButton.setFocusable(false);
 
             loginButton.addActionListener(e -> {
-                reference.dispose();
-                new SellerPage();
-                cardLayout.next(container);
+                String password = new String(passwordField.getPassword());
+                if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[loginButton]");
+                    data.add(identifierField.getText());
+                    data.add(password);
+                    Client.sendToServer(data);
+                    ArrayList<String> serverLines = Client.readFromServer(2);
+                    if(serverLines.get(0).equals("True")) {
+                        if(serverLines.get(1).equals("b")) new CustomerPage(identifierField.getText());
+                        else new SellerPage();
+                        reference.dispose();
+                        cardLayout.next(container);
+                    }
+                    else {
+                        Client.showErrorMessage("User does not exist. " +
+                                "Make sure you have typed in your username and password correctly.");
+                    }
+                }
             });
 
             createAccountButton.setBackground(Color.decode("#f4f4f4"));
@@ -171,7 +187,7 @@ public class OnboardingPage extends JFrame {
                 if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
                     if (sellerType.isSelected() || buyerType.isSelected()) {
                         ArrayList<String> data = new ArrayList<>();
-                        data.add("signUpButton");
+                        data.add("[signUpButton]");
                         if (sellerType.isSelected()) {
                             data.add("s");
                         } else {
@@ -181,7 +197,7 @@ public class OnboardingPage extends JFrame {
                         data.add(password);
                         data.add(emailField.getText());
 
-                        Client.sendToClient(data);
+                        Client.sendToServer(data);
 
                         reference.dispose();
                         if (sellerType.isSelected()) {
@@ -190,6 +206,9 @@ public class OnboardingPage extends JFrame {
                             new CustomerPage(usernameField.getText());
                         }
                     }
+                }
+                else {
+                    Client.showErrorMessage("Please make sure no fields are empty");
                 }
             });
 

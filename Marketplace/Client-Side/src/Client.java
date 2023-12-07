@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
+    private static BufferedReader reader;
     private static PrintWriter stringToServer;
 
     public static void main(String[] args) {
@@ -18,6 +19,7 @@ public class Client {
 
             socket.setSoTimeout(5000);
 
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             stringToServer = new PrintWriter(socket.getOutputStream(), false);
 
             // Initialize GUI for Program
@@ -42,11 +44,28 @@ public class Client {
         }
     }
 
-    public static void sendToClient(ArrayList<String> lines) {
+    public static void sendToServer(ArrayList<String> lines) {
         for (String line : lines) {
             stringToServer.println(line);
         }
         stringToServer.flush();
+    }
+
+    public static ArrayList<String> readFromServer(int numLines) {
+        try {
+            ArrayList<String> data = new ArrayList<>();
+            for (int i = 0; i < numLines; i++) {
+                data.add(reader.readLine());
+            }
+            return data;
+        } catch(IOException e) {
+            showErrorMessage("An error has occurred trying to read from the server");
+            return null;
+        }
+    }
+
+    public static void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 }

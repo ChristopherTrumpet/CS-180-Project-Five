@@ -3,6 +3,7 @@ package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,7 +63,7 @@ public class AccountService {
             userObj = new JSONObject(getJSONFile(getUserFileDirectory()));
 
         // Uses user email as it is unique, user id cannot be used as it generated upon creation
-        if (userExists(email))
+        if (userExists(email, userName))
             return false;
 
         JSONArray users = userObj.getJSONArray("users");
@@ -95,8 +96,8 @@ public class AccountService {
      * @param email The email of the sought out user
      * @return True if user exists, false otherwise
      */
-    private boolean userExists(String email) {
-        return getUserByEmail(email) != null;
+    private boolean userExists(String email, String username) {
+        return getUserByEmail(email) != null && getUserByUsername(username) != null;
     }
 
     /**
@@ -137,6 +138,16 @@ public class AccountService {
         System.out.println(getJSONFile(getUserFileDirectory()));
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("email").toString().equals(email)) {
+                return (JSONObject) user;
+            }
+        }
+        return null;
+    }
+
+    private JSONObject getUserByUsername(String username) {
+        System.out.println(getJSONFile(getUserFileDirectory()));
+        for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
+            if (((JSONObject) user).get("username").toString().equals(username)) {
                 return (JSONObject) user;
             }
         }
@@ -203,7 +214,7 @@ public class AccountService {
 
     public String[] getAccountDetails(String userId) {
 
-        String[] accountDetails = new String[6];
+        String[] accountDetails = new String[4];
 
         JSONObject user = getUserById(userId);
 
@@ -213,9 +224,7 @@ public class AccountService {
         accountDetails[0] = user.get("username").toString();
         accountDetails[1] = user.get("password").toString();
         accountDetails[2] = user.get("email").toString();
-        accountDetails[3] = user.get("first_name").toString();
-        accountDetails[4] = user.get("last_name").toString();
-        accountDetails[5] = userId.charAt(userId.length() - 1) == 'b' ? "Buyer" : "Seller";
+        accountDetails[3] = userId.charAt(userId.length() - 1) == 'b' ? "Buyer" : "Seller";
 
         return accountDetails;
     }
@@ -237,5 +246,24 @@ public class AccountService {
         }
 
         return userId.toString() + AccountType;
+    }
+
+
+    public JSONObject validateLogin(String usernameOrEmail, String password) {
+        JSONObject user;
+        if(getUserByEmail(usernameOrEmail) == null) {
+            if(getUserByUsername(usernameOrEmail) == null) {
+                return null;
+            }
+            else {
+                user = getUserByUsername(usernameOrEmail);
+            }
+        }
+        else {
+            user = getUserByEmail(usernameOrEmail);
+        }
+        if(user.get("password").toString().equals(password))
+            return user;
+        return null;
     }
 }
