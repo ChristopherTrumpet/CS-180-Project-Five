@@ -159,6 +159,17 @@ public class ClientThread extends Thread {
                         }
                         writer.flush();
                     }
+                    case "[updateUserDetails]" -> {
+                        data.add(input.readLine()); // User id
+                        data.add(input.readLine()); // User info to change
+                        data.add(input.readLine()); // New value
+
+                        if (as.updateUserDetails(data.get(1), data.get(2), data.get(3))) {
+                            System.out.println("Changed details successfully");
+                        } else {
+                            System.out.println("Error occurred");
+                        }
+                    }
                 }
             }
 

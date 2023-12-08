@@ -184,7 +184,6 @@ public class SellerPage extends JFrame {
             JSONArray allStores = new JSONArray(allStoresString);
             for (Object storeGeneric : allStores) {
                 JSONObject storeGenericObj = (JSONObject) storeGeneric;
-                System.out.println(storeGenericObj);
                 String storeGenericId = storeGenericObj.getString("id");
 
                 for (Object store : stores) {
@@ -302,7 +301,7 @@ public class SellerPage extends JFrame {
 
         JTextField usernameField = new JTextField(12);
         usernameField.setBounds(24, 84, 268, 24);
-        usernameField.setText("JDoe");
+        usernameField.setText(seller.getString("username"));
 
         JButton usernameButton = new JButton("Change Username");
         usernameButton.setOpaque(true);
@@ -310,6 +309,16 @@ public class SellerPage extends JFrame {
         usernameButton.setBackground(Color.black);
         usernameButton.setForeground(Color.white);
         usernameButton.setBounds(300, 84, 174, 24);
+        usernameButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[updateUserDetails]");
+            data.add(seller.getString("id"));
+            data.add("username");
+            data.add(usernameField.getText());
+            Client.sendToServer(data);
+
+            JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         settingsPanel.add(usernameLabel);
         settingsPanel.add(usernameField);
@@ -320,13 +329,23 @@ public class SellerPage extends JFrame {
 
         JTextField emailField = new JTextField(12);
         emailField.setBounds(24, 132, 268, 24);
-        emailField.setText("jdoe@purdue.edu");
+        emailField.setText(seller.getString("email"));
 
         JButton emailButton = new JButton("Change Email");
         emailButton.setOpaque(true);
         emailButton.setBackground(Color.black);
         emailButton.setForeground(Color.white);
         emailButton.setBorderPainted(false);
+        emailButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[updateUserDetails]");
+            data.add(seller.getString("id"));
+            data.add("email");
+            data.add(emailField.getText());
+            Client.sendToServer(data);
+
+            JOptionPane.showMessageDialog (null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         emailButton.setBounds(300, 132, 174, 24);
 
@@ -339,7 +358,7 @@ public class SellerPage extends JFrame {
 
         JPasswordField passwordField = new JPasswordField(12);
         passwordField.setBounds(24, 180, 268, 24);
-        passwordField.setText("secret_password");
+        passwordField.setText(seller.getString("password"));
 
         JButton passwordButton = new JButton("Change Password");
         passwordButton.setBorderPainted(false);
@@ -347,6 +366,16 @@ public class SellerPage extends JFrame {
         passwordButton.setBackground(Color.black);
         passwordButton.setForeground(Color.white);
         passwordButton.setBounds(300, 180, 174, 24);
+        passwordButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[updateUserDetails]");
+            data.add(seller.getString("id"));
+            data.add("password");
+            data.add(String.valueOf(passwordField.getPassword()));
+            Client.sendToServer(data);
+
+            JOptionPane.showMessageDialog (null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         settingsPanel.add(passwordLabel);
         settingsPanel.add(passwordField);
