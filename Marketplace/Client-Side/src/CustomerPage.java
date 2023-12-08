@@ -448,13 +448,6 @@ public class CustomerPage extends JFrame {
 
         storePage.setLayout(new BorderLayout());
 
-//        JLabel welcomeMessage = new JLabel("Purdue Marketplace");
-//        welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
-//        c.gridy = 0;
-//        c.gridwidth = 4;
-//        gridLayout.setConstraints(welcomeMessage, c);
-//        panel.add(welcomeMessage);
-
         JLabel productLabel = new JLabel(product.getString("name"));
         productLabel.setFont(new Font("serif", Font.BOLD, 24));
         c.gridy = 0;
@@ -463,10 +456,12 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(productLabel, c);
         panel.add(productLabel);
 
-        JLabel descriptionLabel = new JLabel(product.getString("description"));
+        JTextArea descriptionLabel = new JTextArea(product.getString("description"));
         descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+        descriptionLabel.setLineWrap(true);
+        descriptionLabel.setOpaque(false);
+        descriptionLabel.setFocusable(false);
         c.gridy = 1;
-        c.gridwidth = 4;
         gridLayout.setConstraints(descriptionLabel, c);
         panel.add(descriptionLabel);
 

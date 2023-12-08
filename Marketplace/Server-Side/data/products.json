@@ -9,7 +9,7 @@
     {
       "id": "3452b45klj5234j3924",
       "name": "A Very Large Macbook",
-      "description": "A laptop designed by Apple",
+      "description": "A laptop designed by Apple and a very long description to show text wrapping that could possibly happen",
       "item": "laptop"
     },
     {
