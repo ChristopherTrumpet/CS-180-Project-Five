@@ -1,19 +1,50 @@
 {
   "stores": [
     {
-      "name": "Apple",
-      "id": "zJUMqmTMK0p1NoP0XgqD",
+      "name": "Best Buy",
+      "id": "vFU6uYwHPj19520gMVAb",
       "sales": 0,
       "products": [
         {
           "price": 99.99,
-          "qty": 995,
-          "id": "3452345klj52345234"
-        },
+          "qty": 1,
+          "id": "gXKKbDMkj4bJgINinF"
+        }
+      ]
+    },
+    {
+      "name": "Target",
+      "id": "MvwZzNyJXTxNHYqONgBV",
+      "sales": 0,
+      "products": [
         {
           "price": 29.99,
-          "qty": 986,
-          "id": "4202b45klj5234j3924"
+          "qty": 1,
+          "id": "U0KUx6cBSBpVb5mQci"
+        }
+      ]
+    },
+    {
+      "name": "Walmart",
+      "id": "L6cq1IGYnqjzjQgG3jAI",
+      "sales": 0,
+      "products": [
+        {
+          "price": 99.99,
+          "qty": 1,
+          "id": "pvhaKzq5tUO4R0QxRV"
+        }
+      ]
+    },
+    {
+      "name": "GameStop",
+      "id": "Apx9J6BFuGEitxEFsI07",
+      "sales": 0,
+      "products": [
+        {
+          "price": 29.99,
+          "qty": 1,
+          "id": "a9ki5zFlMRmrELly4I"
         }
       ]
     }

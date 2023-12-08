@@ -117,6 +117,13 @@ public class SellerPage extends JFrame {
             FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
             chooser.setFileFilter(filter);
             chooser.showOpenDialog(null);
+
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[importProducts]");
+            data.add(chooser.getSelectedFile().getAbsolutePath());
+            Client.sendToServer(data);
+
+            JOptionPane.showMessageDialog (null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
         });
         c.gridy = 5;
         c.gridwidth = 4;

@@ -734,7 +734,6 @@ public class CustomerPage extends JFrame {
             System.out.println("No Results...");
         }
 
-
         ArrayList<String> results = Client.readFromServer(numOfResults);
 
         String[] array = new String[results.size()];

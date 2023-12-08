@@ -3,11 +3,9 @@ package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
@@ -104,7 +102,9 @@ public class StoreService {
     public JSONObject getStoreByName(String storeName) {
         JSONObject stores = new JSONObject(accountService.getJSONFile(storeFileDirectory));
         for (Object store : stores.getJSONArray("stores")) {
-            if (((JSONObject) store).get("name").toString().equals(storeName)) {
+            System.out.println(((JSONObject) store).getString("name"));
+            if (((JSONObject) store).getString("name").equals(storeName)) {
+                System.out.println("Found store!");
                 return (JSONObject) store;
             }
         }
@@ -126,34 +126,61 @@ public class StoreService {
     }
 
 
-    public boolean importProducts(File csvFile) {
+    public void importProducts(String filePath) {
+        CSVtoJSON converter = new CSVtoJSON(filePath);
+        String jsonContents = converter.convert();
+        JSONArray productList = new JSONArray(jsonContents);
 
-        return false;
-    }
+        for (Object product : productList) {
+            JSONObject productObj = (JSONObject) product;
+            createProduct(productObj.getString("name"), productObj.getString("description"));
+            String storeName = ((JSONObject) product).getString("store");
 
-    public boolean exportProducts(String storeId, File exportToFile) {
-        JSONObject store = getStoreById(storeId);
-        JSONArray products = store.getJSONArray("products");
-        String fileContents = "";
-        for (Object product : products) {
-            JSONObject productObj = getProduct((String) product);
-            fileContents.concat(String.format("%s, %s, %s", productObj.get("name"), productObj.get("description"), productObj.get("item")));
+            JSONObject storeObj =  new JSONObject(accountService.getJSONFile(getStoreFileDirectory()));
+            JSONArray storeArray = storeObj.getJSONArray("stores");
+            JSONObject store = new JSONObject();
+
+            if (getStoreByName(storeName) == null) {
+                store.put("name", storeName);
+                store.put("id", generateStoreId());
+                store.put("sales", 0.0);
+                store.put("products", new JSONArray());
+                storeArray.put(store);
+                storeObj.put("stores", storeArray);
+                writeJSONObjectToFile(storeObj, getStoreFileDirectory());
+            }
+
+            if (getStoreByName(storeName) != null) {
+
+                int index = 0;
+
+                for (int i = 0; i < storeArray.length(); i++) {
+                    JSONObject storeItem = (JSONObject) storeArray.get(i);
+                    if (storeItem.getString("name").equals(storeName))
+                    {
+                        store = storeItem;
+                        index = i;
+                    }
+                }
+
+                JSONArray products = store.getJSONArray("products");
+                JSONObject newProduct = new JSONObject();
+                newProduct.put("price", productObj.getDouble("price"));
+                newProduct.put("qty", productObj.getInt("quantity"));
+                String id = getProductByName(productObj.getString("name")).getString("product_id");
+                newProduct.put("id", id);
+                products.put(newProduct);
+                store.put("products", products);
+                storeArray.put(index, store);
+                storeObj.put("stores", storeArray);
+                writeJSONObjectToFile(storeObj, getStoreFileDirectory());
+            }
         }
 
-        try {
+        System.out.println("Added products!");
 
-            FileWriter file = new FileWriter(exportToFile);
-            file.write(fileContents);
-            file.flush();
-            file.close();
-            return true;
-
-        } catch (IOException e) {
-            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
-        }
-
-        return false;
     }
+
 
     public JSONObject getProduct(String productId) {
         for (Object store : new JSONObject(Objects.requireNonNull(getProductFile())).getJSONArray("products")) {
@@ -164,7 +191,7 @@ public class StoreService {
         return null;
     }
 
-    public JSONObject getProductByName(String productName) {
+    public JSONObject  getProductByName(String productName) {
         for (Object product : new JSONObject(getProductFile()).getJSONArray("products")) {
             if (((JSONObject) product).getString("name").equals(productName))
                 return (JSONObject) product;
@@ -174,19 +201,17 @@ public class StoreService {
 
     public boolean addProduct(String storeId, String productId, int qty, double price) {
 
-        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
-        JSONArray storeArray = stores.getJSONArray("stores");
+        JSONObject storeObj = new JSONObject(getStoreFile());
+        JSONArray stores = storeObj.getJSONArray("stores");
+        JSONObject newStore = new JSONObject();
 
-        for (Object store : storeArray) {
-            if (((JSONObject) store).get("id").toString().equals(storeId)) {
-                JSONObject product = new JSONObject();
-                product.put("id", productId);
-                product.put("qty", qty);
-                product.put("price", price);
-                ((JSONObject) store).getJSONArray("products").put(product);
-                stores.put("stores", storeArray);
-                return writeJSONObjectToFile(stores, storeFileDirectory);
-            }
+        if (getStoreById(storeId) == null) {
+            newStore.put("id", productId);
+            newStore.put("price", price);
+            newStore.put("qty", qty);
+            stores.put(newStore);
+            storeObj.put("stores", stores);
+            return writeJSONObjectToFile(storeObj, productFileDirectory);
         }
         return false;
     }
@@ -212,18 +237,22 @@ public class StoreService {
         return false;
     }
 
-    public boolean createProduct(String storeId, String name, String description, String itemType) {
+    public boolean createProduct(String name, String description) {
 
+        JSONObject productObj = new JSONObject(getProductFile());
+        JSONArray products = productObj.getJSONArray("products");
         JSONObject product = new JSONObject();
         String product_id = generateProductId();
 
-        product.put("product_id", product_id);
-        product.put("name", name);
-        product.put("description", description);
-        product.put("item", itemType);
-        String productFileDirectory = Paths.get(System.getProperty("user.dir") + "\\data\\stores.json").toString();
-        AccountService as =  new AccountService();
-        return as.writeJSONObjectToFile(product, productFileDirectory);
+        if (getProductByName(name) == null) {
+            product.put("product_id", product_id);
+            product.put("name", name);
+            product.put("description", description);
+            products.put(product);
+            productObj.put("products", products);
+            return writeJSONObjectToFile(productObj, productFileDirectory);
+        }
+        return false;
     }
 
     public boolean updateProductName(String storeId, String productId, String newName) {

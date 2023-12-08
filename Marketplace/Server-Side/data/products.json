@@ -1,19 +1,24 @@
 {
   "products": [
     {
-      "id": "3452345klj52345234",
-      "name": "iPhone",
-      "description": "A phone designed by Apple"
+      "product_id": "gXKKbDMkj4bJgINinF",
+      "name": "Deoderant",
+      "description": "Here is a description"
     },
     {
-      "id": "3452b45klj5234j3924",
-      "name": "A Very Large Macbook",
-      "description": "A laptop designed by Apple and a very long description to show text wrapping that could possibly happen"
+      "product_id": "U0KUx6cBSBpVb5mQci",
+      "name": "Toothbrush",
+      "description": "Here is a description"
     },
     {
-      "id": "4202b45klj5234j3924",
-      "name": "Basket",
-      "description": "A basket designed by Rubarb"
+      "product_id": "pvhaKzq5tUO4R0QxRV",
+      "name": "Oil",
+      "description": "Here is a description"
+    },
+    {
+      "product_id": "a9ki5zFlMRmrELly4I",
+      "name": "PS5",
+      "description": "Here is a description"
     }
   ]
 }
