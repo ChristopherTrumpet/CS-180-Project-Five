@@ -38,22 +38,32 @@ public class StoreService {
         return false;
     }
 
-    public boolean removeStore(String storeId) {
-        boolean removed = false;
-        JSONArray storeList = (JSONArray) new JSONObject("stores.json").get("stores");
-        for(int i = 0; i < storeList.length(); i++) {
-            JSONObject store = (JSONObject) storeList.get(i);
-            if(store.get("id").equals(storeId)) {
-                storeList.remove(i);
-                removed = true;
-                break;
+    public boolean removeStore(String storeId, String userId) {
+
+        AccountService as = new AccountService();
+        JSONObject users = new JSONObject(as.getJSONFile(as.getUserFileDirectory()));
+
+        for (Object user : users.getJSONArray("users")) {
+            JSONObject userObj = (JSONObject) user;
+            if (userObj.getString("id").equals(userId)) {
+                JSONArray stores = userObj.getJSONArray("stores");
+                for (int i = 0; i < stores.length(); i++) {
+                    String userStoreId = (String) stores.get(i);
+                    if (storeId.equals(userStoreId)) {
+                        System.out.println("Found store!");
+                        stores.remove(i);
+                        as.writeJSONObjectToFile(users, as.getUserFileDirectory());
+                        return true;
+                    }
+                }
             }
         }
-        return removed;
+
+        return false;
     }
     public boolean checkQuantity(String storeId, String productId, int quantity) {
         JSONObject store = accountService.getUserById(storeId);
-        for (Object product : ((JSONObject) store).getJSONArray("products")) {
+        for (Object product : store.getJSONArray("products")) {
             if (((JSONObject) product).get("id").toString().equals(productId)) {
                 JSONObject theProduct = (JSONObject) ((JSONObject) product).get("id");
                 if (theProduct.getInt("qty") < 1) {

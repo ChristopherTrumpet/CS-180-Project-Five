@@ -255,6 +255,12 @@ public class SellerPage extends JFrame {
             if(!table.getSelectionModel().isSelectionEmpty()) {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + table.getValueAt(table.getSelectedRow(), 0).toString() + "?");
                 if (input == 0) {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[removeStore]");
+                    data.add(seller.getString("id"));
+                    data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
+                    Client.sendToServer(data);
+
                     ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
                 }
             }
