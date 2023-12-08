@@ -252,9 +252,10 @@ public class ClientThread extends Thread {
                         writer.flush();
                     }
                     case "[importProducts]" -> {
+                        data.add(input.readLine()); // ID
                         data.add(input.readLine()); // filePath
 
-                        ss.importProducts(data.get(1));
+                        ss.importProducts(new JSONObject(data.get(1)), data.get(2));
                     }
                 }
             }

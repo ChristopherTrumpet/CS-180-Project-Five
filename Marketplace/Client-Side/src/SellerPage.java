@@ -120,9 +120,13 @@ public class SellerPage extends JFrame {
 
             ArrayList<String> data = new ArrayList<>();
             data.add("[importProducts]");
+            data.add(seller.toString());
             data.add(chooser.getSelectedFile().getAbsolutePath());
             Client.sendToServer(data);
 
+            container.remove(Stores());
+            container.add("stores", Stores());
+            cardLayout.show(container, "stores");
             JOptionPane.showMessageDialog (null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
         });
         c.gridy = 5;

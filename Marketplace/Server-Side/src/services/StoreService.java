@@ -126,10 +126,11 @@ public class StoreService {
     }
 
 
-    public void importProducts(String filePath) {
+    public void importProducts(JSONObject seller, String filePath) {
         CSVtoJSON converter = new CSVtoJSON(filePath);
         String jsonContents = converter.convert();
         JSONArray productList = new JSONArray(jsonContents);
+        JSONArray storeIdList = new JSONArray();
 
         for (Object product : productList) {
             JSONObject productObj = (JSONObject) product;
@@ -173,10 +174,12 @@ public class StoreService {
                 store.put("products", products);
                 storeArray.put(index, store);
                 storeObj.put("stores", storeArray);
+                storeIdList.put(store.getString("id"));
                 writeJSONObjectToFile(storeObj, getStoreFileDirectory());
             }
         }
 
+        accountService.updateUserDetails(seller.getString("id"), "stores", storeIdList);
         System.out.println("Added products!");
 
     }
