@@ -52,7 +52,7 @@ public class SellerPage extends JFrame {
         container.setVisible(true);
 
 
-        this.add(SidePanel(), BorderLayout.WEST);
+        this.add(sidePanel, BorderLayout.WEST);
         this.add(container, BorderLayout.CENTER);
         this.setVisible(true);
     }
@@ -315,10 +315,9 @@ public class SellerPage extends JFrame {
 
             for (Component jc : sidePanel.getComponents()) {
                 if (jc instanceof JTextArea) {
-                    ((JTextArea) jc).setText("RAHHHHHHH");
+                    ((JTextArea) jc).setText("Hey, " + usernameField.getText());
                 }
             }
-
 
             JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
