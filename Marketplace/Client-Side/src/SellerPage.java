@@ -43,9 +43,11 @@ public class SellerPage extends JFrame {
 
         this.setLayout(new BorderLayout());
 
+        JPanel sidePanel = SidePanel();
+
         container.setLayout(cardLayout);
         container.add("stores", Stores());
-        container.add("settings", settings());
+        container.add("settings", settings(sidePanel));
         container.add("statistics", statistics());
         container.setVisible(true);
 
@@ -75,16 +77,15 @@ public class SellerPage extends JFrame {
         c.insets = new Insets(0,80,8,24);
 
         JTextArea nameMessage = new JTextArea("Hey, " + seller.getString("username"));
-        nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
-        nameMessage.setOpaque(false);
-        nameMessage.setFocusable(false);
-        nameMessage.setEditable(false);
+        nameMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         nameMessage.setLineWrap(true);
         nameMessage.setWrapStyleWord(true);
+        nameMessage.setFocusable(false);
+        nameMessage.setEditable(false);
+        nameMessage.setOpaque(false);
         c.gridy = 1;
         c.gridwidth = 4;
         gridLayout.setConstraints(nameMessage,c);
-        nameMessage.setMaximumSize(new Dimension(300, 24));
         panel.add(nameMessage);
 
         c.insets = new Insets(4,80,4,24);
@@ -282,7 +283,7 @@ public class SellerPage extends JFrame {
         return panel;
     }
 
-    public JPanel settings() {
+    public JPanel settings(JPanel sidePanel) {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(null);
@@ -296,18 +297,14 @@ public class SellerPage extends JFrame {
         supportLabel.setBounds(24, 36, 400, 24);
 
         JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setBounds(24, 60, 200, 24);
+        usernameLabel.setBounds(24, 64, 200, 24);
 
         JTextField usernameField = new JTextField(12);
-        usernameField.setBounds(24, 84, 268, 24);
+        usernameField.setBounds(24, 88, 268, 24);
         usernameField.setText(seller.getString("username"));
 
         JButton usernameButton = new JButton("Change Username");
-        usernameButton.setOpaque(true);
-        usernameButton.setBorderPainted(false);
-        usernameButton.setBackground(Color.black);
-        usernameButton.setForeground(Color.white);
-        usernameButton.setBounds(300, 84, 174, 24);
+        usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -315,6 +312,13 @@ public class SellerPage extends JFrame {
             data.add("username");
             data.add(usernameField.getText());
             Client.sendToServer(data);
+
+            for (Component jc : sidePanel.getComponents()) {
+                if (jc instanceof JTextArea) {
+                    ((JTextArea) jc).setText("RAHHHHHHH");
+                }
+            }
+
 
             JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -324,17 +328,13 @@ public class SellerPage extends JFrame {
         settingsPanel.add(usernameButton);
 
         JLabel emailLabel = new JLabel("Email");
-        emailLabel.setBounds(24, 108, 200, 24);
+        emailLabel.setBounds(24, 116, 200, 24);
 
         JTextField emailField = new JTextField(12);
-        emailField.setBounds(24, 132, 268, 24);
+        emailField.setBounds(24, 140, 268, 24);
         emailField.setText(seller.getString("email"));
 
         JButton emailButton = new JButton("Change Email");
-        emailButton.setOpaque(true);
-        emailButton.setBackground(Color.black);
-        emailButton.setForeground(Color.white);
-        emailButton.setBorderPainted(false);
         emailButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -346,25 +346,21 @@ public class SellerPage extends JFrame {
             JOptionPane.showMessageDialog (null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        emailButton.setBounds(300, 132, 174, 24);
+        emailButton.setBounds(300, 140, 174, 24);
 
         settingsPanel.add(emailLabel);
         settingsPanel.add(emailField);
         settingsPanel.add(emailButton);
 
         JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(24, 156, 200, 24);
+        passwordLabel.setBounds(24, 168, 200, 24);
 
         JPasswordField passwordField = new JPasswordField(12);
-        passwordField.setBounds(24, 180, 268, 24);
+        passwordField.setBounds(24, 192, 268, 24);
         passwordField.setText(seller.getString("password"));
 
         JButton passwordButton = new JButton("Change Password");
-        passwordButton.setBorderPainted(false);
-        passwordButton.setOpaque(true);
-        passwordButton.setBackground(Color.black);
-        passwordButton.setForeground(Color.white);
-        passwordButton.setBounds(300, 180, 174, 24);
+        passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -381,15 +377,13 @@ public class SellerPage extends JFrame {
         settingsPanel.add(passwordButton);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setBounds(24, 228, 450,24);
+        accountDetailsDivider.setBounds(24, 240, 450,24);
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
 
         JButton deleteAccountButton = new JButton("Delete Account");
-        deleteAccountButton.setBackground(Color.decode("#f4f4f4"));
-        deleteAccountButton.setOpaque(false);
         deleteAccountButton.setForeground(Color.decode("#d11111"));
-        deleteAccountButton.setBounds(24, 253, 150, 24);
+        deleteAccountButton.setBounds(24, 264, 150, 24);
         deleteAccountButton.addActionListener(e -> {
             int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Account Removal", JOptionPane.OK_CANCEL_OPTION);
             if (option == 0) {

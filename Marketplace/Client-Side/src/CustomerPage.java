@@ -9,7 +9,6 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.ParseException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -227,7 +226,6 @@ public class CustomerPage extends JFrame {
                 }
             }
         }
-
         // Create a JTable using the model
         JTable cartTable = new JTable(model);
 
@@ -423,18 +421,14 @@ public class CustomerPage extends JFrame {
         supportLabel.setBounds(24, 36, 400, 24);
 
         JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setBounds(24, 60, 200, 24);
+        usernameLabel.setBounds(24, 64, 200, 24);
 
         JTextField usernameField = new JTextField(12);
-        usernameField.setBounds(24, 84, 268, 24);
+        usernameField.setBounds(24, 88, 268, 24);
         usernameField.setText(buyer.getString("username"));
 
         JButton usernameButton = new JButton("Change Username");
-        usernameButton.setOpaque(true);
-        usernameButton.setBorderPainted(false);
-        usernameButton.setBackground(Color.black);
-        usernameButton.setForeground(Color.white);
-        usernameButton.setBounds(300, 84, 174, 24);
+        usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -457,17 +451,13 @@ public class CustomerPage extends JFrame {
         settingsPanel.add(usernameButton);
 
         JLabel emailLabel = new JLabel("Email");
-        emailLabel.setBounds(24, 108, 200, 24);
+        emailLabel.setBounds(24, 116, 200, 24);
 
         JTextField emailField = new JTextField(12);
-        emailField.setBounds(24, 132, 268, 24);
+        emailField.setBounds(24, 140, 268, 24);
         emailField.setText(buyer.getString("email"));
 
         JButton emailButton = new JButton("Change Email");
-        emailButton.setOpaque(true);
-        emailButton.setBackground(Color.black);
-        emailButton.setForeground(Color.white);
-        emailButton.setBorderPainted(false);
         emailButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -479,25 +469,21 @@ public class CustomerPage extends JFrame {
             JOptionPane.showMessageDialog (null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        emailButton.setBounds(300, 132, 174, 24);
+        emailButton.setBounds(300, 140, 174, 24);
 
         settingsPanel.add(emailLabel);
         settingsPanel.add(emailField);
         settingsPanel.add(emailButton);
 
         JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(24, 156, 200, 24);
+        passwordLabel.setBounds(24, 168, 200, 24);
 
         JPasswordField passwordField = new JPasswordField(12);
-        passwordField.setBounds(24, 180, 268, 24);
+        passwordField.setBounds(24, 192, 268, 24);
         passwordField.setText(buyer.getString("password"));
 
         JButton passwordButton = new JButton("Change Password");
-        passwordButton.setBorderPainted(false);
-        passwordButton.setOpaque(true);
-        passwordButton.setBackground(Color.black);
-        passwordButton.setForeground(Color.white);
-        passwordButton.setBounds(300, 180, 174, 24);
+        passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
             ArrayList<String> data = new ArrayList<>();
             data.add("[updateUserDetails]");
@@ -514,15 +500,13 @@ public class CustomerPage extends JFrame {
         settingsPanel.add(passwordButton);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setBounds(24, 228, 450,24);
+        accountDetailsDivider.setBounds(24, 240, 450,24);
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
 
         JButton deleteAccountButton = new JButton("Delete Account");
-        deleteAccountButton.setBackground(Color.decode("#f4f4f4"));
-        deleteAccountButton.setOpaque(false);
         deleteAccountButton.setForeground(Color.decode("#d11111"));
-        deleteAccountButton.setBounds(24, 253, 150, 24);
+        deleteAccountButton.setBounds(24, 264, 150, 24);
         deleteAccountButton.addActionListener(e -> {
             int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Account Removal", JOptionPane.OK_CANCEL_OPTION);
             if (option == 0) {
@@ -588,7 +572,7 @@ public class CustomerPage extends JFrame {
         JPanel panel = new JPanel();
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(0,60,0,24);
+        c.insets = new Insets(0,24,0,24);
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(gridLayout);
 
@@ -609,6 +593,9 @@ public class CustomerPage extends JFrame {
 
         storePage.setLayout(new BorderLayout());
 
+        panel.setMinimumSize(new Dimension(320, 480));
+        panel.setPreferredSize(new Dimension(320, 480));
+        panel.setMaximumSize(new Dimension(320, 480));
         JLabel productLabel = new JLabel(product.getString("name"));
         productLabel.setFont(new Font("serif", Font.BOLD, 24));
         c.gridy = 0;
@@ -616,6 +603,8 @@ public class CustomerPage extends JFrame {
         c.anchor = GridBagConstraints.NORTH;
         gridLayout.setConstraints(productLabel, c);
         panel.add(productLabel);
+
+        c.insets = new Insets(4,24,0,24);
 
         JTextArea descriptionLabel = new JTextArea(product.getString("description"));
         descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
@@ -634,21 +623,21 @@ public class CustomerPage extends JFrame {
         productPageDivider.setPreferredSize(new Dimension(150, 8));
         productPageDivider.setBackground(Color.decode("#dbdbdb"));
         productPageDivider.setForeground(Color.decode("#dbdbdb"));
-        c.insets = new Insets(8,60,0,24);
+        c.insets = new Insets(8,24,0,24);
         c.gridy = 2;
         gridLayout.setConstraints(productPageDivider, c);
         panel.add(productPageDivider);
 
         JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
         quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
-        c.insets = new Insets(4,60,0,24);
+        c.insets = new Insets(4,24,0,24);
         c.gridy = 3;
         gridLayout.setConstraints(quantityLabel, c);
         panel.add(quantityLabel);
 
         JLabel priceLabel = new JLabel("Price: $" + storeProduct.getDouble("price"));
         priceLabel.setFont(new Font("sans-serif", Font.BOLD, 14));
-        c.insets = new Insets(0,60,0,24);
+        c.insets = new Insets(4,24,0,24);
 
         c.gridy = 4;
         c.gridwidth = 4;
@@ -670,10 +659,13 @@ public class CustomerPage extends JFrame {
     public JPanel purchasePanel(JFrame productFrame, JSONObject product, JSONObject storeProduct) {
 
         JPanel panel = new JPanel();
+        panel.setMinimumSize(new Dimension(300, 480));
+        panel.setPreferredSize(new Dimension(300, 480));
+        panel.setMaximumSize(new Dimension(300, 480));
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panel.setLayout(gridLayout);
-        c.insets = new Insets(0,0,0,80);
+        c.insets = new Insets(0,24,0,24);
 
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel();
         spinnerNumberModel.setMinimum(1);
@@ -714,7 +706,7 @@ public class CustomerPage extends JFrame {
         JButton addToCartButton = new JButton("Add to Cart");
         c.gridy = 3;
         c.gridwidth = 4;
-        c.insets = new Insets(8,0,0,80);
+        c.insets = new Insets(8,24,0,24);
         addToCartButton.setMinimumSize(new Dimension(150, 24));
         addToCartButton.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(addToCartButton, c);
@@ -747,7 +739,7 @@ public class CustomerPage extends JFrame {
         JButton closeWindow = new JButton("Close");
         c.gridy = 34;
         c.gridwidth = 4;
-        c.insets = new Insets(8,0,0,80);
+        c.insets = new Insets(8,24,0,24);
         closeWindow.setMinimumSize(new Dimension(150, 24));
         closeWindow.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(closeWindow, c);
