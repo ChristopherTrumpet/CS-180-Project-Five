@@ -18,13 +18,28 @@ public class Client {
     public static void main(String[] args) {
 
         // MAKE SURE the port number is IDENTICAL to that of the server
-        try (Socket socket = new Socket("100.69.62.163", 9080)) {
+        try (Socket socket = new Socket("localhost", 5000)) {
 
             clientSocket = socket;
             socket.setSoTimeout(5000);
 
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             stringToServer = new PrintWriter(socket.getOutputStream(), false);
+
+            try {
+                // Set cross-platform Java L&F (also called "Metal")
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            }
+            catch (UnsupportedLookAndFeelException e) {
+                System.out.println("System does not support this library");
+            }
+            catch (ClassNotFoundException e) {
+                // handle exception
+                System.out.println("Library could not be found..");
+            }
+            catch (InstantiationException | IllegalAccessException e) {
+                System.out.println("Error occurred.");
+            }
 
             // Initialize GUI for Program
             SwingUtilities.invokeLater(() -> new OnboardingPage(true));
