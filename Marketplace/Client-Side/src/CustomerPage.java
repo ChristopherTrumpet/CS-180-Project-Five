@@ -167,10 +167,10 @@ public class CustomerPage extends JFrame {
 
         // Add some data to the model
         model.addColumn("Product");
-        model.addColumn("Description");
         model.addColumn("Store");
         model.addColumn("Price");
-        model.addColumn("Id");
+        model.addColumn("Product Id");
+        model.addColumn("Store Product Id");
 
         Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
         String allStoresString = Client.readFromServer(1).get(0);
@@ -184,7 +184,7 @@ public class CustomerPage extends JFrame {
                         JSONObject productObj = (JSONObject) product;
                         JSONObject storeProductObj = (JSONObject) storeProduct;
                         JSONObject storeObj = (JSONObject) store;
-                        model.addRow(new Object[]{productObj.getString("name"), productObj.getString("description"), storeObj.getString("name"), storeProductObj.getDouble("price"), productObj.toString()});
+                        model.addRow(new Object[]{productObj.getString("name"), storeObj.getString("name"), storeProductObj.getDouble("price"), productObj.toString(), storeProductObj.toString()});
                     }
                 }
             }
@@ -200,17 +200,14 @@ public class CustomerPage extends JFrame {
         }
 
         TableColumnModel tcm = table.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(4) );
-
-        table.getColumnModel().getColumn(1).setPreferredWidth(175);
-        table.getColumnModel().getColumn(1).setMaxWidth(175);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn( tcm.getColumn(3) );
 
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
                 }
             }
         });
@@ -233,7 +230,7 @@ public class CustomerPage extends JFrame {
         selectProductButton.setBounds(24, 404, 400/2 - 4, 24);
         selectProductButton.addActionListener(e -> {
             if(!table.getSelectionModel().isSelectionEmpty()) {
-                viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+                viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
             }
         });
 
@@ -423,9 +420,16 @@ public class CustomerPage extends JFrame {
 
     }
 
-    public void viewProductPage(JSONObject product) {
+    public void viewProductPage(JSONObject product, JSONObject storeProduct) {
 
         JFrame storePage = new JFrame();
+
+        JPanel panel = new JPanel();
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(0,60,0,24);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        panel.setLayout(gridLayout);
 
         // Set title of window
         storePage.setTitle(product.getString("name"));
@@ -442,10 +446,109 @@ public class CustomerPage extends JFrame {
         // Set window to open in the center of the screen
         storePage.setLocationRelativeTo(null);
 
-        storePage.setLayout(null);
+        storePage.setLayout(new BorderLayout());
+
+//        JLabel welcomeMessage = new JLabel("Purdue Marketplace");
+//        welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
+//        c.gridy = 0;
+//        c.gridwidth = 4;
+//        gridLayout.setConstraints(welcomeMessage, c);
+//        panel.add(welcomeMessage);
+
+        JLabel productLabel = new JLabel(product.getString("name"));
+        productLabel.setFont(new Font("serif", Font.BOLD, 24));
+        c.gridy = 0;
+        c.gridwidth = 4;
+        c.anchor = GridBagConstraints.NORTH;
+        gridLayout.setConstraints(productLabel, c);
+        panel.add(productLabel);
+
+        JLabel descriptionLabel = new JLabel(product.getString("description"));
+        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+        c.gridy = 1;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(descriptionLabel, c);
+        panel.add(descriptionLabel);
+
+        JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
+        quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+        c.insets = new Insets(16,60,0,24);
+        c.gridy = 3;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(quantityLabel, c);
+        panel.add(quantityLabel);
+
+        JLabel priceLabel = new JLabel("Price: $" + storeProduct.getDouble("price"));
+        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 16));
+        c.insets = new Insets(0,60,0,24);
+
+        c.gridy = 4;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(priceLabel, c);
+        panel.add(priceLabel);
+
+        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
+        divider.setBackground(Color.decode("#dbdbdb"));
+        divider.setForeground(Color.decode("#dbdbdb"));
+
+        storePage.add(panel, BorderLayout.WEST);
+        storePage.add(divider, BorderLayout.CENTER);
+        storePage.add(purchasePanel(storePage), BorderLayout.EAST);
 
         storePage.setVisible(true);
 
+    }
+
+    public JPanel purchasePanel(JFrame productFrame) {
+
+        JPanel panel = new JPanel();
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panel.setLayout(gridLayout);
+        c.insets = new Insets(0,0,0,95);
+
+        JSpinner spinner = new JSpinner();
+        c.gridy = 2;
+        c.gridwidth = 4;
+        spinner.setMinimumSize(new Dimension(150, 24));
+        spinner.setPreferredSize(new Dimension(150, 24));
+        gridLayout.setConstraints(spinner, c);
+        panel.add(spinner);
+
+        JLabel qtyLabel = new JLabel("Quantity: ");
+        c.gridy = 1;
+        c.gridwidth = 4;
+        qtyLabel.setMinimumSize(new Dimension(150, 24));
+        qtyLabel.setPreferredSize(new Dimension(150, 24));
+        gridLayout.setConstraints(qtyLabel, c);
+        panel.add(qtyLabel);
+
+        JButton addToCartButton = new JButton("Add to Cart");
+        c.gridy = 3;
+        c.gridwidth = 4;
+        c.insets = new Insets(8,0,0,95);
+        addToCartButton.setMinimumSize(new Dimension(150, 24));
+        addToCartButton.setPreferredSize(new Dimension(150, 24));
+        gridLayout.setConstraints(addToCartButton, c);
+        addToCartButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog (null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        panel.add(addToCartButton);
+
+        JButton closeWindow = new JButton("Close");
+        c.gridy = 34;
+        c.gridwidth = 4;
+        c.insets = new Insets(8,0,0,95);
+        closeWindow.setMinimumSize(new Dimension(150, 24));
+        closeWindow.setPreferredSize(new Dimension(150, 24));
+        gridLayout.setConstraints(closeWindow, c);
+        closeWindow.addActionListener(e -> {
+            productFrame.dispose();
+        });
+        panel.add(closeWindow);
+
+        return panel;
     }
 }
 
