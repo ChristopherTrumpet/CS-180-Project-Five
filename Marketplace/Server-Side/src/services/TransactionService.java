@@ -1,8 +1,11 @@
 package services;
 
+import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -102,6 +105,25 @@ public class TransactionService {
     public String getUser(String buyerId) {
         JSONObject user = accountService.getUserById(buyerId);
         return user.toString();
+    }
+
+    public boolean exportProductHistory(String buyerId, String filePath) {
+
+        JSONObject buyer = accountService.getUserById(buyerId);
+        String csvString = CDL.toString(buyer.getJSONArray("product_history"));
+
+        try {
+            FileWriter file = new FileWriter(filePath+".csv");
+            file.write(csvString);
+            file.flush();
+            file.close();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
+        }
+
+        return false;
     }
 
     public boolean placeOrder(String userId) {

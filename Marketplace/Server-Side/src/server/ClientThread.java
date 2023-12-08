@@ -226,6 +226,12 @@ public class ClientThread extends Thread {
                         writer.println(user);
                         writer.flush();
                     }
+                    case "[exportHistory]" -> {
+                        data.add(input.readLine()); // ID
+                        data.add(input.readLine()); // filePath
+
+                        ts.exportProductHistory(data.get(1), data.get(2));
+                    }
                 }
             }
 

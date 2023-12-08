@@ -2,6 +2,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -425,6 +426,21 @@ public class CustomerPage extends JFrame {
         c.gridy = 2;
         c.gridwidth = 2;
         gridLayout.setConstraints(exportHistoryButton, c);
+        exportHistoryButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
+            chooser.setFileFilter(filter);
+            chooser.showOpenDialog(null);
+
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[exportHistory]");
+            data.add(buyer.getString("id"));
+            data.add(chooser.getSelectedFile().getAbsolutePath());
+            Client.sendToServer(data);
+
+            JOptionPane.showMessageDialog (null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
+
+        });
         frame.add(exportHistoryButton);
 
 
