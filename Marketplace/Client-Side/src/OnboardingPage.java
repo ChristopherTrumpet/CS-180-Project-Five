@@ -215,10 +215,13 @@ public class OnboardingPage extends JFrame {
 
                         Client.sendToServer(data);
 
+                        String userString = Client.readFromServer(1).get(0);
+                        JSONObject user = new JSONObject(userString);
+
                         reference.dispose();
 
                         if (sellerType.isSelected()) {
-                            new SellerPage(null);
+                            new SellerPage(user);
                         } else {
                             new CustomerPage(usernameField.getText());
                         }

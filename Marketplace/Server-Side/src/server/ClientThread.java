@@ -53,6 +53,8 @@ public class ClientThread extends Thread {
                         String password = data.get(3);
                         String email = data.get(4);
                         as.createAccount(accountType, username, password, email);
+                        writer.println(as.getUserByUsername(username));
+                        writer.flush();
                         data.clear();
                     }
                     case "[loginButton]" -> {

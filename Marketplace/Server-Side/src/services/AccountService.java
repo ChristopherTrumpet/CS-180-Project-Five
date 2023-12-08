@@ -143,7 +143,7 @@ public class AccountService {
         return null;
     }
 
-    private JSONObject getUserByUsername(String username) {
+    public JSONObject getUserByUsername(String username) {
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("username").toString().equals(username)) {
                 return (JSONObject) user;

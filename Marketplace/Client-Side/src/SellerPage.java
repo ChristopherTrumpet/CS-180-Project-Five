@@ -228,8 +228,8 @@ public class SellerPage extends JFrame {
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-//        TableColumnModel tcm = table.getColumnModel();
-//        tcm.removeColumn( tcm.getColumn(2) );
+        TableColumnModel tcm = table.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(2) );
 
         JScrollPane scrollPane= new  JScrollPane(table);
         scrollPane.setBounds(24, 66, 400, 330);
@@ -494,8 +494,8 @@ public class SellerPage extends JFrame {
         // Create a JTable using the model
         JTable productTable = new JTable(model);
 
-//        TableColumnModel tcm = productTable.getColumnModel();
-//        tcm.removeColumn( tcm.getColumn(3) );
+        TableColumnModel tcm = productTable.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(3) );
 
         JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
         titleMessage.setFont(new Font("serif", Font.BOLD, 18));
@@ -514,7 +514,9 @@ public class SellerPage extends JFrame {
             data.add(store.getString("id"));
             data.add(storeName);
             Client.sendToServer(data);
+
             titleMessage.setText(storeName + "'s Products");
+            table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
         });
 
         JButton addProduct = new JButton("Add Product");
