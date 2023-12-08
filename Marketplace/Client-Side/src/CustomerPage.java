@@ -300,6 +300,111 @@ public class CustomerPage extends JFrame {
 
     public void productHistory() {
 
+        JFrame frame = new JFrame();
+        GridBagLayout gridLayout = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        // Set title of window
+        frame.setTitle("Product History");
+
+        // Set behavior to "destroy" window when closed
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Set dimensions of application
+        frame.setSize(448, 480);
+
+        // Does not allow user to resize window
+        frame.setResizable(false);
+
+        // Set window to open in the center of the screen
+        frame.setLocationRelativeTo(null);
+
+        frame.setLayout(gridLayout);
+
+        JLabel productLabel = new JLabel("Your Product History");
+        productLabel.setFont(new Font("serif", Font.BOLD, 18));
+        c.gridy = 0;
+        c.gridwidth = 4;
+        c.insets = new Insets(0,24,8,24);
+        c.anchor = GridBagConstraints.NORTH;
+        gridLayout.setConstraints(productLabel, c);
+        frame.add(productLabel);
+
+
+        // Create a DefaultTableModel
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("Product");
+        model.addColumn("Quantity");
+        model.addColumn("Price");
+        model.addColumn("Store Id");
+
+        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+        String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
+
+        JSONArray productHistory = buyer.getJSONArray("product_history");
+
+        for (Object contents : productHistory) {
+            for (Object product : new JSONArray(allProductsString)) {
+                if (((JSONObject) product).getString("id").equals(((JSONObject) contents).getString("product_id")))
+                {
+                    model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price")});
+                }
+            }
+        }
+        // Create a JTable using the model
+        JTable historyTable = new JTable(model);
+
+        TableColumnModel tcm = historyTable.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(3) );
+
+        for (int k = 0; k < historyTable.getColumnCount(); k++)
+        {
+            Class<?> col_class = historyTable.getColumnClass(k);
+            historyTable.setDefaultEditor(col_class, null);        // remove editor
+        }
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(historyTable.getModel());
+        historyTable.setRowSorter(sorter);
+
+        // SORTING BROKEN FIX THIS LATER
+//        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+//        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+//        sorter.setSortKeys(sortKeys);
+
+        JScrollPane scrollPane= new  JScrollPane(historyTable);
+        scrollPane.setMinimumSize(new Dimension(400, 306));
+        scrollPane.setPreferredSize(new Dimension(400, 306));
+        scrollPane.setMaximumSize(new Dimension(400, 306));
+
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
+
+        c.gridy = 1;
+        c.gridwidth = 4;
+        c.insets = new Insets(0,24,4,24);
+        gridLayout.setConstraints(scrollPane, c);
+
+        frame.add(scrollPane);
+
+        JButton closeButton = new JButton("Close");
+        c.gridy = 2;
+        c.gridwidth = 2;
+        gridLayout.setConstraints(closeButton, c);
+        closeButton.addActionListener(e -> {
+            frame.dispose();
+        });
+        frame.add(closeButton);
+
+        JButton exportHistoryButton = new JButton("Export History");
+        c.gridy = 2;
+        c.gridwidth = 2;
+        gridLayout.setConstraints(exportHistoryButton, c);
+        frame.add(exportHistoryButton);
+
+
+        frame.setVisible(true);
     }
 
     public JPanel Stores() {
