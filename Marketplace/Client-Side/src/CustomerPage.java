@@ -457,8 +457,11 @@ public class CustomerPage extends JFrame {
         panel.add(productLabel);
 
         JTextArea descriptionLabel = new JTextArea(product.getString("description"));
+        descriptionLabel.setMinimumSize(new Dimension(300, 150));
+        descriptionLabel.setPreferredSize(new Dimension(250, 96));
         descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
         descriptionLabel.setLineWrap(true);
+        descriptionLabel.setWrapStyleWord(true);
         descriptionLabel.setOpaque(false);
         descriptionLabel.setFocusable(false);
         c.gridy = 1;
@@ -467,9 +470,8 @@ public class CustomerPage extends JFrame {
 
         JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
         quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
-        c.insets = new Insets(16,60,0,24);
+        c.insets = new Insets(4,60,0,24);
         c.gridy = 3;
-        c.gridwidth = 4;
         gridLayout.setConstraints(quantityLabel, c);
         panel.add(quantityLabel);
 
@@ -500,7 +502,7 @@ public class CustomerPage extends JFrame {
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panel.setLayout(gridLayout);
-        c.insets = new Insets(0,0,0,95);
+        c.insets = new Insets(0,0,0,80);
 
         JSpinner spinner = new JSpinner();
         c.gridy = 2;
@@ -521,7 +523,7 @@ public class CustomerPage extends JFrame {
         JButton addToCartButton = new JButton("Add to Cart");
         c.gridy = 3;
         c.gridwidth = 4;
-        c.insets = new Insets(8,0,0,95);
+        c.insets = new Insets(8,0,0,80);
         addToCartButton.setMinimumSize(new Dimension(150, 24));
         addToCartButton.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(addToCartButton, c);
@@ -534,7 +536,7 @@ public class CustomerPage extends JFrame {
         JButton closeWindow = new JButton("Close");
         c.gridy = 34;
         c.gridwidth = 4;
-        c.insets = new Insets(8,0,0,95);
+        c.insets = new Insets(8,0,0,80);
         closeWindow.setMinimumSize(new Dimension(150, 24));
         closeWindow.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(closeWindow, c);
