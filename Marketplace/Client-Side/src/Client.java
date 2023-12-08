@@ -28,7 +28,8 @@ public class Client {
 
             try {
                 // Set cross-platform Java L&F (also called "Metal")
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                UIManager.setLookAndFeel(
+                        UIManager.getSystemLookAndFeelClassName());
             }
             catch (UnsupportedLookAndFeelException e) {
                 System.out.println("System does not support this library");
