@@ -76,8 +76,13 @@ public class SellerPage extends JFrame {
 
         c.insets = new Insets(0,80,8,24);
 
-        JLabel nameMessage = new JLabel("Hey, " + seller.getString("username"));
+        JTextArea nameMessage = new JTextArea("Hey, " + seller.getString("username"));
         nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
+        nameMessage.setOpaque(false);
+        nameMessage.setFocusable(false);
+        nameMessage.setEditable(false);
+        nameMessage.setLineWrap(true);
+        nameMessage.setWrapStyleWord(true);
         c.gridy = 1;
         c.gridwidth = 4;
         gridLayout.setConstraints(nameMessage,c);

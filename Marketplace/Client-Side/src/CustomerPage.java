@@ -42,15 +42,16 @@ public class CustomerPage extends JFrame {
 
         this.setLayout(new BorderLayout());
 
+        JPanel sidePanel = SidePanel();
+
         container.setLayout(cardLayout);
         container.add("stores", Stores());
-        container.add("settings", settings());
+        container.add("settings", settings(sidePanel));
         container.add("statistics", statistics());
         container.add("cart", cart());
         container.setVisible(true);
 
-
-        this.add(SidePanel(), BorderLayout.WEST);
+        this.add(sidePanel, BorderLayout.WEST);
         this.add(container, BorderLayout.CENTER);
         this.setVisible(true);
     }
@@ -74,42 +75,83 @@ public class CustomerPage extends JFrame {
 
         c.insets = new Insets(0,80,8,24);
 
-        JLabel nameMessage = new JLabel("Hey, " + buyer.getString("username"));
-        nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
+        JTextArea nameMessage = new JTextArea("Hey, " + buyer.getString("username"));
+        nameMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
+        nameMessage.setLineWrap(true);
+        nameMessage.setWrapStyleWord(true);
+        nameMessage.setFocusable(false);
+        nameMessage.setEditable(false);
+        nameMessage.setOpaque(false);
         c.gridy = 1;
         c.gridwidth = 4;
         gridLayout.setConstraints(nameMessage,c);
-        nameMessage.setMaximumSize(new Dimension(300, 24));
         panel.add(nameMessage);
+
+        c.insets = new Insets(0,80,0,24);
+
+        JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
+        accountDetailsDivider.setMinimumSize(new Dimension(150, 4));
+        accountDetailsDivider.setPreferredSize(new Dimension(150, 4));
+        accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
+        accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
+        c.gridy = 2;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(accountDetailsDivider, c);
+        panel.add(accountDetailsDivider);
+
+        c.insets = new Insets(4,80,4,24);
+
+        JLabel balanceMessage = new JLabel("Balance: $" + buyer.getDouble("funds"));
+        balanceMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
+        c.gridy = 3;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(balanceMessage,c);
+        balanceMessage.setMaximumSize(new Dimension(300, 24));
+        panel.add(balanceMessage);
 
         c.insets = new Insets(4,80,4,24);
 
         JButton storesButton = new JButton("Marketplace");
         storesButton.addActionListener(e -> cardLayout.show(container, "stores"));
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridwidth = 4;
         gridLayout.setConstraints(storesButton, c);
         panel.add(storesButton);
 
         JButton settingsButton = new JButton("Settings");
         settingsButton.addActionListener(e -> cardLayout.show(container, "settings"));
-        c.gridy = 3;
+        c.gridy = 5;
         c.gridwidth = 4;
         gridLayout.setConstraints(settingsButton, c);
         panel.add(settingsButton);
 
         JButton statisticsButton = new JButton("Statistics");
         statisticsButton.addActionListener(e -> cardLayout.show(container, "statistics"));
-        c.gridy = 4;
+        c.gridy = 6;
         c.gridwidth = 4;
         gridLayout.setConstraints(statisticsButton, c);
         panel.add(statisticsButton);
+
+        JButton fundsButton = new JButton("Add Funding");
+        fundsButton.addActionListener(e -> {
+            String funding = JOptionPane.showInputDialog(null, "How much would you like to add?", "Funding Panel", JOptionPane.QUESTION_MESSAGE);
+
+            if (funding != null && !funding.isEmpty()) {
+                balanceMessage.setText("Balance: $" + funding);
+                JOptionPane.showMessageDialog (null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        });
+        c.gridy = 7;
+        c.gridwidth = 4;
+        gridLayout.setConstraints(fundsButton, c);
+        panel.add(fundsButton);
 
         JButton importProductsButton = new JButton("View Cart");
         importProductsButton.addActionListener(e -> {
             cardLayout.show(container, "cart");
         });
-        c.gridy = 5;
+        c.gridy = 8;
         c.gridwidth = 4;
         gridLayout.setConstraints(importProductsButton, c);
         panel.add(importProductsButton);
@@ -122,7 +164,7 @@ public class CustomerPage extends JFrame {
                 new OnboardingPage(true);
             }
         });
-        c.gridy = 6;
+        c.gridy = 9;
         c.gridwidth = 2;
         c.gridx = 0;
         c.insets = new Insets(4,80,4,4);
@@ -136,7 +178,7 @@ public class CustomerPage extends JFrame {
                 reference.dispose();
             }
         });
-        c.gridy = 6;
+        c.gridy = 9;
         c.gridx = 2;
         c.gridwidth = 2;
         c.insets = new Insets(4,4,4,24);
@@ -196,10 +238,10 @@ public class CustomerPage extends JFrame {
 
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                JTable table =(JTable) mouseEvent.getSource();
-                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
-                }
+            JTable table =(JTable) mouseEvent.getSource();
+            if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+            }
             }
         });
 
@@ -362,7 +404,7 @@ public class CustomerPage extends JFrame {
         return panel;
     }
 
-    public JPanel settings() {
+    public JPanel settings(JPanel sidePanel) {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(null);
@@ -395,6 +437,12 @@ public class CustomerPage extends JFrame {
             data.add("username");
             data.add(usernameField.getText());
             Client.sendToServer(data);
+
+            for (Component jc : sidePanel.getComponents()) {
+                if (jc instanceof JTextArea) {
+                    ((JTextArea) jc).setText("Hey, " + usernameField.getText());
+                }
+            }
 
             JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
