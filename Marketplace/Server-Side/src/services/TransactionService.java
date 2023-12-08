@@ -99,6 +99,8 @@ public class TransactionService {
 
     public boolean placeOrder(String userId) {
 
+        StoreService ss = new StoreService();
+        JSONObject stores = new JSONObject(ss.getStoreFile());
         JSONObject users = new JSONObject(accountService.getJSONFile(accountService.getUserFileDirectory()));
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
@@ -109,6 +111,19 @@ public class TransactionService {
 
                 for (Object product : user.getJSONArray("cart")) {
                     JSONObject productObj = (JSONObject) product;
+                    for (int j = 0; j < stores.getJSONArray("stores").length(); j++) {
+                        JSONObject store = (JSONObject) stores.getJSONArray("stores").get(j);
+                        if (store.getString("id").equals(productObj.getString("store_id"))) {
+                            for (Object storeProduct : store.getJSONArray("products")) {
+                                System.out.println((storeProduct));
+                                if (((JSONObject) storeProduct).getString("id").equals(productObj.getString("product_id"))) {
+                                    ((JSONObject) storeProduct).put("qty", productObj.getInt("quantity"));
+                                }
+                            }
+                        }
+                        System.out.println(store);
+                        stores.getJSONArray("stores").put(j,store);
+                    }
                     totalCost += productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity")));
                 }
 

@@ -269,7 +269,6 @@ public class CustomerPage extends JFrame {
             data.add("[placeOrder]");
             data.add(buyer.getString("id"));
             Client.sendToServer(data);
-            ((DefaultTableModel) cartTable.getModel()).getDataVector().removeAllElements();
         });
 
         JButton removeFromCartButton = new JButton("Remove Item");

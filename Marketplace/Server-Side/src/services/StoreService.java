@@ -322,6 +322,7 @@ public class StoreService {
     }
 
     public String getStoreFile() {
+        System.out.println(storeFileDirectory);
         try {
             return Files.readString(Path.of(storeFileDirectory));
         } catch (IOException e) {

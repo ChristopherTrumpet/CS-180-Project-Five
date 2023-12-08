@@ -1,1 +1,21 @@
-{"stores":[{"name":"Apple","id":"zJUMqmTMK0p1NoP0XgqD","sales":0,"products":[{"price":99.99,"qty":1,"id":"3452345klj52345234"},{"price":29.99,"qty":1,"id":"4202b45klj5234j3924"}]}]}
+{
+  "stores": [
+    {
+      "name": "Apple",
+      "id": "zJUMqmTMK0p1NoP0XgqD",
+      "sales": 0,
+      "products": [
+        {
+          "price": 99.99,
+          "qty": 1,
+          "id": "3452345klj52345234"
+        },
+        {
+          "price": 29.99,
+          "qty": 1,
+          "id": "4202b45klj5234j3924"
+        }
+      ]
+    }
+  ]
+}

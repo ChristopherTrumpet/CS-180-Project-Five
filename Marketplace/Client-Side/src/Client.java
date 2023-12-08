@@ -18,7 +18,7 @@ public class Client {
     public static void main(String[] args) {
 
         // MAKE SURE the port number is IDENTICAL to that of the server
-        try (Socket socket = new Socket("100.69.62.163", 9080)) {
+        try (Socket socket = new Socket("localhost", 9080)) {
 
             clientSocket = socket;
             socket.setSoTimeout(5000);
