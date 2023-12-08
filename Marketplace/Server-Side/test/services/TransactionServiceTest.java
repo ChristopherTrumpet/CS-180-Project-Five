@@ -21,7 +21,7 @@ class TransactionServiceTest {
 
     @Test
     void removeFromCart() {
-        assertTrue(transactionService.removeFromCart("PztsCpytYcTxgAKCJVb", "3452345klj52345234",1));
+        assertTrue(transactionService.removeFromCart("PztsCpytYcTxgAKCJVb", "3452345klj52345234","zJUMqmTMK0p1NoP0XgqD"));
     }
 
     @Test

@@ -239,7 +239,7 @@ public class CustomerPage extends JFrame {
                 if (((JSONObject) product).getString("id").equals(((JSONObject) contents).getString("product_id")))
                 {
                     totalCost += ((JSONObject) contents).getInt("quantity") * ((JSONObject) contents).getDouble("price");
-                    model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price")});
+                    model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price"), ((JSONObject) contents).getString("store_id")});
                 }
             }
         }
@@ -300,6 +300,15 @@ public class CustomerPage extends JFrame {
         JButton removeFromCartButton = new JButton("Remove Item");
         removeFromCartButton.setBounds(24 + 400/3+4, 404, 400/3 - 4, 24);
         removeFromCartButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[removeFromCart]");
+            data.add(buyer.getString("id"));
+            data.add(cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
+            data.add(model.getValueAt(cartTable.getSelectedRow(), 3).toString());
+
+            Client.sendToServer(data);
+
+            ((DefaultTableModel)cartTable.getModel()).removeRow(cartTable.getSelectedRow());
 
         });
 

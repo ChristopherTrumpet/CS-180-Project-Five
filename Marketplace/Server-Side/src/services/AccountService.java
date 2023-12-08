@@ -168,6 +168,21 @@ public class AccountService {
         return false;
     }
 
+    public boolean updateCart(String userId, JSONArray value) {
+
+        JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
+
+        for (Object user : users.getJSONArray("users")) {
+            if (((JSONObject) user).getString("id").equals(userId)) {
+                ((JSONObject) user).put("cart", value);
+                writeJSONObjectToFile(users, getUserFileDirectory());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean removeAccount(String userId) {
 
         JSONObject userObj = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));

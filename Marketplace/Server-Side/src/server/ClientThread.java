@@ -232,6 +232,13 @@ public class ClientThread extends Thread {
 
                         ts.exportProductHistory(data.get(1), data.get(2));
                     }
+                    case "[removeFromCart]" -> {
+                        data.add(input.readLine()); // ID
+                        data.add(input.readLine()); // Product Name
+                        data.add(input.readLine()); // Store ID
+
+                        ts.removeFromCart(data.get(1), data.get(2), data.get(3));
+                    }
                 }
             }
 

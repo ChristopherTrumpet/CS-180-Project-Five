@@ -164,6 +164,14 @@ public class StoreService {
         return null;
     }
 
+    public JSONObject getProductByName(String productName) {
+        for (Object product : new JSONObject(getProductFile()).getJSONArray("products")) {
+            if (((JSONObject) product).getString("name").equals(productName))
+                return (JSONObject) product;
+        }
+        return null;
+    }
+
     public boolean addProduct(String storeId, String productId, int qty, double price) {
 
         JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));

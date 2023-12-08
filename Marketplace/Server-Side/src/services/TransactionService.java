@@ -36,25 +36,21 @@ public class TransactionService {
     }
 
 
-    public boolean removeFromCart(String userId, String productId, int quantity) {
+    public boolean removeFromCart(String userId, String productName, String storeId) {
         if (accountService.isBuyer(userId))
         {
             JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
-
+            StoreService ss = new StoreService();
+            String productId = ss.getProductByName(productName).getString("id");
             for (int i = 0; i < cart.length(); i++) {
                 JSONObject product = (JSONObject) cart.get(i);
-                System.out.println(product);
-                String currProductId = (String) product.get("product_id");
-                if (currProductId.equals(productId))
+                String currProductId = product.getString("product_id");
+
+                if (currProductId.equals(productId) && product.getString("store_id").equals(storeId))
                 {
-                    if ((Integer) product.get("quantity") <= quantity)
-                        cart.remove(i);
-                    else
-                    {
-                        product.put("quantity", quantity);
-                        cart.put(product);
-                    }
-                    return accountService.updateUserDetails(userId, "cart", cart);
+                    cart.remove(i);
+                    System.out.println("Updating cart...");
+                    return accountService.updateCart(userId, cart);
                 }
             }
         }
