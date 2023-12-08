@@ -26,6 +26,10 @@ public class StoreService {
 
     }
 
+    public String getStoreFileDirectory() {
+        return storeFileDirectory;
+    }
+
     public boolean addStoreToSeller(String userId, String storeId) {
 
         JSONObject users = new JSONObject(Objects.requireNonNull(accountService.getJSONFile(accountService.getUserFileDirectory())));

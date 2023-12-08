@@ -151,14 +151,25 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(fundsButton, c);
         panel.add(fundsButton);
 
-        JButton importProductsButton = new JButton("View Cart");
-        importProductsButton.addActionListener(e -> {
+        JButton cartButton = new JButton("View Cart");
+        cartButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[getUser]");
+            data.add(buyer.getString("id"));
+            Client.sendToServer(data);
+            String userString = Client.readFromServer(1).get(0);
+            JSONObject user = new JSONObject(userString);
+
+            this.buyer = user;
+            container.remove(cart());
+            container.add("cart", cart());
             cardLayout.show(container, "cart");
+
         });
         c.gridy = 8;
         c.gridwidth = 4;
-        gridLayout.setConstraints(importProductsButton, c);
-        panel.add(importProductsButton);
+        gridLayout.setConstraints(cartButton, c);
+        panel.add(cartButton);
 
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(e -> {
@@ -265,10 +276,10 @@ public class CustomerPage extends JFrame {
         JButton placeOrderButton = new JButton("Place Order");
         placeOrderButton.setBounds(24, 404, 400/3 - 4, 24);
         placeOrderButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[placeOrder]");
-            data.add(buyer.getString("id"));
-            Client.sendToServer(data);
+            ArrayList<String> orderData = new ArrayList<>();
+            orderData.add("[placeOrder]");
+            orderData.add(buyer.getString("id"));
+            Client.sendToServer(orderData);
         });
 
         JButton removeFromCartButton = new JButton("Remove Item");

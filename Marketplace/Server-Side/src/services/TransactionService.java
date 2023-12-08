@@ -3,6 +3,8 @@ package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.SortedMap;
 
@@ -97,6 +99,11 @@ public class TransactionService {
         return false;
     }
 
+    public String getUser(String buyerId) {
+        JSONObject user = accountService.getUserById(buyerId);
+        return user.toString();
+    }
+
     public boolean placeOrder(String userId) {
 
         StoreService ss = new StoreService();
@@ -115,14 +122,15 @@ public class TransactionService {
                         JSONObject store = (JSONObject) stores.getJSONArray("stores").get(j);
                         if (store.getString("id").equals(productObj.getString("store_id"))) {
                             for (Object storeProduct : store.getJSONArray("products")) {
-                                System.out.println((storeProduct));
                                 if (((JSONObject) storeProduct).getString("id").equals(productObj.getString("product_id"))) {
-                                    ((JSONObject) storeProduct).put("qty", productObj.getInt("quantity"));
+                                    ((JSONObject) storeProduct).put("qty", ((JSONObject) storeProduct).getInt("qty") - productObj.getInt("quantity"));
+                                    System.out.println(store);
                                 }
                             }
                         }
-                        System.out.println(store);
+
                         stores.getJSONArray("stores").put(j,store);
+                        ss.writeJSONObjectToFile(stores, ss.getStoreFileDirectory());
                     }
                     totalCost += productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity")));
                 }
@@ -130,7 +138,7 @@ public class TransactionService {
                 if (user.getDouble("funds") >= totalCost) {
                     user.getJSONArray("product_history").putAll(user.getJSONArray("cart"));
                     user.getJSONArray("cart").clear();
-                    user.put("funds", user.getDouble("funds") - totalCost);
+                    user.put("funds", round((user.getDouble("funds") - totalCost), 2));
                 }
 
                 users.getJSONArray("users").put(i, user);
@@ -140,6 +148,14 @@ public class TransactionService {
 
         return false;
 
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }

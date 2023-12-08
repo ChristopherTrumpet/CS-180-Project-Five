@@ -218,6 +218,14 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Funds were not successfully added...");
                         }
                     }
+                    case "[getUser]" -> {
+
+                        data.add(input.readLine()); // Id
+
+                        String user = ts.getUser(data.get(1));
+                        writer.println(user);
+                        writer.flush();
+                    }
                 }
             }
 
