@@ -184,6 +184,7 @@ public class SellerPage extends JFrame {
             JSONArray allStores = new JSONArray(allStoresString);
             for (Object storeGeneric : allStores) {
                 JSONObject storeGenericObj = (JSONObject) storeGeneric;
+                System.out.println(storeGenericObj);
                 String storeGenericId = storeGenericObj.getString("id");
 
                 for (Object store : stores) {
@@ -227,8 +228,8 @@ public class SellerPage extends JFrame {
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        TableColumnModel tcm = table.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(2) );
+//        TableColumnModel tcm = table.getColumnModel();
+//        tcm.removeColumn( tcm.getColumn(2) );
 
         JScrollPane scrollPane= new  JScrollPane(table);
         scrollPane.setBounds(24, 66, 400, 330);
@@ -408,13 +409,26 @@ public class SellerPage extends JFrame {
 
         // Create a dialog box with a text field and a button
         String storeName = JOptionPane.showInputDialog("Enter store name", "Store");
+        ArrayList<String> data = new ArrayList<>();
 
         if(storeName != null) {
             System.out.println("User created store: " + storeName);
 
+//            Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+//
+//            String storesString = Client.readFromServer(1).get(0);
+//            JSONObject stores = new JSONObject(storesString);
+
+            data.add("[createStore]");
+            data.add(seller.getString("id"));
+            data.add(storeName);
+            Client.sendToServer(data);
+
+            String storeId = Client.readFromServer(1).get(0);
+
             // Create a DefaultTableModel
             DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.addRow(new Object[]{storeName, "$0.00"});
+            model.addRow(new Object[]{storeName, "$0.00", storeId});
         }
 
     }

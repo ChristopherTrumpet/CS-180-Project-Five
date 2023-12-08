@@ -143,6 +143,19 @@ public class ClientThread extends Thread {
                         } else {
                             System.out.println("[SERVER] Could not add product...");
                         }
+                        data.clear();
+                    }
+                    case "[createStore]" -> {
+                        data.add(input.readLine()); // Seller Id
+                        data.add(input.readLine()); // Store Name
+
+                        if (ss.createStore(data.get(1), data.get(2))) {
+                            writer.println(ss.getStoreByName(data.get(2)));
+                            System.out.println("[SERVER] Created store and add to users store");
+                        } else {
+                            System.out.println("[SERVER] Store could not be created...");
+                        }
+                        writer.flush();
                     }
                 }
             }

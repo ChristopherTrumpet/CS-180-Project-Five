@@ -26,16 +26,18 @@ public class StoreService {
 
     }
 
-    public boolean addStore(String userId, String storeId) {
-        AccountService as = new AccountService();
-        if (as.isSeller(userId)) {
-            JSONObject seller = as.getUserById(userId);
-            JSONArray idList = (JSONArray) seller.get("stores");
-            idList.put(storeId);
-            seller.put("stores", idList);
-            return true;
+    public boolean addStoreToSeller(String userId, String storeId) {
+
+        JSONObject users = new JSONObject(Objects.requireNonNull(accountService.getJSONFile(accountService.getUserFileDirectory())));
+
+        for (Object user : users.getJSONArray("users")) {
+            JSONObject userObj = (JSONObject) user;
+            if (userObj.getString("id").equals(userId)) {
+                userObj.getJSONArray("stores").put(storeId);
+            }
         }
-        return false;
+
+        return writeJSONObjectToFile(users, accountService.getUserFileDirectory());
     }
 
     public boolean removeStore(String storeId, String userId) {
@@ -78,16 +80,31 @@ public class StoreService {
         return false;
     }
 
-    public boolean createStore(String name) {
+    public boolean createStore(String sellerId, String name) {
         String store_id = generateStoreId();
-        JSONObject StoreObj = new JSONObject();
+
+        JSONObject stores = new JSONObject(Objects.requireNonNull(getStoreFile()));
         JSONObject store = new JSONObject();
-        JSONArray products = new JSONArray();
-        store.put("store_id", store_id);
+
+        store.put("id", store_id);
         store.put("name", name);
-        store.put("products", products);
-        AccountService as = new AccountService();
-        return as.writeJSONObjectToFile(store, storeFileDirectory);
+        store.put("sales", 0.0);
+        store.put("products", new JSONArray());
+        stores.getJSONArray("stores").put(store);
+
+        addStoreToSeller(sellerId, store.getString("id"));
+
+        return writeJSONObjectToFile(stores, storeFileDirectory);
+    }
+
+    public JSONObject getStoreByName(String storeName) {
+        JSONObject stores = new JSONObject(accountService.getJSONFile(storeFileDirectory));
+        for (Object store : stores.getJSONArray("stores")) {
+            if (((JSONObject) store).get("name").toString().equals(storeName)) {
+                return (JSONObject) store;
+            }
+        }
+        return null;
     }
 
     public boolean updateStoreName(String storeId, String newName) {
@@ -103,6 +120,7 @@ public class StoreService {
 
         return false;
     }
+
 
     public boolean importProducts(File csvFile) {
 

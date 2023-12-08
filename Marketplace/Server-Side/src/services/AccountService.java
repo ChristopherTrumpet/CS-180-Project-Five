@@ -135,7 +135,6 @@ public class AccountService {
     }
 
     private JSONObject getUserByEmail(String email) {
-        System.out.println(getJSONFile(getUserFileDirectory()));
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("email").toString().equals(email)) {
                 return (JSONObject) user;
@@ -145,7 +144,6 @@ public class AccountService {
     }
 
     private JSONObject getUserByUsername(String username) {
-        System.out.println(getJSONFile(getUserFileDirectory()));
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("username").toString().equals(username)) {
                 return (JSONObject) user;
