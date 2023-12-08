@@ -170,6 +170,15 @@ public class ClientThread extends Thread {
                             System.out.println("Error occurred");
                         }
                     }
+                    case "[deleteAccount]" -> {
+                        data.add(input.readLine()); // User id
+
+                        if (as.removeAccount(data.get(1))) {
+                            System.out.println("[SERVER] Account removed successfully!");
+                        } else {
+                            System.out.println("[SERVER] Error occurred, account was not removed.");
+                        }
+                    }
                 }
             }
 

@@ -124,7 +124,7 @@ public class SellerPage extends JFrame {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout");
             if (input == 0) {
                 reference.dispose();
-                new OnboardingPage(null, true);
+                new OnboardingPage(true);
             }
         });
         c.gridy = 6;
@@ -391,6 +391,17 @@ public class SellerPage extends JFrame {
         deleteAccountButton.setOpaque(false);
         deleteAccountButton.setForeground(Color.decode("#d11111"));
         deleteAccountButton.setBounds(24, 253, 150, 24);
+        deleteAccountButton.addActionListener(e -> {
+            int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Account Removal", JOptionPane.OK_CANCEL_OPTION);
+            if (option == 0) {
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[deleteAccount]");
+                data.add(seller.getString("id"));
+                Client.sendToServer(data);
+                dispose();
+                new OnboardingPage(true);
+            }
+        });
 
         settingsPanel.add(accountDetailsDivider);
         settingsPanel.add(deleteAccountButton);

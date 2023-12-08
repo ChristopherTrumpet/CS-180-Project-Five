@@ -23,7 +23,7 @@ public class Client {
             stringToServer = new PrintWriter(socket.getOutputStream(), false);
 
             // Initialize GUI for Program
-            SwingUtilities.invokeLater(() -> new OnboardingPage(null, true));
+            SwingUtilities.invokeLater(() -> new OnboardingPage(true));
 
             Scanner scanner = new Scanner(System.in);
             String echoString;

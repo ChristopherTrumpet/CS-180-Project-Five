@@ -13,9 +13,7 @@ public class OnboardingPage extends JFrame {
 
     JFrame reference;
 
-    HashMap<String, String> users = new HashMap<>();
-
-    public OnboardingPage(HashMap<String, String> users, boolean firstTime) {
+    public OnboardingPage(boolean firstTime) {
 
         this.reference = this;
         this.firstTime = firstTime;
