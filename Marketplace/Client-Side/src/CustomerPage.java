@@ -151,16 +151,97 @@ public class CustomerPage extends JFrame {
         JPanel storesPanel = new JPanel();
         storesPanel.setLayout(null);
 
-        JLabel accountDetailsLabel = new JLabel("Product Cart");
+        JLabel accountDetailsLabel = new JLabel("Your Cart");
         accountDetailsLabel.setFont(new Font("Serif", Font.BOLD, 18));
         accountDetailsLabel.setBounds(24, 16, 200, 24);
 
-        JLabel supportLabel = new JLabel("View your cart");
+        JLabel supportLabel = new JLabel("View your cart contents and make purchase");
         supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
         supportLabel.setBounds(24, 36, 400, 24);
 
         storesPanel.add(accountDetailsLabel);
         storesPanel.add(supportLabel);
+
+        // Create a DefaultTableModel
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("Product");
+        model.addColumn("Quantity");
+        model.addColumn("Price");
+
+        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+        String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
+
+        JSONArray cart = buyer.getJSONArray("cart");
+        double totalCost = 0.0;
+
+        for (Object contents : cart) {
+            for (Object product : new JSONArray(allProductsString)) {
+                if (((JSONObject) product).getString("id").equals(((JSONObject) contents).getString("product_id")))
+                {
+                    totalCost += ((JSONObject) contents).getInt("quantity") * ((JSONObject) contents).getDouble("price");
+                    model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price")});
+                }
+            }
+        }
+
+        // Create a JTable using the model
+        table = new JTable(model);
+
+        for (int c = 0; c < table.getColumnCount(); c++)
+        {
+            Class<?> col_class = table.getColumnClass(c);
+            table.setDefaultEditor(col_class, null);        // remove editor
+        }
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                JTable table =(JTable) mouseEvent.getSource();
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+                }
+            }
+        });
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+        table.setRowSorter(sorter);
+
+        // SORTING BROKEN FIX THIS LATER
+//        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+//        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+//        sorter.setSortKeys(sortKeys);
+
+        JScrollPane scrollPane= new  JScrollPane(table);
+        scrollPane.setBounds(24, 66, 400, 306);
+
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
+
+        JLabel totalCostLabel = new JLabel("Total Cost: $" + totalCost);
+        totalCostLabel.setBounds(24, 372+4, 400, 24);
+        storesPanel.add(totalCostLabel);
+
+        JButton placeOrderButton = new JButton("Place Order");
+        placeOrderButton.setBounds(24, 404, 400/3 - 4, 24);
+        placeOrderButton.addActionListener(e -> {
+
+        });
+
+        JButton removeFromCartButton = new JButton("Remove Item");
+        removeFromCartButton.setBounds(24 + 400/3+4, 404, 400/3 - 4, 24);
+        removeFromCartButton.addActionListener(e -> {
+
+        });
+
+        JButton productHistoryButton = new JButton("History");
+        productHistoryButton.setBounds(24 + 400/3 * 2 + 8, 404, 400/3 - 8, 24);
+        productHistoryButton.addActionListener(e -> productHistory());
+
+        storesPanel.add(scrollPane);
+
+        storesPanel.add(placeOrderButton);
+        storesPanel.add(removeFromCartButton);
+        storesPanel.add(productHistoryButton);
 
         panel.add(storesPanel, BorderLayout.CENTER);
         JSeparator divider = new JSeparator(JSeparator.VERTICAL);
@@ -170,6 +251,10 @@ public class CustomerPage extends JFrame {
 
 
         return panel;
+    }
+
+    public void productHistory() {
+
     }
 
     public JPanel Stores() {
