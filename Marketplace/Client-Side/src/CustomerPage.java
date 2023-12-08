@@ -90,8 +90,8 @@ public class CustomerPage extends JFrame {
         c.insets = new Insets(0,80,0,24);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setMinimumSize(new Dimension(150, 4));
-        accountDetailsDivider.setPreferredSize(new Dimension(150, 4));
+        accountDetailsDivider.setMinimumSize(new Dimension(150, 8));
+        accountDetailsDivider.setPreferredSize(new Dimension(150, 8));
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
         c.gridy = 2;
@@ -630,8 +630,8 @@ public class CustomerPage extends JFrame {
 
 
         JSeparator productPageDivider = new JSeparator(JSeparator.HORIZONTAL);
-        productPageDivider.setMinimumSize(new Dimension(150, 4));
-        productPageDivider.setPreferredSize(new Dimension(150, 4));
+        productPageDivider.setMinimumSize(new Dimension(150, 8));
+        productPageDivider.setPreferredSize(new Dimension(150, 8));
         productPageDivider.setBackground(Color.decode("#dbdbdb"));
         productPageDivider.setForeground(Color.decode("#dbdbdb"));
         c.insets = new Insets(8,60,0,24);
