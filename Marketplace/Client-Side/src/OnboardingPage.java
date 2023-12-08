@@ -102,12 +102,12 @@ public class OnboardingPage extends JFrame {
                     if (data.get(0).equals("true")) {
                         JSONObject user = new JSONObject(data.get(1));
                         if (user.getString("id").endsWith("b")) {
-                            new CustomerPage(identifierField.getText());
+                            new CustomerPage(user);
                         } else {
                             new SellerPage(user);
-                            reference.dispose();
-                            cardLayout.next(container);
                         }
+                        reference.dispose();
+                        cardLayout.next(container);
                     } else {
                         Client.showErrorMessage("User does not exist. " +
                                 "Make sure you have typed in your username and password correctly.");
@@ -221,7 +221,7 @@ public class OnboardingPage extends JFrame {
                         if (sellerType.isSelected()) {
                             new SellerPage(user);
                         } else {
-                            new CustomerPage(usernameField.getText());
+                            new CustomerPage(user);
                         }
                     }
                 }
