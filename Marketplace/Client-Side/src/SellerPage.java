@@ -600,7 +600,7 @@ public class SellerPage extends JFrame {
             if (option == JOptionPane.OK_OPTION) {
 
                 if (isValidQuantity(quantity.getText(), 100)) {
-                    if (isValidQuantity(price.getText(), 1000000)) {
+                    if (isValidPrice(price.getText(), 1000000.00)) {
                         String productName = Objects.requireNonNull(productList.getSelectedItem()).toString();
 
                         for (Object product : allProducts) {
@@ -670,6 +670,14 @@ public class SellerPage extends JFrame {
     public boolean isValidQuantity(String text, int limit) {
         try {
             return Integer.parseInt(text) < limit && Integer.parseInt(text) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidPrice(String text, double limit) {
+        try {
+            return Double.parseDouble(text) < limit && Double.parseDouble(text) > 0;
         } catch (NumberFormatException e) {
             return false;
         }

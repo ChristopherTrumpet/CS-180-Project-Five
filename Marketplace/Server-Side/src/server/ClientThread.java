@@ -186,18 +186,37 @@ public class ClientThread extends Thread {
                     case "[addToCart]" -> {
                         data.add(input.readLine()); // User ID
                         data.add(input.readLine()); // Product ID
+                        data.add(input.readLine()); // Store ID
                         data.add(input.readLine()); // Quantity
                         data.add(input.readLine()); // Price
 
-                        if (ts.addToCart(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
+                        System.out.println("Store id " + data.get(3));
+
+                        if (ts.addToCart(data.get(1), data.get(2), data.get(3), Integer.parseInt(data.get(4)), Double.parseDouble(data.get(5)))) {
                             System.out.println("[SERVER] Added to cart successfully!");
                         } else {
                             System.out.println("[SERVER] Error occurred writing cart.");
                         }
                     }
-                    case "[quit]" -> {
-                        System.out.println("[SERVER] Client has disconnected.");
-                        run = false;
+                    case "[placeOrder]" -> {
+                        data.add(input.readLine()); // User id
+
+                        if (ts.placeOrder(data.get(1))) {
+                            System.out.println("[SERVER] Order successfully placed!");
+                        } else {
+                            System.out.println("[SERVER] Error occurred placing order.");
+                        }
+                    }
+                    case "[addFunds]" -> {
+
+                        data.add(input.readLine()); // Buyer id
+                        data.add(input.readLine()); // New Balance Amount
+
+                        if (ts.addFunds(data.get(1), Double.parseDouble(data.get(2)))) {
+                            System.out.println("[SERVER] Funds added!");
+                        } else {
+                            System.out.println("[SERVER] Funds were not successfully added...");
+                        }
                     }
                 }
             }

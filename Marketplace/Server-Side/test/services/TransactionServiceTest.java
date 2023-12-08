@@ -16,7 +16,7 @@ class TransactionServiceTest {
 
     @Test
     void addToCart() {
-        assertTrue(transactionService.addToCart("PztsCpytYcTxgAKCJVb", "3452345klj52345234", 7,19.99));
+        assertTrue(transactionService.addToCart("PztsCpytYcTxgAKCJVb", "3452345klj52345234", "2034vas2345234",7,19.99));
     }
 
     @Test

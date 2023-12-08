@@ -136,7 +136,12 @@ public class CustomerPage extends JFrame {
             String funding = JOptionPane.showInputDialog(null, "How much would you like to add?", "Funding Panel", JOptionPane.QUESTION_MESSAGE);
 
             if (funding != null && !funding.isEmpty()) {
-                balanceMessage.setText("Balance: $" + funding);
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[addFunds]");
+                data.add(buyer.getString("id"));
+                data.add(funding);
+                Client.sendToServer(data);
+                balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
                 JOptionPane.showMessageDialog (null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
             }
 
@@ -210,6 +215,7 @@ public class CustomerPage extends JFrame {
         model.addColumn("Product");
         model.addColumn("Quantity");
         model.addColumn("Price");
+        model.addColumn("Store Id");
 
         Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
@@ -229,20 +235,14 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable cartTable = new JTable(model);
 
+        TableColumnModel tcm = cartTable.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(3) );
+
         for (int c = 0; c < cartTable.getColumnCount(); c++)
         {
             Class<?> col_class = cartTable.getColumnClass(c);
             cartTable.setDefaultEditor(col_class, null);        // remove editor
         }
-
-        cartTable.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
-            JTable table =(JTable) mouseEvent.getSource();
-            if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
-            }
-            }
-        });
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(cartTable.getModel());
         cartTable.setRowSorter(sorter);
@@ -265,7 +265,11 @@ public class CustomerPage extends JFrame {
         JButton placeOrderButton = new JButton("Place Order");
         placeOrderButton.setBounds(24, 404, 400/3 - 4, 24);
         placeOrderButton.addActionListener(e -> {
-
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[placeOrder]");
+            data.add(buyer.getString("id"));
+            Client.sendToServer(data);
+            ((DefaultTableModel) cartTable.getModel()).getDataVector().removeAllElements();
         });
 
         JButton removeFromCartButton = new JButton("Remove Item");
@@ -320,6 +324,7 @@ public class CustomerPage extends JFrame {
         model.addColumn("Price");
         model.addColumn("Product Id");
         model.addColumn("Store Product Id");
+        model.addColumn("Store Object");
 
         Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
         String allStoresString = Client.readFromServer(1).get(0);
@@ -333,7 +338,7 @@ public class CustomerPage extends JFrame {
                         JSONObject productObj = (JSONObject) product;
                         JSONObject storeProductObj = (JSONObject) storeProduct;
                         JSONObject storeObj = (JSONObject) store;
-                        model.addRow(new Object[]{productObj.getString("name"), storeObj.getString("name"), storeProductObj.getDouble("price"), productObj.toString(), storeProductObj.toString()});
+                        model.addRow(new Object[]{productObj.getString("name"), storeObj.getString("name"), storeProductObj.getDouble("price"), productObj.toString(), storeProductObj.toString(), storeObj.toString()});
                     }
                 }
             }
@@ -351,12 +356,13 @@ public class CustomerPage extends JFrame {
         TableColumnModel tcm = marketTable.getColumnModel();
         tcm.removeColumn( tcm.getColumn(3) );
         tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn( tcm.getColumn(3) );
 
         marketTable.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+                    viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 5).toString()).getString("id"));
                 }
             }
         });
@@ -380,7 +386,7 @@ public class CustomerPage extends JFrame {
         selectProductButton.addActionListener(e -> {
             if (!marketTable.getSelectionModel().isSelectionEmpty())
             {
-                viewProductPage(new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 3).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 4).toString()));
+                viewProductPage(new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 3).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 4).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 5).toString()).getString("id"));
             } else {
                 JOptionPane.showMessageDialog (null, "Please highlight a product to select!", "No Product Highlighted!", JOptionPane.INFORMATION_MESSAGE);
 
@@ -565,7 +571,7 @@ public class CustomerPage extends JFrame {
 
     }
 
-    public void viewProductPage(JSONObject product, JSONObject storeProduct) {
+    public void viewProductPage(JSONObject product, JSONObject storeProduct, String storeId) {
 
         JFrame storePage = new JFrame();
 
@@ -650,13 +656,13 @@ public class CustomerPage extends JFrame {
 
         storePage.add(panel, BorderLayout.WEST);
         storePage.add(divider, BorderLayout.CENTER);
-        storePage.add(purchasePanel(storePage, product, storeProduct), BorderLayout.EAST);
+        storePage.add(purchasePanel(storePage, product, storeProduct, storeId), BorderLayout.EAST);
 
         storePage.setVisible(true);
 
     }
 
-    public JPanel purchasePanel(JFrame productFrame, JSONObject product, JSONObject storeProduct) {
+    public JPanel purchasePanel(JFrame productFrame, JSONObject product, JSONObject storeProduct, String storeId) {
 
         JPanel panel = new JPanel();
         panel.setMinimumSize(new Dimension(300, 480));
@@ -717,8 +723,11 @@ public class CustomerPage extends JFrame {
                     data.add("[addToCart]");
                     data.add(buyer.getString("id"));
                     data.add(product.getString("id"));
+                    data.add(storeId);
                     data.add(spinner.getValue().toString());
                     data.add(String.valueOf(storeProduct.getDouble("price")));
+
+                    System.out.println("Store id: " + storeId);
 
                     Client.sendToServer(data);
 

@@ -21,8 +21,8 @@ public class StoreService {
 
     public StoreService() {
 
-        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "\\Marketplace\\Server-Side\\data\\stores.json").toString();
-        this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "\\Marketplace\\Server-Side\\data\\products.json").toString();
+        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/stores.json").toString();
+        this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/products.json").toString();
 
     }
 
@@ -64,10 +64,10 @@ public class StoreService {
         return false;
     }
     public boolean checkQuantity(String storeId, String productId, int quantity) {
-        JSONObject store = accountService.getUserById(storeId);
+        JSONObject store = getStoreById(storeId);
         for (Object product : store.getJSONArray("products")) {
-            if (((JSONObject) product).get("id").toString().equals(productId)) {
-                JSONObject theProduct = (JSONObject) ((JSONObject) product).get("id");
+            if (((JSONObject) product).getString("id").equals(productId)) {
+                JSONObject theProduct = (JSONObject) product;
                 if (theProduct.getInt("qty") < 1) {
                     return false;
                 } else if (theProduct.getInt("qty") >= quantity) {
