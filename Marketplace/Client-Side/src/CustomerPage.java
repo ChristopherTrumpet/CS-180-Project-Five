@@ -18,6 +18,7 @@ public class CustomerPage extends JFrame {
     Container container = new Container();
     JFrame reference;
     JSONObject buyer;
+    JLabel balanceMessage;
 
     public CustomerPage(JSONObject buyer) {
 
@@ -100,7 +101,7 @@ public class CustomerPage extends JFrame {
 
         c.insets = new Insets(4,80,4,24);
 
-        JLabel balanceMessage = new JLabel("Balance: $" + buyer.getDouble("funds"));
+        balanceMessage = new JLabel("Balance: $" + buyer.getDouble("funds"));
         balanceMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         c.gridy = 3;
         c.gridwidth = 4;
@@ -158,9 +159,7 @@ public class CustomerPage extends JFrame {
             data.add(buyer.getString("id"));
             Client.sendToServer(data);
             String userString = Client.readFromServer(1).get(0);
-            JSONObject user = new JSONObject(userString);
-
-            this.buyer = user;
+            this.buyer = new JSONObject(userString);
             container.remove(cart());
             container.add("cart", cart());
             cardLayout.show(container, "cart");
@@ -280,6 +279,21 @@ public class CustomerPage extends JFrame {
             orderData.add("[placeOrder]");
             orderData.add(buyer.getString("id"));
             Client.sendToServer(orderData);
+
+
+            ArrayList<String> buyerData = new ArrayList<>();
+            buyerData.add("[getUser]");
+            buyerData.add(buyer.getString("id"));
+            Client.sendToServer(buyerData);
+            String userString = Client.readFromServer(1).get(0);
+            this.buyer = new JSONObject(userString);
+
+            balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
+
+            for (int i = 0; i < cartTable.getRowCount(); i++) {
+                ((DefaultTableModel)cartTable.getModel()).removeRow(i);
+            }
+
         });
 
         JButton removeFromCartButton = new JButton("Remove Item");
