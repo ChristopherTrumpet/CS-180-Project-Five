@@ -7,7 +7,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -547,16 +546,16 @@ public class CustomerPage extends JFrame {
             }
         });
 
-        JButton filterButton = new JButton("Filter");
-        filterButton.setBounds(24 + 400/2 + 4, 404, 400/2 - 8, 24);
-        filterButton.addActionListener(e -> filter());
+        JButton searchButton = new JButton("Search");
+        searchButton.setBounds(24 + 400/2 + 4, 404, 400/2 - 8, 24);
+        searchButton.addActionListener(e -> search());
 
         storesPanel.add(storesLabel);
         storesPanel.add(helpfulLabel);
         storesPanel.add(scrollPane);
 
         storesPanel.add(selectProductButton);
-        storesPanel.add(filterButton);
+        storesPanel.add(searchButton);
 
         panel.add(storesPanel, BorderLayout.CENTER);
         JSeparator divider = new JSeparator(JSeparator.VERTICAL);
@@ -721,8 +720,36 @@ public class CustomerPage extends JFrame {
         return panel;
     }
 
-    public void filter() {
+    public void search() {
+        String searchQuery = JOptionPane.showInputDialog("Search:", "Type here...");
+        ArrayList<String> data = new ArrayList<>();
+        data.add("[search]");
+        data.add(searchQuery);
+        Client.sendToServer(data);
 
+        int numOfResults = -1;
+        try {
+             numOfResults = Integer.parseInt(Client.readFromServer(1).get(0));
+        } catch (NumberFormatException e) {
+            System.out.println("No Results...");
+        }
+
+
+        ArrayList<String> results = Client.readFromServer(numOfResults);
+
+        String[] array = new String[results.size()];
+        for(int i = 0; i < array.length; i++) {
+            array[i] = results.get(i);
+        }
+        JComboBox resultList = new JComboBox(array);
+        resultList.setEditable(true);
+        AutoCompletion.enable(resultList);
+
+        int option = JOptionPane.showConfirmDialog(null, resultList, "Select result", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == 0) {
+            System.out.println("Selection made.");
+        }
     }
 
     public void viewProductPage(JSONObject product, JSONObject storeProduct, String storeId) {

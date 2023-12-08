@@ -3,6 +3,7 @@ package server;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import services.AccountService;
+import services.SearchService;
 import services.StoreService;
 import services.TransactionService;
 
@@ -238,6 +239,17 @@ public class ClientThread extends Thread {
                         data.add(input.readLine()); // Store ID
 
                         ts.removeFromCart(data.get(1), data.get(2), data.get(3));
+                    }
+                    case "[search]" -> {
+                        data.add(input.readLine()); // Search Query
+                        SearchService searchService = new SearchService();
+                        ArrayList<String> results = searchService.search(data.get(1));
+
+                        System.out.println(results);
+                        for (String result : results) {
+                            writer.println(result);
+                        }
+                        writer.flush();
                     }
                 }
             }

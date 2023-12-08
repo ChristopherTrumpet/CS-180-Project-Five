@@ -3,20 +3,17 @@
     {
       "id": "3452345klj52345234",
       "name": "iPhone",
-      "description": "A phone designed by Apple",
-      "item": "phone"
+      "description": "A phone designed by Apple"
     },
     {
       "id": "3452b45klj5234j3924",
       "name": "A Very Large Macbook",
-      "description": "A laptop designed by Apple and a very long description to show text wrapping that could possibly happen",
-      "item": "laptop"
+      "description": "A laptop designed by Apple and a very long description to show text wrapping that could possibly happen"
     },
     {
       "id": "4202b45klj5234j3924",
       "name": "Basket",
-      "description": "A basket designed by Rubarb",
-      "item": "Storage"
+      "description": "A basket designed by Rubarb"
     }
   ]
 }
