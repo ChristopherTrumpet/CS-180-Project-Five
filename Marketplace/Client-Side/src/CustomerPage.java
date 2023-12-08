@@ -176,6 +176,7 @@ public class CustomerPage extends JFrame {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit");
             if (input == 0) {
                 reference.dispose();
+                Client.closeConnection();
             }
         });
         c.gridy = 9;
@@ -228,15 +229,15 @@ public class CustomerPage extends JFrame {
         }
 
         // Create a JTable using the model
-        table = new JTable(model);
+        JTable cartTable = new JTable(model);
 
-        for (int c = 0; c < table.getColumnCount(); c++)
+        for (int c = 0; c < cartTable.getColumnCount(); c++)
         {
-            Class<?> col_class = table.getColumnClass(c);
-            table.setDefaultEditor(col_class, null);        // remove editor
+            Class<?> col_class = cartTable.getColumnClass(c);
+            cartTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        table.addMouseListener(new MouseAdapter() {
+        cartTable.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
             JTable table =(JTable) mouseEvent.getSource();
             if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
@@ -245,15 +246,15 @@ public class CustomerPage extends JFrame {
             }
         });
 
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(cartTable.getModel());
+        cartTable.setRowSorter(sorter);
 
         // SORTING BROKEN FIX THIS LATER
 //        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        JScrollPane scrollPane= new  JScrollPane(table);
+        JScrollPane scrollPane= new  JScrollPane(cartTable);
         scrollPane.setBounds(24, 66, 400, 306);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
@@ -341,19 +342,19 @@ public class CustomerPage extends JFrame {
         }
 
         // Create a JTable using the model
-        table = new JTable(model);
+        JTable marketTable = new JTable(model);
 
-        for (int c = 0; c < table.getColumnCount(); c++)
+        for (int c = 0; c < marketTable.getColumnCount(); c++)
         {
-            Class<?> col_class = table.getColumnClass(c);
-            table.setDefaultEditor(col_class, null);        // remove editor
+            Class<?> col_class = marketTable.getColumnClass(c);
+            marketTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        TableColumnModel tcm = table.getColumnModel();
+        TableColumnModel tcm = marketTable.getColumnModel();
         tcm.removeColumn( tcm.getColumn(3) );
         tcm.removeColumn( tcm.getColumn(3) );
 
-        table.addMouseListener(new MouseAdapter() {
+        marketTable.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
@@ -362,15 +363,15 @@ public class CustomerPage extends JFrame {
             }
         });
 
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(marketTable.getModel());
+        marketTable.setRowSorter(sorter);
 
         // SORTING BROKEN FIX THIS LATER
 //        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        JScrollPane scrollPane= new  JScrollPane(table);
+        JScrollPane scrollPane= new  JScrollPane(marketTable);
         scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
@@ -379,8 +380,10 @@ public class CustomerPage extends JFrame {
         JButton selectProductButton = new JButton("Select Product");
         selectProductButton.setBounds(24, 404, 400/2 - 4, 24);
         selectProductButton.addActionListener(e -> {
-            if(!table.getSelectionModel().isSelectionEmpty()) {
-                viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()));
+            System.out.println("Button Pressed!");
+            if (!marketTable.getSelectionModel().isSelectionEmpty())
+            {
+                viewProductPage(new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 3).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 4).toString()));
             }
         });
 
@@ -613,9 +616,7 @@ public class CustomerPage extends JFrame {
         panel.add(productLabel);
 
         JTextArea descriptionLabel = new JTextArea(product.getString("description"));
-        descriptionLabel.setMinimumSize(new Dimension(300, 150));
-        descriptionLabel.setPreferredSize(new Dimension(250, 96));
-        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
         descriptionLabel.setLineWrap(true);
         descriptionLabel.setWrapStyleWord(true);
         descriptionLabel.setOpaque(false);

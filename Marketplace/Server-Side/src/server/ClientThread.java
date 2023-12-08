@@ -36,7 +36,9 @@ public class ClientThread extends Thread {
             TransactionService ts = new TransactionService();
             StoreService ss = new StoreService();
 
-            while (true) {
+            boolean run = true;
+
+            while (run) {
 
                 String clientData = input.readLine();
                 ArrayList<String> data = new ArrayList<>();
@@ -193,6 +195,10 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Error occurred writing cart.");
                         }
                     }
+                    case "[quit]" -> {
+                        System.out.println("[SERVER] Client has disconnected.");
+                        run = false;
+                    }
                 }
             }
 
@@ -203,6 +209,7 @@ public class ClientThread extends Thread {
         } finally {
 
             try {
+                System.out.println("[SERVER] Client thread dispersed.");
                 socket.close();
             } catch (IOException e) {
                 // Oh, well!

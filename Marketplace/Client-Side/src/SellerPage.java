@@ -211,10 +211,6 @@ public class SellerPage extends JFrame {
             table.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        table.getColumnModel().getColumn(1).setPreferredWidth(175);
-        table.getColumnModel().getColumn(1).setMaxWidth(175);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
@@ -241,9 +237,9 @@ public class SellerPage extends JFrame {
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
 
-        JButton sortStoreButton = new JButton("Select Store");
-        sortStoreButton.setBounds(24, 404, 400/3 - 4, 24);
-        sortStoreButton.addActionListener(e -> {
+        JButton selectStoreButton = new JButton("Select Store");
+        selectStoreButton.setBounds(24, 404, 400/3 - 4, 24);
+        selectStoreButton.addActionListener(e -> {
             if(!table.getSelectionModel().isSelectionEmpty()) {
                 editStore(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()));
             }
@@ -276,7 +272,7 @@ public class SellerPage extends JFrame {
         storesPanel.add(scrollPane);
 
         storesPanel.add(addStore);
-        storesPanel.add(sortStoreButton);
+        storesPanel.add(selectStoreButton);
         storesPanel.add(removeStore);
 
         panel.add(storesPanel, BorderLayout.CENTER);

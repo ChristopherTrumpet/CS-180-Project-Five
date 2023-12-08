@@ -6,17 +6,21 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
     private static BufferedReader reader;
     private static PrintWriter stringToServer;
+    public static Socket clientSocket;
+    public static Scanner scanner;
 
     public static void main(String[] args) {
 
         // MAKE SURE the port number is IDENTICAL to that of the server
         try (Socket socket = new Socket("localhost", 5000)) {
 
+            clientSocket = socket;
             socket.setSoTimeout(5000);
 
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -25,16 +29,14 @@ public class Client {
             // Initialize GUI for Program
             SwingUtilities.invokeLater(() -> new OnboardingPage(true));
 
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
             String echoString;
 
             do {
                 echoString = scanner.nextLine();
-
-                // Send input result to server
-                stringToServer.println(echoString);
-
             } while (!echoString.equals("exit"));
+
+            System.out.println("[CLIENT] Leaving...");
 
         } catch (SocketTimeoutException e) {
             System.err.println("The socket timed out");
@@ -66,6 +68,15 @@ public class Client {
 
     public static void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void closeConnection() {
+        try {
+            sendToServer(new ArrayList<>(List.of("[quit]")));
+            clientSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
