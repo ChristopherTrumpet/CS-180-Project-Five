@@ -9,7 +9,7 @@ public class Server {
         System.out.println("[SERVER] Server initialized...");
 
         // Arbitrary port number
-        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+        try (ServerSocket serverSocket = new ServerSocket(9080)) {
 
             while (true) {
                 new ClientThread(serverSocket.accept()).start();
