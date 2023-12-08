@@ -44,18 +44,6 @@
       "id": "WRZDAMtjvFa2mP8Feu4T",
       "sales": 0,
       "products": []
-    },
-    {
-      "name": "Apple",
-      "id": "ILaquzKSYoo6c0M29pb2",
-      "sales": 0,
-      "products": [
-        {
-          "price": 23.99,
-          "qty": 2,
-          "id": "3452b45klj5234j3924"
-        }
-      ]
     }
   ]
 }

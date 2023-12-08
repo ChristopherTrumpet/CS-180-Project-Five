@@ -9,7 +9,7 @@ public class TransactionService {
 
     private final AccountService accountService = new AccountService();
 
-    public boolean addToCart(String userId, String productId, String storeId, int quantity) {
+    public boolean addToCart(String userId, String productId, int quantity, double price) {
 
         // TODO: Do NOT allow duplicates!
 
@@ -20,7 +20,7 @@ public class TransactionService {
 
             product.put("product_id", productId);
             product.put("quantity", quantity);
-            product.put("amount", getTotalAmount(productId, storeId, quantity));
+            product.put("price", price);
 
             cart.put(product);
             return accountService.updateUserDetails(userId, "cart", cart);

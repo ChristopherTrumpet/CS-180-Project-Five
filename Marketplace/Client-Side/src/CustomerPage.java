@@ -46,6 +46,7 @@ public class CustomerPage extends JFrame {
         container.add("stores", Stores());
         container.add("settings", settings());
         container.add("statistics", statistics());
+        container.add("cart", cart());
         container.setVisible(true);
 
 
@@ -106,7 +107,7 @@ public class CustomerPage extends JFrame {
 
         JButton importProductsButton = new JButton("View Cart");
         importProductsButton.addActionListener(e -> {
-            cart();
+            cardLayout.show(container, "cart");
         });
         c.gridy = 5;
         c.gridwidth = 4;
@@ -145,8 +146,30 @@ public class CustomerPage extends JFrame {
         return panel;
     }
 
-    public void cart() {
+    public JPanel cart() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel storesPanel = new JPanel();
+        storesPanel.setLayout(null);
 
+        JLabel accountDetailsLabel = new JLabel("Product Cart");
+        accountDetailsLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        accountDetailsLabel.setBounds(24, 16, 200, 24);
+
+        JLabel supportLabel = new JLabel("View your cart");
+        supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
+        supportLabel.setBounds(24, 36, 400, 24);
+
+        storesPanel.add(accountDetailsLabel);
+        storesPanel.add(supportLabel);
+
+        panel.add(storesPanel, BorderLayout.CENTER);
+        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
+        divider.setBackground(Color.decode("#dbdbdb"));
+        divider.setForeground(Color.decode("#dbdbdb"));
+        panel.add(divider, BorderLayout.LINE_START);
+
+
+        return panel;
     }
 
     public JPanel Stores() {
@@ -464,6 +487,7 @@ public class CustomerPage extends JFrame {
         descriptionLabel.setWrapStyleWord(true);
         descriptionLabel.setOpaque(false);
         descriptionLabel.setFocusable(false);
+
         c.gridy = 1;
         gridLayout.setConstraints(descriptionLabel, c);
         panel.add(descriptionLabel);
@@ -490,13 +514,13 @@ public class CustomerPage extends JFrame {
 
         storePage.add(panel, BorderLayout.WEST);
         storePage.add(divider, BorderLayout.CENTER);
-        storePage.add(purchasePanel(storePage), BorderLayout.EAST);
+        storePage.add(purchasePanel(storePage, product, storeProduct), BorderLayout.EAST);
 
         storePage.setVisible(true);
 
     }
 
-    public JPanel purchasePanel(JFrame productFrame) {
+    public JPanel purchasePanel(JFrame productFrame, JSONObject product, JSONObject storeProduct) {
 
         JPanel panel = new JPanel();
         GridBagLayout gridLayout = new GridBagLayout();
@@ -528,6 +552,15 @@ public class CustomerPage extends JFrame {
         addToCartButton.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(addToCartButton, c);
         addToCartButton.addActionListener(e -> {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[addToCart]");
+            data.add(buyer.getString("id"));
+            data.add(product.getString("id"));
+            data.add(spinner.getValue().toString());
+            data.add(String.valueOf(storeProduct.getDouble("price")));
+
+            Client.sendToServer(data);
+
             JOptionPane.showMessageDialog (null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
 
         });

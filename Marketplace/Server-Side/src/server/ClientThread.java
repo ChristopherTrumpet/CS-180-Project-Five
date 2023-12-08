@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import services.AccountService;
 import services.StoreService;
+import services.TransactionService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class ClientThread extends Thread {
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
             AccountService as = new AccountService();
+            TransactionService ts = new TransactionService();
             StoreService ss = new StoreService();
 
             while (true) {
@@ -177,6 +179,18 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Account removed successfully!");
                         } else {
                             System.out.println("[SERVER] Error occurred, account was not removed.");
+                        }
+                    }
+                    case "[addToCart]" -> {
+                        data.add(input.readLine()); // User ID
+                        data.add(input.readLine()); // Product ID
+                        data.add(input.readLine()); // Quantity
+                        data.add(input.readLine()); // Price
+
+                        if (ts.addToCart(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
+                            System.out.println("[SERVER] Added to cart successfully!");
+                        } else {
+                            System.out.println("[SERVER] Error occurred writing cart.");
                         }
                     }
                 }

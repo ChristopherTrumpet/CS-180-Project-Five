@@ -20,9 +20,7 @@ class AccountServiceTest {
             'b',
             "CTrumpet",
             "password",
-            "ctrumpet@purdue.edu",
-            "Christopher",
-            "Trumpet"
+            "ctrumpet@purdue.edu"
         ));
     }
 
