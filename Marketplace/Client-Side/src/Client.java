@@ -23,7 +23,7 @@ public class Client {
             stringToServer = new PrintWriter(socket.getOutputStream(), false);
 
             // Initialize GUI for Program
-            SwingUtilities.invokeLater(() -> new OnboardingPage(null, true));
+            SwingUtilities.invokeLater(() -> new OnboardingPage(true));
 
             Scanner scanner = new Scanner(System.in);
             String echoString;
@@ -50,10 +50,10 @@ public class Client {
         }
         stringToServer.flush();
     }
-
     public static ArrayList<String> readFromServer(int numLines) {
         try {
             ArrayList<String> data = new ArrayList<>();
+
             for (int i = 0; i < numLines; i++) {
                 data.add(reader.readLine());
             }

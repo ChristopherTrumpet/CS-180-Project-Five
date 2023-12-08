@@ -13,6 +13,8 @@ public class Server {
 
             while (true) {
                 new ClientThread(serverSocket.accept()).start();
+                System.out.println("[SERVER] Client connected!");
+
             }
 
         } catch (IOException e) {

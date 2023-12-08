@@ -11,6 +11,12 @@
       "name": "MacBook",
       "description": "A laptop designed by Apple",
       "item": "laptop"
+    },
+    {
+      "id": "4202b45klj5234j3924",
+      "name": "Basket",
+      "description": "A basket designed by Rubarb",
+      "item": "Storage"
     }
   ]
 }

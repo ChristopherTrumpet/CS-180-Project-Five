@@ -135,7 +135,6 @@ public class AccountService {
     }
 
     private JSONObject getUserByEmail(String email) {
-        System.out.println(getJSONFile(getUserFileDirectory()));
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("email").toString().equals(email)) {
                 return (JSONObject) user;
@@ -144,8 +143,7 @@ public class AccountService {
         return null;
     }
 
-    private JSONObject getUserByUsername(String username) {
-        System.out.println(getJSONFile(getUserFileDirectory()));
+    public JSONObject getUserByUsername(String username) {
         for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
             if (((JSONObject) user).get("username").toString().equals(username)) {
                 return (JSONObject) user;
@@ -159,7 +157,7 @@ public class AccountService {
         JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
 
         for (Object user : users.getJSONArray("users")) {
-            if (((JSONObject) user).get("id").toString().equals(userId)) {
+            if (((JSONObject) user).getString("id").equals(userId)) {
                 ((JSONObject) user).put(key, value);
                 writeJSONObjectToFile(users, getUserFileDirectory());
                 return true;
@@ -186,7 +184,6 @@ public class AccountService {
 
     public String getJSONFile(String fileDirectory) {
         try {
-            System.out.println(getUserFileDirectory());
             return Files.readString(Path.of(fileDirectory));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving user file...");

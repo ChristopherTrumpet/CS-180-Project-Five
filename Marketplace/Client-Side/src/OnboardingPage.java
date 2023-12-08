@@ -1,7 +1,10 @@
+import org.json.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class OnboardingPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -10,9 +13,7 @@ public class OnboardingPage extends JFrame {
 
     JFrame reference;
 
-    HashMap<String, String> users = new HashMap<>();
-
-    public OnboardingPage(HashMap<String, String> users, boolean firstTime) {
+    public OnboardingPage(boolean firstTime) {
 
         this.reference = this;
         this.firstTime = firstTime;
@@ -83,21 +84,31 @@ public class OnboardingPage extends JFrame {
             loginButton.setFocusable(false);
 
             loginButton.addActionListener(e -> {
+
                 String password = new String(passwordField.getPassword());
+
                 if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
+
                     ArrayList<String> data = new ArrayList<>();
+
                     data.add("[loginButton]");
                     data.add(identifierField.getText());
                     data.add(password);
+
                     Client.sendToServer(data);
-                    ArrayList<String> serverLines = Client.readFromServer(2);
-                    if(serverLines.get(0).equals("True")) {
-                        if(serverLines.get(1).equals("b")) new CustomerPage(identifierField.getText());
-                        else new SellerPage();
-                        reference.dispose();
-                        cardLayout.next(container);
-                    }
-                    else {
+
+                    data = Client.readFromServer(2);
+
+                    if (data.get(0).equals("true")) {
+                        JSONObject user = new JSONObject(data.get(1));
+                        if (user.getString("id").endsWith("b")) {
+                            new CustomerPage(identifierField.getText());
+                        } else {
+                            new SellerPage(user);
+                            reference.dispose();
+                            cardLayout.next(container);
+                        }
+                    } else {
                         Client.showErrorMessage("User does not exist. " +
                                 "Make sure you have typed in your username and password correctly.");
                     }
@@ -187,21 +198,28 @@ public class OnboardingPage extends JFrame {
                 if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
                     if (sellerType.isSelected() || buyerType.isSelected()) {
                         ArrayList<String> data = new ArrayList<>();
+
                         data.add("[signUpButton]");
+
                         if (sellerType.isSelected()) {
                             data.add("s");
                         } else {
                             data.add("b");
                         }
+
                         data.add(usernameField.getText());
                         data.add(password);
                         data.add(emailField.getText());
 
                         Client.sendToServer(data);
 
+                        String userString = Client.readFromServer(1).get(0);
+                        JSONObject user = new JSONObject(userString);
+
                         reference.dispose();
+
                         if (sellerType.isSelected()) {
-                            new SellerPage();
+                            new SellerPage(user);
                         } else {
                             new CustomerPage(usernameField.getText());
                         }
