@@ -6,10 +6,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.DefaultFormatter;
 import java.awt.*;
+import java.awt.event.*;
+import java.text.ParseException;
 import java.util.List;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -17,7 +18,6 @@ public class CustomerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
     Container container = new Container();
     JFrame reference;
-    JTable table;
     JSONObject buyer;
 
     public CustomerPage(JSONObject buyer) {
@@ -380,10 +380,12 @@ public class CustomerPage extends JFrame {
         JButton selectProductButton = new JButton("Select Product");
         selectProductButton.setBounds(24, 404, 400/2 - 4, 24);
         selectProductButton.addActionListener(e -> {
-            System.out.println("Button Pressed!");
             if (!marketTable.getSelectionModel().isSelectionEmpty())
             {
                 viewProductPage(new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 3).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 4).toString()));
+            } else {
+                JOptionPane.showMessageDialog (null, "Please highlight a product to select!", "No Product Highlighted!", JOptionPane.INFORMATION_MESSAGE);
+
             }
         });
 
@@ -626,15 +628,26 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(descriptionLabel, c);
         panel.add(descriptionLabel);
 
+
+        JSeparator productPageDivider = new JSeparator(JSeparator.HORIZONTAL);
+        productPageDivider.setMinimumSize(new Dimension(150, 4));
+        productPageDivider.setPreferredSize(new Dimension(150, 4));
+        productPageDivider.setBackground(Color.decode("#dbdbdb"));
+        productPageDivider.setForeground(Color.decode("#dbdbdb"));
+        c.insets = new Insets(8,60,0,24);
+        c.gridy = 2;
+        gridLayout.setConstraints(productPageDivider, c);
+        panel.add(productPageDivider);
+
         JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
-        quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
+        quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
         c.insets = new Insets(4,60,0,24);
         c.gridy = 3;
         gridLayout.setConstraints(quantityLabel, c);
         panel.add(quantityLabel);
 
         JLabel priceLabel = new JLabel("Price: $" + storeProduct.getDouble("price"));
-        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 16));
+        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 14));
         c.insets = new Insets(0,60,0,24);
 
         c.gridy = 4;
@@ -662,13 +675,33 @@ public class CustomerPage extends JFrame {
         panel.setLayout(gridLayout);
         c.insets = new Insets(0,0,0,80);
 
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel();
+        spinnerNumberModel.setMinimum(1);
+        spinnerNumberModel.setMaximum(9999999);
         JSpinner spinner = new JSpinner();
+        spinner.setModel(spinnerNumberModel);
+        spinner.setValue(1);
+        ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            spinner.updateUI();
+                        }
+                    });
+                }
+            }
+        });
+
         c.gridy = 2;
         c.gridwidth = 4;
         spinner.setMinimumSize(new Dimension(150, 24));
         spinner.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(spinner, c);
         panel.add(spinner);
+
 
         JLabel qtyLabel = new JLabel("Quantity: ");
         c.gridy = 1;
@@ -686,16 +719,27 @@ public class CustomerPage extends JFrame {
         addToCartButton.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(addToCartButton, c);
         addToCartButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[addToCart]");
-            data.add(buyer.getString("id"));
-            data.add(product.getString("id"));
-            data.add(spinner.getValue().toString());
-            data.add(String.valueOf(storeProduct.getDouble("price")));
+            if (Integer.parseInt(spinner.getValue().toString()) > 0) {
+                if (Integer.parseInt(spinner.getValue().toString()) <= storeProduct.getInt("qty")) {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[addToCart]");
+                    data.add(buyer.getString("id"));
+                    data.add(product.getString("id"));
+                    data.add(spinner.getValue().toString());
+                    data.add(String.valueOf(storeProduct.getDouble("price")));
 
-            Client.sendToServer(data);
+                    Client.sendToServer(data);
 
-            JOptionPane.showMessageDialog (null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog (null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    Client.showErrorMessage("Quantity exceeds amount available!");
+                }
+            } else {
+                Client.showErrorMessage("Quantity must be greater than 0!");
+            }
+
+
+
 
         });
         panel.add(addToCartButton);

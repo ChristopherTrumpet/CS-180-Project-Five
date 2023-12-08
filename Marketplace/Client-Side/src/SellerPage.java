@@ -7,8 +7,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import java.awt.*;
 import java.util.List;
 import java.awt.event.MouseAdapter;
@@ -449,27 +447,27 @@ public class SellerPage extends JFrame {
     public void addStore() {
 
         // Create a dialog box with a text field and a button
-        String storeName = JOptionPane.showInputDialog("Enter store name", "Store");
+        String storeName = JOptionPane.showInputDialog("Enter store name (Must be less than 16 characters)", "Store");
         ArrayList<String> data = new ArrayList<>();
 
         if(storeName != null) {
-            System.out.println("User created store: " + storeName);
+            if (storeName.length() <= 16) {
+                System.out.println("User created store: " + storeName);
 
-//            Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
-//
-//            String storesString = Client.readFromServer(1).get(0);
-//            JSONObject stores = new JSONObject(storesString);
+                data.add("[createStore]");
+                data.add(seller.getString("id"));
+                data.add(storeName);
+                Client.sendToServer(data);
 
-            data.add("[createStore]");
-            data.add(seller.getString("id"));
-            data.add(storeName);
-            Client.sendToServer(data);
+                String storeId = Client.readFromServer(1).get(0);
 
-            String storeId = Client.readFromServer(1).get(0);
+                // Create a DefaultTableModel
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+                model.addRow(new Object[]{storeName, "$0.00", storeId});
+            } else {
+                Client.showErrorMessage("Store name cannot be more than 16 characters!");
+            }
 
-            // Create a DefaultTableModel
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.addRow(new Object[]{storeName, "$0.00", storeId});
         }
 
     }
@@ -550,14 +548,36 @@ public class SellerPage extends JFrame {
         changeStoreName.setBounds(24, 56, 185, 24);
         changeStoreName.addActionListener(e -> {
             String storeName = JOptionPane.showInputDialog("What would you like to change the name to?");
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[changeStoreName]");
-            data.add(store.getString("id"));
-            data.add(storeName);
-            Client.sendToServer(data);
 
-            titleMessage.setText(storeName + "'s Products");
-            table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
+            if (storeName.length() <= 16) {
+
+                boolean storeExists = false;
+                Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+                String storesString = Client.readFromServer(1).get(0);
+                JSONArray stores = new JSONArray(storesString);
+
+                for (Object storeObj : stores) {
+                    if (((JSONObject) storeObj).getString("name").equals(storeName)) {
+                        storeExists = true;
+                    }
+                }
+
+                if (storeExists) {
+                    Client.showErrorMessage("Store already exists!");
+                } else {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[changeStoreName]");
+                    data.add(store.getString("id"));
+                    data.add(storeName);
+                    Client.sendToServer(data);
+
+                    titleMessage.setText(storeName + "'s Products");
+                    table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
+                }
+            } else {
+                Client.showErrorMessage("Please enter a store name that is less than 16 characters!");
+            }
+
         });
 
         JButton addProduct = new JButton("Add Product");
@@ -576,7 +596,7 @@ public class SellerPage extends JFrame {
             JTextField price = new JTextField();
             Object[] message = {
                     "Select a Product: ", productList,
-                    "Quantity:", quantity,
+                    "Quantity (1-99):", quantity,
                     "Price: $", price
             };
 
@@ -586,24 +606,32 @@ public class SellerPage extends JFrame {
 
             if (option == JOptionPane.OK_OPTION) {
 
-                String productName = Objects.requireNonNull(productList.getSelectedItem()).toString();
+                if (isValidQuantity(quantity.getText(), 100)) {
+                    if (isValidQuantity(price.getText(), 1000000)) {
+                        String productName = Objects.requireNonNull(productList.getSelectedItem()).toString();
 
-                for (Object product : allProducts) {
-                    JSONObject productObj = (JSONObject) product;
-                    if (productObj.getString("name").equals(productName))
-                        productId = productObj.getString("id");
+                        for (Object product : allProducts) {
+                            JSONObject productObj = (JSONObject) product;
+                            if (productObj.getString("name").equals(productName))
+                                productId = productObj.getString("id");
+                        }
+
+                        ArrayList<String> data = new ArrayList<>();
+                        data.add("[addProduct]");
+                        data.add(store.getString("id"));
+                        data.add(productId);
+                        data.add(quantity.getText());
+                        data.add(price.getText());
+                        Client.sendToServer(data);
+
+                        model.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText())), productId});
+                    } else {
+                        Client.showErrorMessage("Please enter a valid price. Must be less than $1,000,000");
+                    }
+
+                } else {
+                    Client.showErrorMessage("Please enter a valid quantity!");
                 }
-
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[addProduct]");
-                data.add(store.getString("id"));
-                data.add(productId);
-                data.add(quantity.getText());
-                data.add(price.getText());
-                Client.sendToServer(data);
-
-                model.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText())), productId});
-
 
             } else {
                 System.out.println("Product addition canceled");
@@ -644,6 +672,14 @@ public class SellerPage extends JFrame {
 
         storePage.setVisible(true);
 
+    }
+
+    public boolean isValidQuantity(String text, int limit) {
+        try {
+            return Integer.parseInt(text) < limit && Integer.parseInt(text) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
 

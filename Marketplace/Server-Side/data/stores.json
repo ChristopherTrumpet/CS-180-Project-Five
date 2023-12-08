@@ -44,6 +44,30 @@
       "id": "WRZDAMtjvFa2mP8Feu4T",
       "sales": 0,
       "products": []
+    },
+    {
+      "name": "New Store Name",
+      "id": "WXpe7yXClntxTylfU4Q3",
+      "sales": 0,
+      "products": [
+        {
+          "price": 999.99,
+          "qty": 1,
+          "id": "3452345klj52345234"
+        }
+      ]
+    },
+    {
+      "name": "Store",
+      "id": "PIc2DuDulbPHuO2r5dCB",
+      "sales": 0,
+      "products": []
+    },
+    {
+      "name": "Brand new Store",
+      "id": "tYH9Gic7WSl3Iwo3wasm",
+      "sales": 0,
+      "products": []
     }
   ]
 }

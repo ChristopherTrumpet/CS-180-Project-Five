@@ -2,6 +2,9 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -75,6 +78,48 @@ public class OnboardingPage extends JFrame {
 
             passwordLabel.setBounds(250, start + 48, 300, 24); // 24
             passwordField.setBounds(250, start + 72, 300, 24); // 24
+            passwordField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                String password = new String(passwordField.getPassword());
+
+                                if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
+
+                                    ArrayList<String> data = new ArrayList<>();
+
+                                    data.add("[loginButton]");
+                                    data.add(identifierField.getText());
+                                    data.add(password);
+
+                                    Client.sendToServer(data);
+
+                                    data = Client.readFromServer(2);
+
+                                    if (data.get(0).equals("true")) {
+                                        JSONObject user = new JSONObject(data.get(1));
+                                        if (user.getString("id").endsWith("b")) {
+                                            new CustomerPage(user);
+                                        } else {
+                                            new SellerPage(user);
+                                        }
+                                        reference.dispose();
+                                        cardLayout.next(container);
+                                    } else {
+                                        Client.showErrorMessage("User does not exist. " +
+                                                "Make sure you have typed in your username and password correctly.");
+                                    }
+                                } else {
+                                    JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
 
             loginButton.setBackground(Color.decode("#A77F20"));
             loginButton.setOpaque(true);
@@ -112,6 +157,8 @@ public class OnboardingPage extends JFrame {
                         Client.showErrorMessage("User does not exist. " +
                                 "Make sure you have typed in your username and password correctly.");
                     }
+                } else {
+                    JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
                 }
             });
 
