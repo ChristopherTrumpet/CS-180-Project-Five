@@ -41,7 +41,7 @@ public class TransactionService {
         {
             JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
             StoreService ss = new StoreService();
-            String productId = ss.getProductByName(productName).getString("id");
+            String productId = ss.getProductByName(productName).getString("product_id");
             for (int i = 0; i < cart.length(); i++) {
                 JSONObject product = (JSONObject) cart.get(i);
                 String currProductId = product.getString("product_id");
@@ -130,37 +130,65 @@ public class TransactionService {
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
             JSONObject user = (JSONObject) users.getJSONArray("users").get(i);
+
+            // Retrieves user
             if (user.get("id").toString().equals(userId)) {
 
                 double totalCost = 0.0;
 
+                // Loops through user cart
                 for (Object product : user.getJSONArray("cart")) {
+
+                    // Stores reference to current indexed product
                     JSONObject productObj = (JSONObject) product;
+
+                    // Loops through the stores database
                     for (int j = 0; j < stores.getJSONArray("stores").length(); j++) {
+
+                        // Stores reference to current indexed store
                         JSONObject store = (JSONObject) stores.getJSONArray("stores").get(j);
+
+                        // Conditional for if the store reference id is identical to the store id of the product
                         if (store.getString("id").equals(productObj.getString("store_id"))) {
+
+                            // Loops through the stores products
                             for (Object storeProduct : store.getJSONArray("products")) {
+
+                                // Conditional for if the product id is identical to the stores product id
                                 if (((JSONObject) storeProduct).getString("id").equals(productObj.getString("product_id"))) {
-                                    ((JSONObject) storeProduct).put("qty", ((JSONObject) storeProduct).getInt("qty") - productObj.getInt("quantity"));
-                                    System.out.println(store);
+
+                                    // Checks if store has sufficient quantity
+                                    if (((JSONObject) storeProduct).getInt("qty") >= productObj.getInt("quantity")){
+                                        System.out.println("Product in stock");
+                                        ((JSONObject) storeProduct).put("qty", ((JSONObject) storeProduct).getInt("qty") - productObj.getInt("quantity"));
+                                        store.put("sales", productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity"))));
+                                    } else {
+                                        return false;
+                                    }
                                 }
                             }
                         }
 
+                        // Updates stores object
                         stores.getJSONArray("stores").put(j,store);
-                        ss.writeJSONObjectToFile(stores, ss.getStoreFileDirectory());
+
                     }
+
                     totalCost += productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity")));
                 }
 
+                users.getJSONArray("users").put(i, user);
+
+                // Sufficient funds check
                 if (user.getDouble("funds") >= totalCost) {
                     user.getJSONArray("product_history").putAll(user.getJSONArray("cart"));
                     user.getJSONArray("cart").clear();
                     user.put("funds", round((user.getDouble("funds") - totalCost), 2));
+                    ss.writeJSONObjectToFile(stores, ss.getStoreFileDirectory());
+                    return accountService.writeJSONObjectToFile(users, accountService.getUserFileDirectory());
+                } else {
+                    return false;
                 }
-
-                users.getJSONArray("users").put(i, user);
-                return accountService.writeJSONObjectToFile(users, accountService.getUserFileDirectory());
             }
         }
 

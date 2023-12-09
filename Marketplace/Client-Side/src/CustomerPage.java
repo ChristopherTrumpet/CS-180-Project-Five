@@ -63,17 +63,17 @@ public class CustomerPage extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(0,80,0,24);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTH;
         panel.setLayout(gridLayout);
 
         JLabel welcomeMessage = new JLabel("Purdue Marketplace");
         welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
         c.gridy = 0;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.insets = new Insets(0,80,0,24);
         gridLayout.setConstraints(welcomeMessage, c);
         panel.add(welcomeMessage);
 
-        c.insets = new Insets(0,80,8,24);
 
         JTextArea nameMessage = new JTextArea("Hey, " + buyer.getString("username"));
         nameMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
@@ -83,11 +83,10 @@ public class CustomerPage extends JFrame {
         nameMessage.setEditable(false);
         nameMessage.setOpaque(false);
         c.gridy = 1;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
         gridLayout.setConstraints(nameMessage,c);
         panel.add(nameMessage);
-
-        c.insets = new Insets(0,80,0,24);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
         accountDetailsDivider.setMinimumSize(new Dimension(150, 8));
@@ -95,40 +94,46 @@ public class CustomerPage extends JFrame {
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
         c.gridy = 2;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.insets = new Insets(4,80,0,24);
         gridLayout.setConstraints(accountDetailsDivider, c);
         panel.add(accountDetailsDivider);
 
-        c.insets = new Insets(4,80,4,24);
 
         balanceMessage = new JLabel("Balance: $" + buyer.getDouble("funds"));
         balanceMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         c.gridy = 3;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        c.insets = new Insets(0,80,4,24);
+
         gridLayout.setConstraints(balanceMessage,c);
         balanceMessage.setMaximumSize(new Dimension(300, 24));
         panel.add(balanceMessage);
 
-        c.insets = new Insets(4,80,4,24);
 
         JButton storesButton = new JButton("Marketplace");
         storesButton.addActionListener(e -> cardLayout.show(container, "stores"));
         c.gridy = 4;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
         gridLayout.setConstraints(storesButton, c);
         panel.add(storesButton);
 
         JButton settingsButton = new JButton("Settings");
         settingsButton.addActionListener(e -> cardLayout.show(container, "settings"));
         c.gridy = 5;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
         gridLayout.setConstraints(settingsButton, c);
         panel.add(settingsButton);
 
         JButton statisticsButton = new JButton("Statistics");
         statisticsButton.addActionListener(e -> cardLayout.show(container, "statistics"));
         c.gridy = 6;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
         gridLayout.setConstraints(statisticsButton, c);
         panel.add(statisticsButton);
 
@@ -148,7 +153,9 @@ public class CustomerPage extends JFrame {
 
         });
         c.gridy = 7;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
+
         gridLayout.setConstraints(fundsButton, c);
         panel.add(fundsButton);
 
@@ -166,7 +173,9 @@ public class CustomerPage extends JFrame {
 
         });
         c.gridy = 8;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 2;
+
         gridLayout.setConstraints(cartButton, c);
         panel.add(cartButton);
 
@@ -179,8 +188,8 @@ public class CustomerPage extends JFrame {
             }
         });
         c.gridy = 9;
-        c.gridwidth = 2;
         c.gridx = 0;
+        c.gridwidth = 1;
         c.insets = new Insets(4,80,4,4);
         gridLayout.setConstraints(logoutButton, c);
         panel.add(logoutButton);
@@ -194,8 +203,8 @@ public class CustomerPage extends JFrame {
             }
         });
         c.gridy = 9;
-        c.gridx = 2;
-        c.gridwidth = 2;
+        c.gridx = 1;
+        c.gridwidth = 1;
         c.insets = new Insets(4,4,4,24);
         gridLayout.setConstraints(exitButton, c);
         panel.add(exitButton);
@@ -235,7 +244,7 @@ public class CustomerPage extends JFrame {
 
         for (Object contents : cart) {
             for (Object product : new JSONArray(allProductsString)) {
-                if (((JSONObject) product).getString("id").equals(((JSONObject) contents).getString("product_id")))
+                if (((JSONObject) product).getString("product_id").equals(((JSONObject) contents).getString("product_id")))
                 {
                     totalCost += ((JSONObject) contents).getInt("quantity") * ((JSONObject) contents).getDouble("price");
                     model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price"), ((JSONObject) contents).getString("store_id")});
@@ -245,8 +254,8 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable cartTable = new JTable(model);
 
-        TableColumnModel tcm = cartTable.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(3) );
+//        TableColumnModel tcm = cartTable.getColumnModel();
+//        tcm.removeColumn( tcm.getColumn(3) );
 
         for (int c = 0; c < cartTable.getColumnCount(); c++)
         {
@@ -275,23 +284,31 @@ public class CustomerPage extends JFrame {
         JButton placeOrderButton = new JButton("Place Order");
         placeOrderButton.setBounds(24, 404, 400/3 - 4, 24);
         placeOrderButton.addActionListener(e -> {
-            ArrayList<String> orderData = new ArrayList<>();
-            orderData.add("[placeOrder]");
-            orderData.add(buyer.getString("id"));
-            Client.sendToServer(orderData);
 
+            if (cartTable.getRowCount() > 0) {
+                ArrayList<String> orderData = new ArrayList<>();
+                orderData.add("[placeOrder]");
+                orderData.add(buyer.getString("id"));
+                Client.sendToServer(orderData);
 
-            ArrayList<String> buyerData = new ArrayList<>();
-            buyerData.add("[getUser]");
-            buyerData.add(buyer.getString("id"));
-            Client.sendToServer(buyerData);
-            String userString = Client.readFromServer(1).get(0);
-            this.buyer = new JSONObject(userString);
+                if (Client.readFromServer(1).get(0).equals("true")) {
+                    ArrayList<String> buyerData = new ArrayList<>();
+                    buyerData.add("[getUser]");
+                    buyerData.add(buyer.getString("id"));
+                    Client.sendToServer(buyerData);
+                    String userString = Client.readFromServer(1).get(0);
+                    this.buyer = new JSONObject(userString);
 
-            balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
+                    balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
 
-            for (int i = 0; i < cartTable.getRowCount(); i++) {
-                ((DefaultTableModel)cartTable.getModel()).removeRow(i);
+                    for (int i = 0; i < cartTable.getRowCount(); i++) {
+                        ((DefaultTableModel)cartTable.getModel()).removeRow(i);
+                    }
+                } else {
+                    Client.showErrorMessage("Could not place order! Not enough funds.");
+                }
+            } else {
+                Client.showErrorMessage("Please add items to cart to purchase!");
             }
 
         });
@@ -299,15 +316,19 @@ public class CustomerPage extends JFrame {
         JButton removeFromCartButton = new JButton("Remove Item");
         removeFromCartButton.setBounds(24 + 400/3+4, 404, 400/3 - 4, 24);
         removeFromCartButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[removeFromCart]");
-            data.add(buyer.getString("id"));
-            data.add(cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
-            data.add(model.getValueAt(cartTable.getSelectedRow(), 3).toString());
+            if (cartTable.getRowCount() > 0) {
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[removeFromCart]");
+                data.add(buyer.getString("id"));
+                data.add(cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
+                data.add(model.getValueAt(cartTable.getSelectedRow(), 3).toString());
 
-            Client.sendToServer(data);
+                Client.sendToServer(data);
 
-            ((DefaultTableModel)cartTable.getModel()).removeRow(cartTable.getSelectedRow());
+                ((DefaultTableModel)cartTable.getModel()).removeRow(cartTable.getSelectedRow());
+            } else {
+                Client.showErrorMessage("There is nothing in the cart to remove!");
+            }
 
         });
 
@@ -380,7 +401,7 @@ public class CustomerPage extends JFrame {
 
         for (Object contents : productHistory) {
             for (Object product : new JSONArray(allProductsString)) {
-                if (((JSONObject) product).getString("id").equals(((JSONObject) contents).getString("product_id")))
+                if (((JSONObject) product).getString("product_id").equals(((JSONObject) contents).getString("product_id")))
                 {
                     model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price")});
                 }
@@ -423,6 +444,8 @@ public class CustomerPage extends JFrame {
 
         JButton closeButton = new JButton("Close");
         c.gridy = 2;
+        c.gridx = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 2;
         gridLayout.setConstraints(closeButton, c);
         closeButton.addActionListener(e -> {
@@ -432,21 +455,31 @@ public class CustomerPage extends JFrame {
 
         JButton exportHistoryButton = new JButton("Export History");
         c.gridy = 2;
+        c.gridx = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 2;
         gridLayout.setConstraints(exportHistoryButton, c);
         exportHistoryButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
-            chooser.setFileFilter(filter);
-            chooser.showOpenDialog(null);
 
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[exportHistory]");
-            data.add(buyer.getString("id"));
-            data.add(chooser.getSelectedFile().getAbsolutePath());
-            Client.sendToServer(data);
+            if (historyTable.getRowCount() > 0) {
+                JFileChooser chooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
+                chooser.setFileFilter(filter);
+                chooser.showOpenDialog(null);
 
-            JOptionPane.showMessageDialog (null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
+                if (chooser.getSelectedFile() != null) {
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[exportHistory]");
+                    data.add(buyer.getString("id"));
+                    data.add(chooser.getSelectedFile().getAbsolutePath());
+                    Client.sendToServer(data);
+
+                    JOptionPane.showMessageDialog (null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+            } else {
+                Client.showErrorMessage("You have not made any purchases!");
+            }
 
         });
         frame.add(exportHistoryButton);
@@ -487,7 +520,7 @@ public class CustomerPage extends JFrame {
         for (Object product : new JSONArray(allProductsString)) {
             for (Object store : new JSONArray(allStoresString)) {
                 for (Object storeProduct : ((JSONObject) store).getJSONArray("products")) {
-                    if (((JSONObject) product).getString("id").equals(((JSONObject) storeProduct).getString("id"))) {
+                    if (((JSONObject) product).getString("product_id").equals(((JSONObject) storeProduct).getString("id"))) {
                         JSONObject productObj = (JSONObject) product;
                         JSONObject storeProductObj = (JSONObject) storeProduct;
                         JSONObject storeObj = (JSONObject) store;
@@ -902,7 +935,7 @@ public class CustomerPage extends JFrame {
                     ArrayList<String> data = new ArrayList<>();
                     data.add("[addToCart]");
                     data.add(buyer.getString("id"));
-                    data.add(product.getString("id"));
+                    data.add(product.getString("product_id"));
                     data.add(storeId);
                     data.add(spinner.getValue().toString());
                     data.add(String.valueOf(storeProduct.getDouble("price")));

@@ -1,6 +1,5 @@
 package server;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import services.AccountService;
 import services.SearchService;
@@ -164,6 +163,18 @@ public class ClientThread extends Thread {
                         }
                         writer.flush();
                     }
+                    case "[updateProduct]" -> {
+                        data.add(input.readLine()); // Store Id
+                        data.add(input.readLine()); // Product Id
+                        data.add(input.readLine()); // Type
+                        data.add(input.readLine()); // Value
+
+                        if (ss.updateStoreProduct(data.get(1), data.get(2), data.get(3), data.get(4))) {
+                            System.out.println("Changed details successfully");
+                        } else {
+                            System.out.println("Error occurred");
+                        }
+                    }
                     case "[updateUserDetails]" -> {
                         data.add(input.readLine()); // User id
                         data.add(input.readLine()); // User info to change
@@ -204,9 +215,12 @@ public class ClientThread extends Thread {
 
                         if (ts.placeOrder(data.get(1))) {
                             System.out.println("[SERVER] Order successfully placed!");
+                            writer.println("true");
                         } else {
+                            writer.println("false");
                             System.out.println("[SERVER] Error occurred placing order.");
                         }
+                        writer.flush();
                     }
                     case "[addFunds]" -> {
 
@@ -227,6 +241,14 @@ public class ClientThread extends Thread {
                         writer.println(user);
                         writer.flush();
                     }
+                    case "[getStore]" -> {
+
+                        data.add(input.readLine()); // Id
+
+                        String store = ss.getStoreById(data.get(1)).toString();
+                        writer.println(store);
+                        writer.flush();
+                    }
                     case "[exportHistory]" -> {
                         data.add(input.readLine()); // ID
                         data.add(input.readLine()); // filePath
@@ -245,7 +267,6 @@ public class ClientThread extends Thread {
                         SearchService searchService = new SearchService();
                         ArrayList<String> results = searchService.search(data.get(1));
 
-                        System.out.println(results);
                         for (String result : results) {
                             writer.println(result);
                         }

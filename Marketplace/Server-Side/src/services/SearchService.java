@@ -18,7 +18,7 @@ public class SearchService {
         for (Object product : products.getJSONArray("products")) {
             for (Object store : stores.getJSONArray("stores")) {
                 for (Object storeProduct : ((JSONObject) store).getJSONArray("products")) {
-                    if (((JSONObject) storeProduct).getString("id").equals(((JSONObject) product).getString("id"))) {
+                    if (((JSONObject) storeProduct).getString("id").equals(((JSONObject) product).getString("product_id"))) {
                         JSONObject productObj = (JSONObject) product;
                         JSONObject storeProductObj = (JSONObject) storeProduct;
                         String name = productObj.getString("name").toLowerCase();

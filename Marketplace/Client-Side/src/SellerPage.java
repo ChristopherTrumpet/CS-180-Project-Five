@@ -2,6 +2,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -118,16 +122,26 @@ public class SellerPage extends JFrame {
             chooser.setFileFilter(filter);
             chooser.showOpenDialog(null);
 
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[importProducts]");
-            data.add(seller.toString());
-            data.add(chooser.getSelectedFile().getAbsolutePath());
-            Client.sendToServer(data);
+            if (chooser.getSelectedFile() != null) {
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[importProducts]");
+                data.add(seller.toString());
+                data.add(chooser.getSelectedFile().getAbsolutePath());
+                Client.sendToServer(data);
 
-            container.remove(Stores());
-            container.add("stores", Stores());
-            cardLayout.show(container, "stores");
-            JOptionPane.showMessageDialog (null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
+                ArrayList<String> userData = new ArrayList<>();
+                userData.add("[getUser]");
+                userData.add(seller.getString("id"));
+                Client.sendToServer(userData);
+                String userString = Client.readFromServer(1).get(0);
+                this.seller = new JSONObject(userString);
+
+                container.remove(Stores());
+                container.add("stores", Stores());
+                cardLayout.show(container, "stores");
+                JOptionPane.showMessageDialog (null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
+
+            }
         });
         c.gridy = 5;
         c.gridwidth = 4;
@@ -225,7 +239,12 @@ public class SellerPage extends JFrame {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table =(JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    editStore(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()));
+                    ArrayList<String> data = new ArrayList<>();
+                    data.add("[getStore]");
+                    data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
+                    Client.sendToServer(data);
+                    JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
+                    editStore(store);
                 }
             }
         });
@@ -251,7 +270,12 @@ public class SellerPage extends JFrame {
         selectStoreButton.setBounds(24, 404, 400/3 - 4, 24);
         selectStoreButton.addActionListener(e -> {
             if(!table.getSelectionModel().isSelectionEmpty()) {
-                editStore(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()));
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[getStore]");
+                data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
+                Client.sendToServer(data);
+                JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
+                editStore(store);
             }
 
         });
@@ -497,7 +521,14 @@ public class SellerPage extends JFrame {
 
         storePage.setLayout(null);
 
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column)
+            {
+                // make read only fields except column 1 and 2
+                return column == 1 || column == 2;
+            }
+        };
 
         // Add some data to the model
         model.addColumn("Product Name");
@@ -518,7 +549,7 @@ public class SellerPage extends JFrame {
         else {
             for (Object productGeneric : allProducts) {
                 JSONObject productGenericObj = (JSONObject) productGeneric;
-                String storeGenericId = productGenericObj.getString("id");
+                String storeGenericId = productGenericObj.getString("product_id");
 
                 productNames.add(productGenericObj.getString("name"));
 
@@ -539,6 +570,38 @@ public class SellerPage extends JFrame {
 
         TableColumnModel tcm = productTable.getColumnModel();
         tcm.removeColumn( tcm.getColumn(3) );
+
+
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                String valueStr = productTable.getValueAt(row, column).toString();
+
+                ArrayList<String> data = new ArrayList<>();
+                data.add("[updateProduct]");
+
+                data.add(store.getString("id")); // Store id
+                data.add(model.getValueAt(row, 3).toString()); // Product id
+
+                // Type
+                switch (column) {
+                    case 1 -> {
+                        data.add("quantity");
+                        data.add(valueStr);
+                    }
+                    case 2 -> {
+                        data.add("price");
+                        data.add(valueStr.substring(1));
+                    }
+                }
+
+                Client.sendToServer(data);
+
+            }
+        });
 
         JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
         titleMessage.setFont(new Font("serif", Font.BOLD, 18));
@@ -617,7 +680,7 @@ public class SellerPage extends JFrame {
                         for (Object product : allProducts) {
                             JSONObject productObj = (JSONObject) product;
                             if (productObj.getString("name").equals(productName))
-                                productId = productObj.getString("id");
+                                productId = productObj.getString("product_id");
                         }
 
                         ArrayList<String> data = new ArrayList<>();
