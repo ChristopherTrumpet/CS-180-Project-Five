@@ -219,9 +219,15 @@ public class SellerPage extends JFrame {
                     String storeId = (String) store;
 
                     if (storeId.equals(storeGenericId)) {
-                        model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales"), storeGenericObj.toString()});
+                        boolean storeExists = false;
+                        for (int i = 0; i < model.getRowCount(); i++) {
+                            if (model.getValueAt(i, 0).equals(storeGenericObj.getString("name"))) {
+                                storeExists = true;
+                            }
+                        }
+                        if (!storeExists)
+                            model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales"), storeGenericObj.toString()});
                     }
-
                 }
             }
         }
@@ -616,33 +622,35 @@ public class SellerPage extends JFrame {
         changeStoreName.addActionListener(e -> {
             String storeName = JOptionPane.showInputDialog("What would you like to change the name to?");
 
-            if (storeName.length() <= 16) {
+            if (storeName != null) {
+                if (storeName.length() <= 16) {
 
-                boolean storeExists = false;
-                Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
-                String storesString = Client.readFromServer(1).get(0);
-                JSONArray stores = new JSONArray(storesString);
+                    boolean storeExists = false;
+                    Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+                    String storesString = Client.readFromServer(1).get(0);
+                    JSONArray stores = new JSONArray(storesString);
 
-                for (Object storeObj : stores) {
-                    if (((JSONObject) storeObj).getString("name").equals(storeName)) {
-                        storeExists = true;
+                    for (Object storeObj : stores) {
+                        if (((JSONObject) storeObj).getString("name").equals(storeName)) {
+                            storeExists = true;
+                        }
                     }
-                }
 
-                if (storeExists) {
-                    Client.showErrorMessage("Store already exists!");
+                    if (storeExists) {
+                        Client.showErrorMessage("Store already exists!");
+                    } else {
+                        ArrayList<String> data = new ArrayList<>();
+                        data.add("[changeStoreName]");
+                        data.add(store.getString("id"));
+                        data.add(storeName);
+                        Client.sendToServer(data);
+
+                        titleMessage.setText(storeName + "'s Products");
+                        table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
+                    }
                 } else {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[changeStoreName]");
-                    data.add(store.getString("id"));
-                    data.add(storeName);
-                    Client.sendToServer(data);
-
-                    titleMessage.setText(storeName + "'s Products");
-                    table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
+                    Client.showErrorMessage("Please enter a store name that is less than 16 characters!");
                 }
-            } else {
-                Client.showErrorMessage("Please enter a store name that is less than 16 characters!");
             }
 
         });

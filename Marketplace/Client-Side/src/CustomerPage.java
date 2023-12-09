@@ -254,8 +254,8 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable cartTable = new JTable(model);
 
-//        TableColumnModel tcm = cartTable.getColumnModel();
-//        tcm.removeColumn( tcm.getColumn(3) );
+        TableColumnModel tcm = cartTable.getColumnModel();
+        tcm.removeColumn( tcm.getColumn(3) );
 
         for (int c = 0; c < cartTable.getColumnCount(); c++)
         {
@@ -581,7 +581,7 @@ public class CustomerPage extends JFrame {
 
         JButton searchButton = new JButton("Search");
         searchButton.setBounds(24 + 400/2 + 4, 404, 400/2 - 8, 24);
-        searchButton.addActionListener(e -> search());
+        searchButton.addActionListener(e -> search(marketTable));
 
         storesPanel.add(storesLabel);
         storesPanel.add(helpfulLabel);
@@ -753,35 +753,45 @@ public class CustomerPage extends JFrame {
         return panel;
     }
 
-    public void search() {
+    public void search(JTable table) {
         String searchQuery = JOptionPane.showInputDialog("Search:", "Type here...");
-        ArrayList<String> data = new ArrayList<>();
-        data.add("[search]");
-        data.add(searchQuery);
-        Client.sendToServer(data);
 
-        int numOfResults = -1;
-        try {
-             numOfResults = Integer.parseInt(Client.readFromServer(1).get(0));
-        } catch (NumberFormatException e) {
-            System.out.println("No Results...");
+        if(searchQuery != null) {
+            ArrayList<String> data = new ArrayList<>();
+            data.add("[search]");
+            data.add(searchQuery);
+            Client.sendToServer(data);
+
+            int numOfResults = -1;
+            try {
+                numOfResults = Integer.parseInt(Client.readFromServer(1).get(0));
+                ArrayList<String> results = Client.readFromServer(numOfResults);
+
+                String[] array = new String[results.size()];
+                for(int i = 0; i < array.length; i++) {
+                    array[i] = results.get(i);
+                }
+                JComboBox resultList = new JComboBox(array);
+                resultList.setEditable(true);
+                AutoCompletion.enable(resultList);
+
+                int option = JOptionPane.showConfirmDialog(null, resultList, "Select result", JOptionPane.OK_CANCEL_OPTION);
+
+                if (option == 0) {
+                    System.out.println("Selection made.");
+                    for (int i = 0; i < table.getRowCount(); i++) {
+
+                        if (resultList.getSelectedItem().equals(table.getValueAt(i, 0).toString()))
+                            viewProductPage(new JSONObject(table.getModel().getValueAt(i, 3).toString()), new JSONObject(table.getModel().getValueAt(i, 4).toString()), new JSONObject(table.getModel().getValueAt(i, 5).toString()).getString("id"));
+
+                    }
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("No Results...");
+                Client.showErrorMessage("There were no results...");
+            }
         }
 
-        ArrayList<String> results = Client.readFromServer(numOfResults);
-
-        String[] array = new String[results.size()];
-        for(int i = 0; i < array.length; i++) {
-            array[i] = results.get(i);
-        }
-        JComboBox resultList = new JComboBox(array);
-        resultList.setEditable(true);
-        AutoCompletion.enable(resultList);
-
-        int option = JOptionPane.showConfirmDialog(null, resultList, "Select result", JOptionPane.OK_CANCEL_OPTION);
-
-        if (option == 0) {
-            System.out.println("Selection made.");
-        }
     }
 
     public void viewProductPage(JSONObject product, JSONObject storeProduct, String storeId) {
@@ -815,18 +825,25 @@ public class CustomerPage extends JFrame {
         panel.setMinimumSize(new Dimension(320, 480));
         panel.setPreferredSize(new Dimension(320, 480));
         panel.setMaximumSize(new Dimension(320, 480));
-        JLabel productLabel = new JLabel(product.getString("name"));
-        productLabel.setFont(new Font("serif", Font.BOLD, 24));
+
+        JTextArea productLabel = new JTextArea(product.getString("name"));
+        productLabel.setMinimumSize(new Dimension(288, 24));
+        productLabel.setPreferredSize(new Dimension(288, 24));
+        productLabel.setMaximumSize(new Dimension(288, 24));
+        productLabel.setFont(new Font("serif", Font.BOLD, 18));
+        productLabel.setLineWrap(true);
+        productLabel.setWrapStyleWord(true);
+        productLabel.setOpaque(false);
+        productLabel.setFocusable(false);
         c.gridy = 0;
-        c.gridwidth = 4;
-        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         gridLayout.setConstraints(productLabel, c);
         panel.add(productLabel);
 
         c.insets = new Insets(4,24,0,24);
 
         JTextArea descriptionLabel = new JTextArea(product.getString("description"));
-        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
+        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 12));
         descriptionLabel.setLineWrap(true);
         descriptionLabel.setWrapStyleWord(true);
         descriptionLabel.setOpaque(false);
@@ -848,14 +865,14 @@ public class CustomerPage extends JFrame {
         panel.add(productPageDivider);
 
         JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
-        quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 14));
+        quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 12));
         c.insets = new Insets(4,24,0,24);
         c.gridy = 3;
         gridLayout.setConstraints(quantityLabel, c);
         panel.add(quantityLabel);
 
         JLabel priceLabel = new JLabel("Price: $" + storeProduct.getDouble("price"));
-        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 14));
+        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 12));
         c.insets = new Insets(4,24,0,24);
 
         c.gridy = 4;

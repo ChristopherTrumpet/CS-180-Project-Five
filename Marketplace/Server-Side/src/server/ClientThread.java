@@ -267,9 +267,14 @@ public class ClientThread extends Thread {
                         SearchService searchService = new SearchService();
                         ArrayList<String> results = searchService.search(data.get(1));
 
-                        for (String result : results) {
-                            writer.println(result);
+                        if (results == null) {
+                            writer.println("null");
+                        } else {
+                            for (String result : results) {
+                                writer.println(result);
+                            }
                         }
+
                         writer.flush();
                     }
                     case "[importProducts]" -> {
