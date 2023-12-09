@@ -747,6 +747,66 @@ public class CustomerPage extends JFrame {
         statisticsPanel.add(statisticsLabel);
         statisticsPanel.add(supportLabel);
 
+        JLabel grossSalesLabel = new JLabel("Best Selling Items");
+        grossSalesLabel.setFont(new Font("serif", Font.BOLD, 14));
+        grossSalesLabel.setBounds(24, 60, 150, 24);
+
+        JLabel customerSalesLabel = new JLabel("Your Top Stores");
+        customerSalesLabel.setFont(new Font("serif", Font.BOLD, 14));
+        customerSalesLabel.setBounds(236, 60, 150, 24);
+
+        statisticsPanel.add(grossSalesLabel);
+        statisticsPanel.add(customerSalesLabel);
+
+        // Create a DefaultTableModel
+        DefaultTableModel storeModel = new DefaultTableModel();
+
+        // Add some data to the model
+        storeModel.addColumn("Store");
+        storeModel.addColumn("Product");
+
+        storeModel.addRow(new Object[]{"Store Name", "Product Name"});
+
+        // Create a JTable using the model
+        JTable storesTable = new JTable(storeModel);
+
+        for (int c = 0; c < storesTable.getColumnCount(); c++)
+        {
+            Class<?> col_class = storesTable.getColumnClass(c);
+            storesTable.setDefaultEditor(col_class, null);        // remove editor
+        }
+
+        JScrollPane storeTableStat = new  JScrollPane(storesTable);
+        storeTableStat.setBounds(24, 92, 200, 344);
+
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
+
+        statisticsPanel.add(storeTableStat);
+
+        // Create a DefaultTableModel
+        DefaultTableModel productModel = new DefaultTableModel();
+
+        // Add some data to the model
+        productModel.addColumn("Store");
+        productModel.addColumn("Product");
+
+        productModel.addRow(new Object[]{"Product Name", "Sales"});
+
+        // Create a JTable using the model
+        JTable productTable = new JTable(productModel);
+
+        for (int c = 0; c < productTable.getColumnCount(); c++)
+        {
+            Class<?> col_class = productTable.getColumnClass(c);
+            productTable.setDefaultEditor(col_class, null);        // remove editor
+        }
+
+        JScrollPane productTableStat = new  JScrollPane(productTable);
+        productTableStat.setBounds(236, 92, 200, 344);
+
+        statisticsPanel.add(productTableStat);
+
         JSeparator divider = new JSeparator(JSeparator.VERTICAL);
         divider.setBackground(Color.decode("#dbdbdb"));
         divider.setForeground(Color.decode("#dbdbdb"));
