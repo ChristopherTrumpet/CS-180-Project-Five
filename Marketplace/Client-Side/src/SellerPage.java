@@ -652,10 +652,12 @@ public class SellerPage extends JFrame {
         JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
         titleMessage.setFont(new Font("serif", Font.BOLD, 18));
         titleMessage.setBounds(233, 24, 365, 24);
+        storePage.add(titleMessage);
 
         JLabel optionsTitle = new JLabel("Options");
         optionsTitle.setFont(new Font("serif", Font.BOLD, 18));
         optionsTitle.setBounds(24, 24, 200, 24);
+        storePage.add(optionsTitle);
 
         JButton changeStoreName = new JButton("Change Store Name");
         changeStoreName.setBounds(24, 56, 185, 24);
@@ -696,6 +698,7 @@ public class SellerPage extends JFrame {
             }
 
         });
+        storePage.add(changeStoreName);
 
         JButton addProduct = new JButton("Add Product");
         addProduct.setBounds(24, 88, 185, 24);
@@ -753,9 +756,16 @@ public class SellerPage extends JFrame {
                 System.out.println("Product addition canceled");
             }
         });
+        storePage.add(addProduct);
+
+        JButton createProductButton = new JButton("Create Product");
+        createProductButton.setBounds(24, 120, 185, 24);
+        createProductButton.addActionListener(e -> {
+
+        });
 
         JButton removeProduct = new JButton("Remove Product");
-        removeProduct.setBounds(24, 120, 185, 24);
+        removeProduct.setBounds(24, 152, 185, 24);
         removeProduct.addActionListener(e -> {
 
             if (!productTable.getSelectionModel().isSelectionEmpty()) {
@@ -771,20 +781,15 @@ public class SellerPage extends JFrame {
                 }
             }
         });
+        storePage.add(removeProduct);
 
         JButton closeProduct = new JButton("Close");
-        closeProduct.setBounds(24, 397, 185, 24);
+        closeProduct.setBounds(24, 429, 185, 24);
         closeProduct.addActionListener(e -> storePage.dispose());
+        storePage.add(closeProduct);
 
         JScrollPane sp = new JScrollPane(productTable);
         sp.setBounds(233, 56, 365, 365);
-
-        storePage.add(optionsTitle);
-        storePage.add(changeStoreName);
-        storePage.add(addProduct);
-        storePage.add(removeProduct);
-        storePage.add(closeProduct);
-        storePage.add(titleMessage);
         storePage.add(sp);
 
         storePage.setVisible(true);

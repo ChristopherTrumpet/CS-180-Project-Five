@@ -47,10 +47,10 @@ public class ClientThread extends Thread {
 
                             data = readData(input, 4);
 
-                            char accountType = data.get(1).charAt(0);
-                            String username = data.get(2);
-                            String password = data.get(3);
-                            String email = data.get(4);
+                            char accountType = data.get(0).charAt(0);
+                            String username = data.get(1);
+                            String password = data.get(2);
+                            String email = data.get(3);
 
                             as.createAccount(accountType, username, password, email);
 
@@ -63,8 +63,10 @@ public class ClientThread extends Thread {
                             // password
                             data = readData(input, 2);
 
-                            String usernameOrEmail = data.get(1);
-                            String password = data.get(2);
+                            System.out.println(data);
+
+                            String usernameOrEmail = data.get(0);
+                            String password = data.get(1);
 
                             JSONObject user = as.validateLogin(usernameOrEmail, password);
 
@@ -110,7 +112,7 @@ public class ClientThread extends Thread {
                             // New Name
                             data = readData(input, 2);
 
-                            if (ss.updateStoreName(data.get(1), data.get(2)))
+                            if (ss.updateStoreName(data.get(0), data.get(1)))
                                 System.out.println("[SERVER] Changed store name...");
                             else
                                 System.out.println("[SERVER] Error occurred changing name.");
@@ -121,7 +123,7 @@ public class ClientThread extends Thread {
                             // Store id
                             data = readData(input, 2);
 
-                            if (ss.removeStore(data.get(2), data.get(1)))
+                            if (ss.removeStore(data.get(1), data.get(0)))
                                 System.out.println("[SERVER] Removed store...");
                             else
                                 System.out.println("[SERVER] Problem occurred removing store...");
@@ -132,7 +134,7 @@ public class ClientThread extends Thread {
                             // Product id
                             data = readData(input, 2);
 
-                            if (ss.removeProduct(data.get(1), data.get(2)))
+                            if (ss.removeProduct(data.get(0), data.get(1)))
                                 System.out.println("[SERVER] Removed product name...");
                             else
                                 System.out.println("[SERVER] Product could not be removed...");
@@ -145,7 +147,7 @@ public class ClientThread extends Thread {
                             // Price
                             data = readData(input, 4);
 
-                            if (ss.addProduct(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
+                            if (ss.addProduct(data.get(0), data.get(1), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)))) {
                                 System.out.println("[SERVER] Added product");
                             } else {
                                 System.out.println("[SERVER] Could not add product...");
@@ -157,8 +159,8 @@ public class ClientThread extends Thread {
                             // Store name
                             data = readData(input, 2);
 
-                            if (ss.createStore(data.get(1), data.get(2))) {
-                                writer.println(ss.getStoreByName(data.get(2)));
+                            if (ss.createStore(data.get(0), data.get(1))) {
+                                writer.println(ss.getStoreByName(data.get(1)));
                                 System.out.println("[SERVER] Created store and add to users store");
                             } else {
                                 System.out.println("[SERVER] Store could not be created...");
@@ -173,7 +175,7 @@ public class ClientThread extends Thread {
                             // Value
                             data = readData(input, 4);
 
-                            if (ss.updateStoreProduct(data.get(1), data.get(2), data.get(3), data.get(4))) {
+                            if (ss.updateStoreProduct(data.get(0), data.get(1), data.get(2), data.get(3))) {
                                 System.out.println("Changed details successfully");
                             } else {
                                 System.out.println("Error occurred");
@@ -186,7 +188,7 @@ public class ClientThread extends Thread {
                             // New value
                             data = readData(input, 3);
 
-                            if (as.updateUserDetails(data.get(1), data.get(2), data.get(3))) {
+                            if (as.updateUserDetails(data.get(0), data.get(1), data.get(2))) {
                                 System.out.println("Changed details successfully");
                             } else {
                                 System.out.println("Error occurred");
@@ -197,7 +199,7 @@ public class ClientThread extends Thread {
                             // User id
                             data = readData(input, 1);
 
-                            if (as.removeAccount(data.get(1))) {
+                            if (as.removeAccount(data.get(0))) {
                                 System.out.println("[SERVER] Account removed successfully!");
                             } else {
                                 System.out.println("[SERVER] Error occurred, account was not removed.");
@@ -212,7 +214,7 @@ public class ClientThread extends Thread {
                             // Price
                             data = readData(input, 5);
 
-                            if (ts.addToCart(data.get(1), data.get(2), data.get(3), Integer.parseInt(data.get(4)), Double.parseDouble(data.get(5)))) {
+                            if (ts.addToCart(data.get(0), data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
                                 System.out.println("[SERVER] Added to cart successfully!");
                             } else {
                                 System.out.println("[SERVER] Error occurred writing cart.");
@@ -223,7 +225,7 @@ public class ClientThread extends Thread {
                             // User id
                             data = readData(input, 1);
 
-                            if (ts.placeOrder(data.get(1))) {
+                            if (ts.placeOrder(data.get(0))) {
                                 System.out.println("[SERVER] Order successfully placed!");
                                 writer.println("true");
                             } else {
@@ -238,7 +240,7 @@ public class ClientThread extends Thread {
                             // New Balance Amount
                             data = readData(input, 2);
 
-                            if (ts.addFunds(data.get(1), Double.parseDouble(data.get(2)))) {
+                            if (ts.addFunds(data.get(0), Double.parseDouble(data.get(1)))) {
                                 System.out.println("[SERVER] Funds added!");
                             } else {
                                 System.out.println("[SERVER] Funds were not successfully added...");
@@ -249,7 +251,7 @@ public class ClientThread extends Thread {
                             // User id
                             data = readData(input, 1);
 
-                            String user = as.getUser("id", data.get(1)).toString();
+                            String user = as.getUser("id", data.get(0)).toString();
                             writer.println(user);
                             writer.flush();
                         }
@@ -258,7 +260,7 @@ public class ClientThread extends Thread {
                             // Store id
                             data = readData(input, 1);
 
-                            String store = ss.getStoreById(data.get(1)).toString();
+                            String store = ss.getStoreById(data.get(0)).toString();
                             writer.println(store);
                             writer.flush();
                         }
@@ -268,7 +270,7 @@ public class ClientThread extends Thread {
                             // File Path
                             data = readData(input, 2);
 
-                            if (ts.exportProductHistory(data.get(1), data.get(2))) {
+                            if (ts.exportProductHistory(data.get(0), data.get(1))) {
                                 System.out.println("[SERVER] Successfully export product history");
                             } else {
                                 System.out.println("[SERVER] Error occurred exporting product history.");
@@ -280,14 +282,14 @@ public class ClientThread extends Thread {
                             // Store id
 
                             data = readData(input, 3);
-                            ts.removeFromCart(data.get(1), data.get(2), data.get(3));
+                            ts.removeFromCart(data.get(0), data.get(1), data.get(2));
                         }
                         case "search" -> {
 
                             // Search Query
                             data = readData(input, 1);
 
-                            ArrayList<String> results = searchService.search(data.get(1));
+                            ArrayList<String> results = searchService.search(data.get(0));
 
                             if (results == null) {
                                 writer.println("null");
@@ -305,7 +307,7 @@ public class ClientThread extends Thread {
                             // File path
                             data = readData(input, 2);
 
-                            ss.importProducts(new JSONObject(data.get(1)), data.get(2));
+                            ss.importProducts(new JSONObject(data.get(0)), data.get(1));
                         }
                         case "exit" -> {
                             break loop;
