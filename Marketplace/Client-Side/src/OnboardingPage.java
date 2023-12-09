@@ -82,41 +82,7 @@ public class OnboardingPage extends JFrame {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                String password = new String(passwordField.getPassword());
-
-                                if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
-
-                                    ArrayList<String> data = new ArrayList<>();
-
-                                    data.add("[loginButton]");
-                                    data.add(identifierField.getText());
-                                    data.add(password);
-
-                                    Client.sendToServer(data);
-
-                                    data = Client.readFromServer(2);
-
-                                    if (data.get(0).equals("true")) {
-                                        JSONObject user = new JSONObject(data.get(1));
-                                        if (user.getString("id").endsWith("b")) {
-                                            new CustomerPage(user);
-                                        } else {
-                                            new SellerPage(user);
-                                        }
-                                        reference.dispose();
-                                        cardLayout.next(container);
-                                    } else {
-                                        Client.showErrorMessage("User does not exist. " +
-                                                "Make sure you have typed in your username and password correctly.");
-                                    }
-                                } else {
-                                    JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
-                                }
-                            }
-                        });
+                        SwingUtilities.invokeLater(() -> login(passwordField, identifierField));
                     }
                 }
             });
@@ -129,37 +95,7 @@ public class OnboardingPage extends JFrame {
             loginButton.setFocusable(false);
 
             loginButton.addActionListener(e -> {
-
-                String password = new String(passwordField.getPassword());
-
-                if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
-
-                    ArrayList<String> data = new ArrayList<>();
-
-                    data.add("[loginButton]");
-                    data.add(identifierField.getText());
-                    data.add(password);
-
-                    Client.sendToServer(data);
-
-                    data = Client.readFromServer(2);
-
-                    if (data.get(0).equals("true")) {
-                        JSONObject user = new JSONObject(data.get(1));
-                        if (user.getString("id").endsWith("b")) {
-                            new CustomerPage(user);
-                        } else {
-                            new SellerPage(user);
-                        }
-                        reference.dispose();
-                        cardLayout.next(container);
-                    } else {
-                        Client.showErrorMessage("User does not exist. " +
-                                "Make sure you have typed in your username and password correctly.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
-                }
+                login(passwordField, identifierField);
             });
 
             createAccountButton.setBackground(Color.decode("#f4f4f4"));
@@ -181,6 +117,36 @@ public class OnboardingPage extends JFrame {
             this.add(passwordField);
             this.add(loginButton);
             this.add(createAccountButton);
+        }
+    }
+
+    private void login(JPasswordField passwordField, JTextField identifierField) {
+        String password = new String(passwordField.getPassword());
+
+        if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
+
+            Client.sendToServer("loginButton",
+                    identifierField.getText(),
+                    password
+            );
+
+            ArrayList<String> data = Client.readFromServer(2);
+
+            if (data.get(0).equals("true")) {
+                JSONObject user = new JSONObject(data.get(1));
+                if (user.getString("id").endsWith("b")) {
+                    new CustomerPage(user);
+                } else {
+                    new SellerPage(user);
+                }
+                reference.dispose();
+                cardLayout.next(container);
+            } else {
+                Client.showErrorMessage("User does not exist. " +
+                        "Make sure you have typed in your username and password correctly.");
+            }
+        } else {
+            JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -244,21 +210,22 @@ public class OnboardingPage extends JFrame {
                 String password = String.valueOf(passwordField.getPassword());
                 if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
                     if (sellerType.isSelected() || buyerType.isSelected()) {
-                        ArrayList<String> data = new ArrayList<>();
 
-                        data.add("[signUpButton]");
+                        String userAccountType;
 
                         if (sellerType.isSelected()) {
-                            data.add("s");
+                            userAccountType = "s";
                         } else {
-                            data.add("b");
+                            userAccountType = "b";
                         }
 
-                        data.add(usernameField.getText());
-                        data.add(password);
-                        data.add(emailField.getText());
-
-                        Client.sendToServer(data);
+                        Client.sendToServer(
+                                "signUpButton",
+                                userAccountType,
+                                usernameField.getText(),
+                                password,
+                                emailField.getText()
+                        );
 
                         String userString = Client.readFromServer(1).get(0);
                         JSONObject user = new JSONObject(userString);

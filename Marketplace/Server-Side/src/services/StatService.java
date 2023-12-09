@@ -82,10 +82,11 @@ public class StatService  {
             JSONObject store = storeService.getStoreById(storeId);
             JSONArray products = store.getJSONArray("buyers");
         }
+        return null;
     }
     public int productsBoughtByCustomer(String buyerId, String storeId) {
         if (!accountService.isBuyer(buyerId)) {
-            return null;
+            return -1;
         } else {
             JSONObject store = storeService.getStoreById(storeId);
             JSONArray products = store.getJSONArray("products");
@@ -98,6 +99,7 @@ public class StatService  {
                 jsonValues.get(i).get("buyers");
             }
         }
+        return 0;
     }
 }
 

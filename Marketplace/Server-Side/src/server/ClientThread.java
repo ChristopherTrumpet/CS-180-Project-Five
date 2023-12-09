@@ -48,7 +48,7 @@ public class ClientThread extends Thread {
                 }
 
                 switch (data.get(0)) {
-                    case "[signUpButton]" -> {
+                    case "signUpButton" -> {
                         for(int i = 0; i < 4; i++) {
                             data.add(input.readLine());
                         }
@@ -61,7 +61,7 @@ public class ClientThread extends Thread {
                         writer.flush();
                         data.clear();
                     }
-                    case "[loginButton]" -> {
+                    case "loginButton" -> {
 
                         data.add(input.readLine());
                         data.add(input.readLine());
@@ -83,7 +83,7 @@ public class ClientThread extends Thread {
                         data.clear();
 
                     }
-                    case "[getStores]" -> {
+                    case "getStores" -> {
                         System.out.println("[SERVER] Receiving stores...");
                         JSONObject storeFile = new JSONObject(ss.getStoreFile());
                         if (!storeFile.isEmpty()) {
@@ -95,7 +95,7 @@ public class ClientThread extends Thread {
                         data.clear();
 
                     }
-                    case "[getProducts]" -> {
+                    case "getProducts" -> {
                         System.out.println("[SERVER] Receiving products...");
                         JSONObject productFile = new JSONObject(ss.getProductFile());
                         if (!productFile.isEmpty()) {
@@ -106,7 +106,7 @@ public class ClientThread extends Thread {
                         writer.flush();
                         data.clear();
                     }
-                    case "[changeStoreName]" -> {
+                    case "changeStoreName" -> {
 
                         data.add(input.readLine());
                         data.add(input.readLine());
@@ -115,7 +115,7 @@ public class ClientThread extends Thread {
                         System.out.println("[SERVER] Changed store name...");
                         data.clear();
                     }
-                    case "[removeStore]" -> {
+                    case "removeStore" -> {
 
                         data.add(input.readLine()); // Seller id
                         data.add(input.readLine()); // Store id
@@ -127,7 +127,7 @@ public class ClientThread extends Thread {
                         else
                             System.out.println("[SERVER] Problem occurred removing store...");
                     }
-                    case "[removeProduct]" -> {
+                    case "removeProduct" -> {
 
                         data.add(input.readLine()); // Store Id
                         data.add(input.readLine()); // Product Id
@@ -138,7 +138,7 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Product could not be removed...");
                         data.clear();
                     }
-                    case "[addProduct]" -> {
+                    case "addProduct" -> {
                         data.add(input.readLine()); // Store id
                         data.add(input.readLine()); // Product id
                         data.add(input.readLine()); // Quantity
@@ -151,7 +151,7 @@ public class ClientThread extends Thread {
                         }
                         data.clear();
                     }
-                    case "[createStore]" -> {
+                    case "createStore" -> {
                         data.add(input.readLine()); // Seller Id
                         data.add(input.readLine()); // Store Name
 
@@ -163,7 +163,7 @@ public class ClientThread extends Thread {
                         }
                         writer.flush();
                     }
-                    case "[updateProduct]" -> {
+                    case "updateProduct" -> {
                         data.add(input.readLine()); // Store Id
                         data.add(input.readLine()); // Product Id
                         data.add(input.readLine()); // Type
@@ -175,7 +175,7 @@ public class ClientThread extends Thread {
                             System.out.println("Error occurred");
                         }
                     }
-                    case "[updateUserDetails]" -> {
+                    case "updateUserDetails" -> {
                         data.add(input.readLine()); // User id
                         data.add(input.readLine()); // User info to change
                         data.add(input.readLine()); // New value
@@ -186,7 +186,7 @@ public class ClientThread extends Thread {
                             System.out.println("Error occurred");
                         }
                     }
-                    case "[deleteAccount]" -> {
+                    case "deleteAccount" -> {
                         data.add(input.readLine()); // User id
 
                         if (as.removeAccount(data.get(1))) {
@@ -195,7 +195,7 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Error occurred, account was not removed.");
                         }
                     }
-                    case "[addToCart]" -> {
+                    case "addToCart" -> {
                         data.add(input.readLine()); // User ID
                         data.add(input.readLine()); // Product ID
                         data.add(input.readLine()); // Store ID
@@ -210,7 +210,7 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Error occurred writing cart.");
                         }
                     }
-                    case "[placeOrder]" -> {
+                    case "placeOrder" -> {
                         data.add(input.readLine()); // User id
 
                         if (ts.placeOrder(data.get(1))) {
@@ -222,7 +222,7 @@ public class ClientThread extends Thread {
                         }
                         writer.flush();
                     }
-                    case "[addFunds]" -> {
+                    case "addFunds" -> {
 
                         data.add(input.readLine()); // Buyer id
                         data.add(input.readLine()); // New Balance Amount
@@ -233,7 +233,7 @@ public class ClientThread extends Thread {
                             System.out.println("[SERVER] Funds were not successfully added...");
                         }
                     }
-                    case "[getUser]" -> {
+                    case "getUser" -> {
 
                         data.add(input.readLine()); // Id
 
@@ -241,7 +241,7 @@ public class ClientThread extends Thread {
                         writer.println(user);
                         writer.flush();
                     }
-                    case "[getStore]" -> {
+                    case "getStore" -> {
 
                         data.add(input.readLine()); // Id
 
@@ -249,20 +249,20 @@ public class ClientThread extends Thread {
                         writer.println(store);
                         writer.flush();
                     }
-                    case "[exportHistory]" -> {
+                    case "exportHistory" -> {
                         data.add(input.readLine()); // ID
                         data.add(input.readLine()); // filePath
 
                         ts.exportProductHistory(data.get(1), data.get(2));
                     }
-                    case "[removeFromCart]" -> {
+                    case "removeFromCart" -> {
                         data.add(input.readLine()); // ID
                         data.add(input.readLine()); // Product Name
                         data.add(input.readLine()); // Store ID
 
                         ts.removeFromCart(data.get(1), data.get(2), data.get(3));
                     }
-                    case "[search]" -> {
+                    case "search" -> {
                         data.add(input.readLine()); // Search Query
                         SearchService searchService = new SearchService();
                         ArrayList<String> results = searchService.search(data.get(1));
@@ -277,7 +277,7 @@ public class ClientThread extends Thread {
 
                         writer.flush();
                     }
-                    case "[importProducts]" -> {
+                    case "importProducts" -> {
                         data.add(input.readLine()); // ID
                         data.add(input.readLine()); // filePath
 

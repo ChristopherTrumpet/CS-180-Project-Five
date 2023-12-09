@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -62,10 +63,16 @@ public class Client {
         }
     }
 
-    public static void sendToServer(ArrayList<String> lines) {
-        for (String line : lines) {
-            stringToServer.println(line);
+    public static void sendToServer(String function, String... dataValues) {
+
+        stringToServer.println(function);
+
+        if (dataValues != null) {
+            for (String value : dataValues) {
+                stringToServer.println(value);
+            }
         }
+
         stringToServer.flush();
     }
     public static ArrayList<String> readFromServer(int numLines) {
@@ -88,7 +95,7 @@ public class Client {
 
     public static void closeConnection() {
         try {
-            sendToServer(new ArrayList<>(List.of("[quit]")));
+            sendToServer("quit");
             clientSocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

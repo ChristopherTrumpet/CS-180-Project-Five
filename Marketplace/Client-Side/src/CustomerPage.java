@@ -9,6 +9,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -61,20 +62,22 @@ public class CustomerPage extends JFrame {
         JPanel panel = new JPanel();
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(0,80,0,24);
+        c.insets = new Insets(0, 80, 0, 24);
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(gridLayout);
 
+
+        // WELCOME MESSAGE
         JLabel welcomeMessage = new JLabel("Purdue Marketplace");
         welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
         c.gridy = 0;
         c.gridx = 0;
         c.gridwidth = 2;
-        c.insets = new Insets(0,80,0,24);
+        c.insets = new Insets(0, 80, 0, 24);
         gridLayout.setConstraints(welcomeMessage, c);
         panel.add(welcomeMessage);
 
-
+        // GREETINGS MESSAGE
         JTextArea nameMessage = new JTextArea("Hey, " + buyer.getString("username"));
         nameMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         nameMessage.setLineWrap(true);
@@ -85,9 +88,10 @@ public class CustomerPage extends JFrame {
         c.gridy = 1;
         c.gridx = 0;
         c.gridwidth = 2;
-        gridLayout.setConstraints(nameMessage,c);
+        gridLayout.setConstraints(nameMessage, c);
         panel.add(nameMessage);
 
+        // DIVIDER
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
         accountDetailsDivider.setMinimumSize(new Dimension(150, 8));
         accountDetailsDivider.setPreferredSize(new Dimension(150, 8));
@@ -96,23 +100,24 @@ public class CustomerPage extends JFrame {
         c.gridy = 2;
         c.gridx = 0;
         c.gridwidth = 2;
-        c.insets = new Insets(4,80,4,24);
+        c.insets = new Insets(4, 80, 4, 24);
         gridLayout.setConstraints(accountDetailsDivider, c);
         panel.add(accountDetailsDivider);
 
-
+        // BUYER'S BALANCE
         balanceMessage = new JLabel("Balance: $" + String.format("%.2f", buyer.getDouble("funds")));
         balanceMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         c.gridy = 3;
         c.gridx = 0;
         c.gridwidth = 2;
-        c.insets = new Insets(4,80,4,24);
-
-        gridLayout.setConstraints(balanceMessage,c);
+        c.insets = new Insets(4, 80, 4, 24);
+        gridLayout.setConstraints(balanceMessage, c);
         balanceMessage.setMaximumSize(new Dimension(300, 24));
         panel.add(balanceMessage);
 
+        // NAVIGATION
 
+        // MARKETPLACE
         JButton storesButton = new JButton("Marketplace");
         storesButton.addActionListener(e -> cardLayout.show(container, "stores"));
         c.gridy = 4;
@@ -121,6 +126,7 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(storesButton, c);
         panel.add(storesButton);
 
+        // SETTINGS
         JButton settingsButton = new JButton("Settings");
         settingsButton.addActionListener(e -> cardLayout.show(container, "settings"));
         c.gridy = 5;
@@ -129,6 +135,7 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(settingsButton, c);
         panel.add(settingsButton);
 
+        // STATISTICS
         JButton statisticsButton = new JButton("Statistics");
         statisticsButton.addActionListener(e -> cardLayout.show(container, "statistics"));
         c.gridy = 6;
@@ -137,48 +144,48 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(statisticsButton, c);
         panel.add(statisticsButton);
 
+        // FUNDING BUTTON
         JButton fundsButton = new JButton("Add Funding");
         fundsButton.addActionListener(e -> {
+
             String funding = JOptionPane.showInputDialog(null, "How much would you like to add?", "Funding Panel", JOptionPane.QUESTION_MESSAGE);
-
             if (funding != null && !funding.isEmpty()) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[addFunds]");
-                data.add(buyer.getString("id"));
-                data.add(funding);
-                Client.sendToServer(data);
-                balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
-                JOptionPane.showMessageDialog (null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
-            }
 
+                Client.sendToServer("addFunds",
+                        buyer.getString("id"),
+                        funding
+                );
+
+                balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
+                JOptionPane.showMessageDialog(null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
         c.gridy = 7;
         c.gridx = 0;
         c.gridwidth = 2;
-
         gridLayout.setConstraints(fundsButton, c);
         panel.add(fundsButton);
 
+        // VIEW CART BUTTON
         JButton cartButton = new JButton("View Cart");
         cartButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[getUser]");
-            data.add(buyer.getString("id"));
-            Client.sendToServer(data);
+
+            Client.sendToServer("getUser", buyer.getString("id"));
             String userString = Client.readFromServer(1).get(0);
+
             this.buyer = new JSONObject(userString);
+
             container.remove(cart());
             container.add("cart", cart());
             cardLayout.show(container, "cart");
-
         });
         c.gridy = 8;
         c.gridx = 0;
         c.gridwidth = 2;
-
         gridLayout.setConstraints(cartButton, c);
         panel.add(cartButton);
 
+        // LOGOUT
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(e -> {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout");
@@ -190,10 +197,11 @@ public class CustomerPage extends JFrame {
         c.gridy = 9;
         c.gridx = 0;
         c.gridwidth = 1;
-        c.insets = new Insets(4,80,4,4);
+        c.insets = new Insets(4, 80, 4, 4);
         gridLayout.setConstraints(logoutButton, c);
         panel.add(logoutButton);
 
+        // EXIT PROGRAM
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit");
@@ -205,7 +213,7 @@ public class CustomerPage extends JFrame {
         c.gridy = 9;
         c.gridx = 1;
         c.gridwidth = 1;
-        c.insets = new Insets(4,4,4,24);
+        c.insets = new Insets(4, 4, 4, 24);
         gridLayout.setConstraints(exitButton, c);
         panel.add(exitButton);
 
@@ -214,8 +222,10 @@ public class CustomerPage extends JFrame {
 
     public JPanel cart() {
         JPanel panel = new JPanel(new BorderLayout());
-        JPanel storesPanel = new JPanel();
-        storesPanel.setLayout(null);
+        JPanel cartPanel = new JPanel();
+        cartPanel.setLayout(null);
+
+        // TITLE
 
         JLabel accountDetailsLabel = new JLabel("Your Cart");
         accountDetailsLabel.setFont(new Font("Serif", Font.BOLD, 18));
@@ -225,44 +235,62 @@ public class CustomerPage extends JFrame {
         supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
         supportLabel.setBounds(24, 36, 400, 24);
 
-        storesPanel.add(accountDetailsLabel);
-        storesPanel.add(supportLabel);
+        cartPanel.add(accountDetailsLabel);
+        cartPanel.add(supportLabel);
+
+        // CART TABLE
 
         // Create a DefaultTableModel
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel cartModel = new DefaultTableModel();
 
-        model.addColumn("Product");
-        model.addColumn("Quantity");
-        model.addColumn("Price");
-        model.addColumn("Store Id");
+        cartModel.addColumn("Product");
+        cartModel.addColumn("Quantity");
+        cartModel.addColumn("Price");
+        cartModel.addColumn("Store Id");
 
-        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
-        String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
+        // RETRIEVE PRODUCTS FILE FROM SERVER-SIDE
+        Client.sendToServer("getProducts");
+        JSONArray products = new JSONArray(Client.readFromServer(1).get(0));
 
+        // BUYER CART
         JSONArray cart = buyer.getJSONArray("cart");
         double totalCost = 0.0;
 
+        // ADD CART CONTENTS TO TABLE
         for (Object contents : cart) {
-            for (Object product : new JSONArray(allProductsString)) {
-                if (((JSONObject) product).getString("product_id").equals(((JSONObject) contents).getString("product_id")))
-                {
-                    totalCost += ((JSONObject) contents).getInt("quantity") * ((JSONObject) contents).getDouble("price");
-                    model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price"), ((JSONObject) contents).getString("store_id")});
+            for (Object product : products) {
+
+                String productId = ((JSONObject) product).getString("product_id");
+                String cartProductId = ((JSONObject) contents).getString("product_id");
+
+                // CHECKS IF PRODUCT IS IN BUYER'S CART
+                if (productId.equals(cartProductId)) {
+                    int cartProductQuantity = ((JSONObject) contents).getInt("quantity");
+                    double cartProductPrice = ((JSONObject) contents).getDouble("price");
+                    String storeId = ((JSONObject) contents).getString("store_id");
+
+                    String productName = ((JSONObject) product).getString("name");
+
+                    totalCost += cartProductQuantity * cartProductPrice;
+                    cartModel.addRow(new Object[]{productName, cartProductQuantity, cartProductPrice, storeId});
                 }
             }
         }
+
         // Create a JTable using the model
-        JTable cartTable = new JTable(model);
+        JTable cartTable = new JTable(cartModel);
 
+        // HIDE STORE ID COLUMN
         TableColumnModel tcm = cartTable.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn(tcm.getColumn(3));
 
-        for (int c = 0; c < cartTable.getColumnCount(); c++)
-        {
+        // MAKE TABLE UN-EDITABLE
+        for (int c = 0; c < cartTable.getColumnCount(); c++) {
             Class<?> col_class = cartTable.getColumnClass(c);
             cartTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
+        // SORTING
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(cartTable.getModel());
         cartTable.setRowSorter(sorter);
 
@@ -271,89 +299,109 @@ public class CustomerPage extends JFrame {
         sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
         sorter.setSortKeys(sortKeys);
 
-        JScrollPane scrollPane= new  JScrollPane(cartTable);
+        // END OF SORTING
+
+        // MAKES TABLE SCROLLABLE
+        JScrollPane scrollPane = new JScrollPane(cartTable);
         scrollPane.setBounds(24, 66, 400, 306);
 
+        // ALTERNATING BACKGROUND COLOR
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
 
+        cartPanel.add(scrollPane);
+
+        // END OF TABLE CREATION
+
+        // TOTAL COST LABEL
         JLabel totalCostLabel = new JLabel("Total Cost: $" + totalCost);
-        totalCostLabel.setBounds(24, 372+4, 400, 24);
-        storesPanel.add(totalCostLabel);
+        totalCostLabel.setBounds(24, 372 + 4, 400, 24);
+        cartPanel.add(totalCostLabel);
 
+        // PLACE ORDER BUTTON
         JButton placeOrderButton = new JButton("Place Order");
-        placeOrderButton.setBounds(24, 404, 400/3 - 4, 24);
+        placeOrderButton.setBounds(24, 404, 400 / 3 - 4, 24);
         placeOrderButton.addActionListener(e -> {
-
-            if (cartTable.getRowCount() > 0) {
-                ArrayList<String> orderData = new ArrayList<>();
-                orderData.add("[placeOrder]");
-                orderData.add(buyer.getString("id"));
-                Client.sendToServer(orderData);
-
-                if (Client.readFromServer(1).get(0).equals("true")) {
-                    ArrayList<String> buyerData = new ArrayList<>();
-                    buyerData.add("[getUser]");
-                    buyerData.add(buyer.getString("id"));
-                    Client.sendToServer(buyerData);
-                    String userString = Client.readFromServer(1).get(0);
-                    this.buyer = new JSONObject(userString);
-
-                    balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
-                    totalCostLabel.setText("Total Cost: $0.00");
-
-                    for (int i = 0; i < cartTable.getRowCount(); i++) {
-                        ((DefaultTableModel)cartTable.getModel()).removeRow(i);
-                    }
-                } else {
-                    Client.showErrorMessage("Could not place order! Not enough funds.");
-                }
-            } else {
-                Client.showErrorMessage("Please add items to cart to purchase!");
-            }
-
+            placeOrder(cartTable, totalCostLabel);
         });
 
+        cartPanel.add(placeOrderButton);
+
+        // REMOVE ITEM FROM CART
         JButton removeFromCartButton = new JButton("Remove Item");
-        removeFromCartButton.setBounds(24 + 400/3+4, 404, 400/3 - 4, 24);
+        removeFromCartButton.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 4, 24);
+
         removeFromCartButton.addActionListener(e -> {
-            if (cartTable.getRowCount() > 0) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[removeFromCart]");
-                data.add(buyer.getString("id"));
-                data.add(cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
-                data.add(model.getValueAt(cartTable.getSelectedRow(), 3).toString());
-
-                Client.sendToServer(data);
-
-                ((DefaultTableModel)cartTable.getModel()).removeRow(cartTable.getSelectedRow());
-            } else {
-                Client.showErrorMessage("There is nothing in the cart to remove!");
-            }
-
+            removeFromCart(cartTable, cartModel);
         });
 
+        cartPanel.add(removeFromCartButton);
+
+        // PRODUCT HISTORY
         JButton productHistoryButton = new JButton("History");
-        productHistoryButton.setBounds(24 + 400/3 * 2 + 8, 404, 400/3 - 8, 24);
+        productHistoryButton.setBounds(24 + 400 / 3 * 2 + 8, 404, 400 / 3 - 8, 24);
         productHistoryButton.addActionListener(e -> productHistory());
+        cartPanel.add(productHistoryButton);
 
-        storesPanel.add(scrollPane);
 
-        storesPanel.add(placeOrderButton);
-        storesPanel.add(removeFromCartButton);
-        storesPanel.add(productHistoryButton);
-
-        panel.add(storesPanel, BorderLayout.CENTER);
+        panel.add(cartPanel, BorderLayout.CENTER);
         JSeparator divider = new JSeparator(JSeparator.VERTICAL);
         divider.setBackground(Color.decode("#dbdbdb"));
         divider.setForeground(Color.decode("#dbdbdb"));
         panel.add(divider, BorderLayout.LINE_START);
 
-
         return panel;
     }
 
-    public void productHistory() {
+
+    private void placeOrder(JTable cartTable, JLabel totalCostLabel) {
+        if (cartTable.getRowCount() > 0) {
+
+            Client.sendToServer("placeOrder", buyer.getString("id"));
+
+            if (Client.readFromServer(1).get(0).equals("true")) {
+
+                // REFRESH BUYER DATA
+                Client.sendToServer("getUser", buyer.getString("id"));
+                String userString = Client.readFromServer(1).get(0);
+                this.buyer = new JSONObject(userString);
+
+                // UPDATE BALANCE
+                balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
+
+                // RESET TOTAL
+                totalCostLabel.setText("Total Cost: $0.00");
+
+                // CLEAR CART TABLE
+                for (int i = 0; i < cartTable.getRowCount(); i++) {
+                    ((DefaultTableModel) cartTable.getModel()).removeRow(i);
+                }
+            } else {
+                Client.showErrorMessage("Could not place order! Not enough funds.");
+            }
+        } else {
+            Client.showErrorMessage("Please add items to cart to purchase!");
+        }
+    }
+
+    private void removeFromCart(JTable cartTable, DefaultTableModel cartModel) {
+        if (cartTable.getRowCount() > 0) {
+
+            // REMOVE CART ITEM FROM DATABASE
+            Client.sendToServer("removeFromCart",
+                    buyer.getString("id"),
+                    cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString(),
+                    cartModel.getValueAt(cartTable.getSelectedRow(), 3).toString()
+            );
+
+            // REMOVE ITEM FROM CART TABLE
+            ((DefaultTableModel) cartTable.getModel()).removeRow(cartTable.getSelectedRow());
+        } else {
+            Client.showErrorMessage("There is nothing in the cart to remove!");
+        }
+    }
+
+    private void productHistory() {
 
         JFrame frame = new JFrame();
         GridBagLayout gridLayout = new GridBagLayout();
@@ -381,7 +429,7 @@ public class CustomerPage extends JFrame {
         productLabel.setFont(new Font("serif", Font.BOLD, 18));
         c.gridy = 0;
         c.gridwidth = 4;
-        c.insets = new Insets(0,24,8,24);
+        c.insets = new Insets(0, 24, 8, 24);
         c.anchor = GridBagConstraints.NORTH;
         gridLayout.setConstraints(productLabel, c);
         frame.add(productLabel);
@@ -395,15 +443,14 @@ public class CustomerPage extends JFrame {
         model.addColumn("Price");
         model.addColumn("Store Id");
 
-        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+        Client.sendToServer("getProducts");
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
         JSONArray productHistory = buyer.getJSONArray("product_history");
 
         for (Object contents : productHistory) {
             for (Object product : new JSONArray(allProductsString)) {
-                if (((JSONObject) product).getString("product_id").equals(((JSONObject) contents).getString("product_id")))
-                {
+                if (((JSONObject) product).getString("product_id").equals(((JSONObject) contents).getString("product_id"))) {
                     model.addRow(new Object[]{((JSONObject) product).getString("name"), ((JSONObject) contents).getInt("quantity"), ((JSONObject) contents).getDouble("price")});
                 }
             }
@@ -412,10 +459,9 @@ public class CustomerPage extends JFrame {
         JTable historyTable = new JTable(model);
 
         TableColumnModel tcm = historyTable.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn(tcm.getColumn(3));
 
-        for (int k = 0; k < historyTable.getColumnCount(); k++)
-        {
+        for (int k = 0; k < historyTable.getColumnCount(); k++) {
             Class<?> col_class = historyTable.getColumnClass(k);
             historyTable.setDefaultEditor(col_class, null);        // remove editor
         }
@@ -428,7 +474,7 @@ public class CustomerPage extends JFrame {
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        JScrollPane scrollPane= new  JScrollPane(historyTable);
+        JScrollPane scrollPane = new JScrollPane(historyTable);
         scrollPane.setMinimumSize(new Dimension(400, 306));
         scrollPane.setPreferredSize(new Dimension(400, 306));
         scrollPane.setMaximumSize(new Dimension(400, 306));
@@ -438,7 +484,7 @@ public class CustomerPage extends JFrame {
 
         c.gridy = 1;
         c.gridwidth = 4;
-        c.insets = new Insets(0,24,4,24);
+        c.insets = new Insets(0, 24, 4, 24);
         gridLayout.setConstraints(scrollPane, c);
 
         frame.add(scrollPane);
@@ -469,13 +515,13 @@ public class CustomerPage extends JFrame {
                 chooser.showOpenDialog(null);
 
                 if (chooser.getSelectedFile() != null) {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[exportHistory]");
-                    data.add(buyer.getString("id"));
-                    data.add(chooser.getSelectedFile().getAbsolutePath());
-                    Client.sendToServer(data);
 
-                    JOptionPane.showMessageDialog (null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
+                    Client.sendToServer("exportHistory",
+                            buyer.getString("id"),
+                            chooser.getSelectedFile().getAbsolutePath()
+                    );
+
+                    JOptionPane.showMessageDialog(null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
 
                 }
             } else {
@@ -513,9 +559,10 @@ public class CustomerPage extends JFrame {
         model.addColumn("Store Product Id");
         model.addColumn("Store Object");
 
-        Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+        Client.sendToServer("getStores");
         String allStoresString = Client.readFromServer(1).get(0);
-        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+
+        Client.sendToServer("getProducts");
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
         for (Object product : new JSONArray(allProductsString)) {
@@ -534,20 +581,19 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable marketTable = new JTable(model);
 
-        for (int c = 0; c < marketTable.getColumnCount(); c++)
-        {
+        for (int c = 0; c < marketTable.getColumnCount(); c++) {
             Class<?> col_class = marketTable.getColumnClass(c);
             marketTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
         TableColumnModel tcm = marketTable.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(3) );
-        tcm.removeColumn( tcm.getColumn(3) );
-        tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn(tcm.getColumn(3));
+        tcm.removeColumn(tcm.getColumn(3));
+        tcm.removeColumn(tcm.getColumn(3));
 
         marketTable.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                JTable table =(JTable) mouseEvent.getSource();
+                JTable table = (JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
                     viewProductPage(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 3).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 4).toString()), new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 5).toString()).getString("id"));
                 }
@@ -562,29 +608,28 @@ public class CustomerPage extends JFrame {
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        JScrollPane scrollPane= new  JScrollPane(marketTable);
+        JScrollPane scrollPane = new JScrollPane(marketTable);
         scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
 
         JButton selectProductButton = new JButton("Select Product");
-        selectProductButton.setBounds(24, 404, 400/2 - 4, 24);
+        selectProductButton.setBounds(24, 404, 400 / 2 - 4, 24);
         selectProductButton.addActionListener(e -> {
-            if (!marketTable.getSelectionModel().isSelectionEmpty())
-            {
+            if (!marketTable.getSelectionModel().isSelectionEmpty()) {
                 JSONObject product = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 3).toString());
                 JSONObject storeProduct = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 4).toString());
                 String storeId = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 5).toString()).getString("id");
                 viewProductPage(product, storeProduct, storeId);
             } else {
-                JOptionPane.showMessageDialog (null, "Please highlight a product to select!", "No Product Highlighted!", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please highlight a product to select!", "No Product Highlighted!", JOptionPane.INFORMATION_MESSAGE);
 
             }
         });
 
         JButton searchButton = new JButton("Search");
-        searchButton.setBounds(24 + 400/2 + 4, 404, 400/2 - 8, 24);
+        searchButton.setBounds(24 + 400 / 2 + 4, 404, 400 / 2 - 8, 24);
         searchButton.addActionListener(e -> search(marketTable));
 
         storesPanel.add(storesLabel);
@@ -626,20 +671,21 @@ public class CustomerPage extends JFrame {
         JButton usernameButton = new JButton("Change Username");
         usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(buyer.getString("id"));
-            data.add("username");
-            data.add(usernameField.getText());
-            Client.sendToServer(data);
 
+            Client.sendToServer("updateUserDetails",
+                    buyer.getString("id"),
+                    "username",
+                    usernameField.getText()
+            );
+
+            // UPDATE GREETING
             for (Component jc : sidePanel.getComponents()) {
                 if (jc instanceof JTextArea) {
                     ((JTextArea) jc).setText("Hey, " + usernameField.getText());
                 }
             }
 
-            JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         settingsPanel.add(usernameLabel);
@@ -655,14 +701,14 @@ public class CustomerPage extends JFrame {
 
         JButton emailButton = new JButton("Change Email");
         emailButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(buyer.getString("id"));
-            data.add("email");
-            data.add(emailField.getText());
-            Client.sendToServer(data);
 
-            JOptionPane.showMessageDialog (null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            Client.sendToServer("updateUserDetails",
+                    buyer.getString("id"),
+                    "email",
+                    emailField.getText()
+            );
+
+            JOptionPane.showMessageDialog(null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         emailButton.setBounds(300, 140, 174, 24);
@@ -681,14 +727,14 @@ public class CustomerPage extends JFrame {
         JButton passwordButton = new JButton("Change Password");
         passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(buyer.getString("id"));
-            data.add("password");
-            data.add(String.valueOf(passwordField.getPassword()));
-            Client.sendToServer(data);
 
-            JOptionPane.showMessageDialog (null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            Client.sendToServer("updateUserDetails",
+                    buyer.getString("id"),
+                    "password",
+                    String.valueOf(passwordField.getPassword())
+            );
+
+            JOptionPane.showMessageDialog(null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         settingsPanel.add(passwordLabel);
@@ -696,7 +742,7 @@ public class CustomerPage extends JFrame {
         settingsPanel.add(passwordButton);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setBounds(24, 240, 450,24);
+        accountDetailsDivider.setBounds(24, 240, 450, 24);
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
 
@@ -706,11 +752,10 @@ public class CustomerPage extends JFrame {
         deleteAccountButton.addActionListener(e -> {
             int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Account Removal", JOptionPane.OK_CANCEL_OPTION);
             if (option == 0) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[deleteAccount]");
-                data.add(buyer.getString("id"));
-                Client.sendToServer(data);
+                Client.sendToServer("deleteAccount", buyer.getString("id"));
                 dispose();
+
+                // NAVIGATE TO SIGNUP PAGE
                 new OnboardingPage(true);
             }
         });
@@ -770,13 +815,12 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable storesTable = new JTable(storeModel);
 
-        for (int c = 0; c < storesTable.getColumnCount(); c++)
-        {
+        for (int c = 0; c < storesTable.getColumnCount(); c++) {
             Class<?> col_class = storesTable.getColumnClass(c);
             storesTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        JScrollPane storeTableStat = new  JScrollPane(storesTable);
+        JScrollPane storeTableStat = new JScrollPane(storesTable);
         storeTableStat.setBounds(24, 92, 200, 344);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
@@ -796,13 +840,12 @@ public class CustomerPage extends JFrame {
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);
 
-        for (int c = 0; c < productTable.getColumnCount(); c++)
-        {
+        for (int c = 0; c < productTable.getColumnCount(); c++) {
             Class<?> col_class = productTable.getColumnClass(c);
             productTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        JScrollPane productTableStat = new  JScrollPane(productTable);
+        JScrollPane productTableStat = new JScrollPane(productTable);
         productTableStat.setBounds(236, 92, 200, 344);
 
         statisticsPanel.add(productTableStat);
@@ -820,11 +863,9 @@ public class CustomerPage extends JFrame {
     public void search(JTable table) {
         String searchQuery = JOptionPane.showInputDialog("Search:", "Type here...");
 
-        if(searchQuery != null) {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[search]");
-            data.add(searchQuery);
-            Client.sendToServer(data);
+        if (searchQuery != null) {
+
+            Client.sendToServer("search", searchQuery);
 
             int numOfResults = -1;
             try {
@@ -832,7 +873,7 @@ public class CustomerPage extends JFrame {
                 ArrayList<String> results = Client.readFromServer(numOfResults);
 
                 String[] array = new String[results.size()];
-                for(int i = 0; i < array.length; i++) {
+                for (int i = 0; i < array.length; i++) {
                     array[i] = results.get(i);
                 }
                 JComboBox resultList = new JComboBox(array);
@@ -865,7 +906,7 @@ public class CustomerPage extends JFrame {
         JPanel panel = new JPanel();
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(0,24,0,24);
+        c.insets = new Insets(0, 24, 0, 24);
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(gridLayout);
 
@@ -904,7 +945,7 @@ public class CustomerPage extends JFrame {
         gridLayout.setConstraints(productLabel, c);
         panel.add(productLabel);
 
-        c.insets = new Insets(4,24,0,24);
+        c.insets = new Insets(4, 24, 0, 24);
 
         JTextArea descriptionLabel = new JTextArea(product.getString("description"));
         descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 12));
@@ -923,21 +964,21 @@ public class CustomerPage extends JFrame {
         productPageDivider.setPreferredSize(new Dimension(150, 8));
         productPageDivider.setBackground(Color.decode("#dbdbdb"));
         productPageDivider.setForeground(Color.decode("#dbdbdb"));
-        c.insets = new Insets(8,24,0,24);
+        c.insets = new Insets(8, 24, 0, 24);
         c.gridy = 2;
         gridLayout.setConstraints(productPageDivider, c);
         panel.add(productPageDivider);
 
         JLabel quantityLabel = new JLabel("Quantity Remaining: " + storeProduct.getInt("qty"));
         quantityLabel.setFont(new Font("sans-serif", Font.PLAIN, 12));
-        c.insets = new Insets(4,24,0,24);
+        c.insets = new Insets(4, 24, 0, 24);
         c.gridy = 3;
         gridLayout.setConstraints(quantityLabel, c);
         panel.add(quantityLabel);
 
         JLabel priceLabel = new JLabel("Price: $" + storeProduct.getDouble("price"));
         priceLabel.setFont(new Font("sans-serif", Font.BOLD, 12));
-        c.insets = new Insets(4,24,0,24);
+        c.insets = new Insets(4, 24, 0, 24);
 
         c.gridy = 4;
         c.gridwidth = 4;
@@ -965,7 +1006,7 @@ public class CustomerPage extends JFrame {
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panel.setLayout(gridLayout);
-        c.insets = new Insets(0,24,0,24);
+        c.insets = new Insets(0, 24, 0, 24);
 
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel();
         spinnerNumberModel.setMinimum(1);
@@ -1006,26 +1047,23 @@ public class CustomerPage extends JFrame {
         JButton addToCartButton = new JButton("Add to Cart");
         c.gridy = 3;
         c.gridwidth = 4;
-        c.insets = new Insets(8,24,0,24);
+        c.insets = new Insets(8, 24, 0, 24);
         addToCartButton.setMinimumSize(new Dimension(150, 24));
         addToCartButton.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(addToCartButton, c);
         addToCartButton.addActionListener(e -> {
             if (Integer.parseInt(spinner.getValue().toString()) > 0) {
                 if (Integer.parseInt(spinner.getValue().toString()) <= storeProduct.getInt("qty")) {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[addToCart]");
-                    data.add(buyer.getString("id"));
-                    data.add(product.getString("product_id"));
-                    data.add(storeId);
-                    data.add(spinner.getValue().toString());
-                    data.add(String.valueOf(storeProduct.getDouble("price")));
 
-                    System.out.println("Store id: " + storeId);
+                    Client.sendToServer("addToCart",
+                            buyer.getString("id"),
+                            product.getString("product_id"),
+                            storeId,
+                            spinner.getValue().toString(),
+                            String.valueOf(storeProduct.getDouble("price"))
+                    );
 
-                    Client.sendToServer(data);
-
-                    JOptionPane.showMessageDialog (null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     Client.showErrorMessage("Quantity exceeds amount available!");
                 }
@@ -1034,15 +1072,13 @@ public class CustomerPage extends JFrame {
             }
 
 
-
-
         });
         panel.add(addToCartButton);
 
         JButton closeWindow = new JButton("Close");
         c.gridy = 34;
         c.gridwidth = 4;
-        c.insets = new Insets(8,24,0,24);
+        c.insets = new Insets(8, 24, 0, 24);
         closeWindow.setMinimumSize(new Dimension(150, 24));
         closeWindow.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(closeWindow, c);

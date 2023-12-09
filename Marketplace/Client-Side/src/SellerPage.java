@@ -66,7 +66,7 @@ public class SellerPage extends JFrame {
         JPanel panel = new JPanel();
         GridBagLayout gridLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(0,80,0,24);
+        c.insets = new Insets(0, 80, 0, 24);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.NORTH;
         panel.setLayout(gridLayout);
@@ -78,7 +78,7 @@ public class SellerPage extends JFrame {
         gridLayout.setConstraints(welcomeMessage, c);
         panel.add(welcomeMessage);
 
-        c.insets = new Insets(0,80,8,24);
+        c.insets = new Insets(0, 80, 8, 24);
 
         JTextArea nameMessage = new JTextArea("Hey, " + seller.getString("username"));
         nameMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
@@ -89,10 +89,10 @@ public class SellerPage extends JFrame {
         nameMessage.setOpaque(false);
         c.gridy = 1;
         c.gridwidth = 4;
-        gridLayout.setConstraints(nameMessage,c);
+        gridLayout.setConstraints(nameMessage, c);
         panel.add(nameMessage);
 
-        c.insets = new Insets(4,80,4,24);
+        c.insets = new Insets(4, 80, 4, 24);
 
         JButton storesButton = new JButton("Stores");
         storesButton.addActionListener(e -> cardLayout.show(container, "stores"));
@@ -123,23 +123,21 @@ public class SellerPage extends JFrame {
             chooser.showOpenDialog(null);
 
             if (chooser.getSelectedFile() != null) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[importProducts]");
-                data.add(seller.toString());
-                data.add(chooser.getSelectedFile().getAbsolutePath());
-                Client.sendToServer(data);
 
-                ArrayList<String> userData = new ArrayList<>();
-                userData.add("[getUser]");
-                userData.add(seller.getString("id"));
-                Client.sendToServer(userData);
+                Client.sendToServer("importProducts",
+                        seller.toString(),
+                        chooser.getSelectedFile().getAbsolutePath()
+                );
+
+                // UPDATE SELLER DATA
+                Client.sendToServer("getUser", seller.getString("id"));
                 String userString = Client.readFromServer(1).get(0);
                 this.seller = new JSONObject(userString);
 
                 container.remove(Stores());
                 container.add("stores", Stores());
                 cardLayout.show(container, "stores");
-                JOptionPane.showMessageDialog (null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Imported Products successfully!", "Product Imports", JOptionPane.INFORMATION_MESSAGE);
 
             }
         });
@@ -159,7 +157,7 @@ public class SellerPage extends JFrame {
         c.gridy = 6;
         c.gridwidth = 2;
         c.gridx = 0;
-        c.insets = new Insets(4,80,4,4);
+        c.insets = new Insets(4, 80, 4, 4);
         gridLayout.setConstraints(logoutButton, c);
         panel.add(logoutButton);
 
@@ -173,7 +171,7 @@ public class SellerPage extends JFrame {
         c.gridy = 6;
         c.gridx = 2;
         c.gridwidth = 2;
-        c.insets = new Insets(4,4,4,24);
+        c.insets = new Insets(4, 4, 4, 24);
         gridLayout.setConstraints(exitButton, c);
         panel.add(exitButton);
 
@@ -203,7 +201,7 @@ public class SellerPage extends JFrame {
 
         JSONArray stores = seller.getJSONArray("stores");
 
-        Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+        Client.sendToServer("getStores");
 
         String allStoresString = Client.readFromServer(1).get(0);
 
@@ -235,20 +233,20 @@ public class SellerPage extends JFrame {
         // Create a JTable using the model
         table = new JTable(model);
 
-        for (int c = 0; c < table.getColumnCount(); c++)
-        {
+        for (int c = 0; c < table.getColumnCount(); c++) {
             Class<?> col_class = table.getColumnClass(c);
             table.setDefaultEditor(col_class, null);        // remove editor
         }
 
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                JTable table =(JTable) mouseEvent.getSource();
+                JTable table = (JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[getStore]");
-                    data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
-                    Client.sendToServer(data);
+
+                    Client.sendToServer("getStore",
+                            new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                    );
+
                     JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
                     editStore(store);
                 }
@@ -264,22 +262,23 @@ public class SellerPage extends JFrame {
 //        sorter.setSortKeys(sortKeys);
 
         TableColumnModel tcm = table.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(2) );
+        tcm.removeColumn(tcm.getColumn(2));
 
-        JScrollPane scrollPane= new  JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         defaults.computeIfAbsent("Table.alternateRowColor", k -> new Color(240, 240, 240));
 
         JButton selectStoreButton = new JButton("Select Store");
-        selectStoreButton.setBounds(24, 404, 400/3 - 4, 24);
+        selectStoreButton.setBounds(24, 404, 400 / 3 - 4, 24);
         selectStoreButton.addActionListener(e -> {
-            if(!table.getSelectionModel().isSelectionEmpty()) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[getStore]");
-                data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
-                Client.sendToServer(data);
+            if (!table.getSelectionModel().isSelectionEmpty()) {
+
+                Client.sendToServer("getStore",
+                        new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                );
+
                 JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
                 editStore(store);
             }
@@ -287,22 +286,22 @@ public class SellerPage extends JFrame {
         });
 
         JButton addStore = new JButton("Add Store");
-        addStore.setBounds(24 + 400/3 + 4, 404, 400/3 - 8, 24);
+        addStore.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 8, 24);
         addStore.addActionListener(e -> addStore());
 
         JButton removeStore = new JButton("Remove Store");
-        removeStore.setBounds(24 + 400/3 * 2 + 4, 404, 400/3 - 4, 24);
+        removeStore.setBounds(24 + 400 / 3 * 2 + 4, 404, 400 / 3 - 4, 24);
         removeStore.addActionListener(e -> {
-            if(!table.getSelectionModel().isSelectionEmpty()) {
+            if (!table.getSelectionModel().isSelectionEmpty()) {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + table.getValueAt(table.getSelectedRow(), 0).toString() + "?");
                 if (input == 0) {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[removeStore]");
-                    data.add(seller.getString("id"));
-                    data.add(new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id"));
-                    Client.sendToServer(data);
 
-                    ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
+                    Client.sendToServer("removeStore",
+                            seller.getString("id"),
+                            new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                    );
+
+                    ((DefaultTableModel) table.getModel()).removeRow(table.getSelectedRow());
                 }
             }
         });
@@ -347,12 +346,13 @@ public class SellerPage extends JFrame {
         JButton usernameButton = new JButton("Change Username");
         usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(seller.getString("id"));
-            data.add("username");
-            data.add(usernameField.getText());
-            Client.sendToServer(data);
+
+            Client.sendToServer("updateUserDetails",
+                    seller.getString("id"),
+                    "username",
+                    usernameField.getText()
+            );
+
 
             for (Component jc : sidePanel.getComponents()) {
                 if (jc instanceof JTextArea) {
@@ -360,7 +360,7 @@ public class SellerPage extends JFrame {
                 }
             }
 
-            JOptionPane.showMessageDialog (null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Username changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         settingsPanel.add(usernameLabel);
@@ -376,14 +376,14 @@ public class SellerPage extends JFrame {
 
         JButton emailButton = new JButton("Change Email");
         emailButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(seller.getString("id"));
-            data.add("email");
-            data.add(emailField.getText());
-            Client.sendToServer(data);
 
-            JOptionPane.showMessageDialog (null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            Client.sendToServer("updateUserDetails",
+                    seller.getString("id"),
+                    "email",
+                    emailField.getText()
+            );
+
+            JOptionPane.showMessageDialog(null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         emailButton.setBounds(300, 140, 174, 24);
@@ -402,14 +402,14 @@ public class SellerPage extends JFrame {
         JButton passwordButton = new JButton("Change Password");
         passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
-            ArrayList<String> data = new ArrayList<>();
-            data.add("[updateUserDetails]");
-            data.add(seller.getString("id"));
-            data.add("password");
-            data.add(String.valueOf(passwordField.getPassword()));
-            Client.sendToServer(data);
 
-            JOptionPane.showMessageDialog (null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
+            Client.sendToServer("updateUserDetails",
+                    seller.getString("id"),
+                    "password",
+                    String.valueOf(passwordField.getPassword())
+            );
+
+            JOptionPane.showMessageDialog(null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
         settingsPanel.add(passwordLabel);
@@ -417,7 +417,7 @@ public class SellerPage extends JFrame {
         settingsPanel.add(passwordButton);
 
         JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
-        accountDetailsDivider.setBounds(24, 240, 450,24);
+        accountDetailsDivider.setBounds(24, 240, 450, 24);
         accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
         accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
 
@@ -427,10 +427,8 @@ public class SellerPage extends JFrame {
         deleteAccountButton.addActionListener(e -> {
             int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Account Removal", JOptionPane.OK_CANCEL_OPTION);
             if (option == 0) {
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[deleteAccount]");
-                data.add(seller.getString("id"));
-                Client.sendToServer(data);
+
+                Client.sendToServer("deleteAccount", seller.getString("id"));
                 dispose();
                 new OnboardingPage(true);
             }
@@ -491,13 +489,12 @@ public class SellerPage extends JFrame {
         // Create a JTable using the model
         JTable customerTable = new JTable(customerModel);
 
-        for (int c = 0; c < customerTable.getColumnCount(); c++)
-        {
+        for (int c = 0; c < customerTable.getColumnCount(); c++) {
             Class<?> col_class = customerTable.getColumnClass(c);
             customerTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        JScrollPane customerTableStat = new  JScrollPane(customerTable);
+        JScrollPane customerTableStat = new JScrollPane(customerTable);
         customerTableStat.setBounds(24, 92, 200, 344);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
@@ -517,13 +514,12 @@ public class SellerPage extends JFrame {
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);
 
-        for (int c = 0; c < productTable.getColumnCount(); c++)
-        {
+        for (int c = 0; c < productTable.getColumnCount(); c++) {
             Class<?> col_class = productTable.getColumnClass(c);
             productTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        JScrollPane productTableStat = new  JScrollPane(productTable);
+        JScrollPane productTableStat = new JScrollPane(productTable);
         productTableStat.setBounds(236, 92, 200, 344);
 
         statisticsPanel.add(productTableStat);
@@ -544,14 +540,13 @@ public class SellerPage extends JFrame {
         String storeName = JOptionPane.showInputDialog("Enter store name (Must be less than 16 characters)", "Store");
         ArrayList<String> data = new ArrayList<>();
 
-        if(storeName != null) {
+        if (storeName != null) {
             if (storeName.length() <= 16) {
-                System.out.println("User created store: " + storeName);
 
-                data.add("[createStore]");
-                data.add(seller.getString("id"));
-                data.add(storeName);
-                Client.sendToServer(data);
+                Client.sendToServer("createStore",
+                        seller.getString("id"),
+                        storeName
+                );
 
                 String storeId = Client.readFromServer(1).get(0);
 
@@ -587,10 +582,9 @@ public class SellerPage extends JFrame {
 
         storePage.setLayout(null);
 
-        DefaultTableModel model = new DefaultTableModel(){
+        DefaultTableModel model = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column)
-            {
+            public boolean isCellEditable(int row, int column) {
                 // make read only fields except column 1 and 2
                 return column == 1 || column == 2;
             }
@@ -604,7 +598,7 @@ public class SellerPage extends JFrame {
 
         JSONArray products = store.getJSONArray("products");
 
-        Client.sendToServer(new ArrayList<>(List.of("[getProducts]")));
+        Client.sendToServer("getProducts");
 
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
         JSONArray allProducts = new JSONArray(allProductsString);
@@ -635,38 +629,34 @@ public class SellerPage extends JFrame {
         JTable productTable = new JTable(model);
 
         TableColumnModel tcm = productTable.getColumnModel();
-        tcm.removeColumn( tcm.getColumn(3) );
+        tcm.removeColumn(tcm.getColumn(3));
 
+        model.addTableModelListener(e -> {
 
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            String valueStr = productTable.getValueAt(row, column).toString();
 
-                int row = e.getFirstRow();
-                int column = e.getColumn();
-                String valueStr = productTable.getValueAt(row, column).toString();
-
-                ArrayList<String> data = new ArrayList<>();
-                data.add("[updateProduct]");
-
-                data.add(store.getString("id")); // Store id
-                data.add(model.getValueAt(row, 3).toString()); // Product id
-
-                // Type
-                switch (column) {
-                    case 1 -> {
-                        data.add("quantity");
-                        data.add(valueStr);
-                    }
-                    case 2 -> {
-                        data.add("price");
-                        data.add(valueStr.substring(1));
-                    }
+            // Type
+            switch (column) {
+                case 1 -> {
+                    Client.sendToServer("updateProduct",
+                            store.getString("id"),
+                            model.getValueAt(row, 3).toString(),
+                            "quantity",
+                            valueStr
+                    );
                 }
-
-                Client.sendToServer(data);
-
+                case 2 -> {
+                    Client.sendToServer("updateProduct",
+                            store.getString("id"),
+                            model.getValueAt(row, 3).toString(),
+                            "price",
+                            valueStr.substring(1)
+                    );
+                }
             }
+
         });
 
         JLabel titleMessage = new JLabel(store.getString("name") + "'s Products");
@@ -686,7 +676,8 @@ public class SellerPage extends JFrame {
                 if (storeName.length() <= 16) {
 
                     boolean storeExists = false;
-                    Client.sendToServer(new ArrayList<>(List.of("[getStores]")));
+
+                    Client.sendToServer("getStores");
                     String storesString = Client.readFromServer(1).get(0);
                     JSONArray stores = new JSONArray(storesString);
 
@@ -699,12 +690,13 @@ public class SellerPage extends JFrame {
                     if (storeExists) {
                         Client.showErrorMessage("Store already exists!");
                     } else {
-                        ArrayList<String> data = new ArrayList<>();
-                        data.add("[changeStoreName]");
-                        data.add(store.getString("id"));
-                        data.add(storeName);
-                        Client.sendToServer(data);
 
+                        Client.sendToServer("changeStoreName",
+                                store.getString("id"),
+                                storeName
+                        );
+
+                        // UPDATE TITLE NAME
                         titleMessage.setText(storeName + "'s Products");
                         table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
                     }
@@ -720,10 +712,10 @@ public class SellerPage extends JFrame {
         addProduct.addActionListener(e -> {
 
             String[] array = new String[productNames.size()];
-            for(int i = 0; i < array.length; i++) {
+            for (int i = 0; i < array.length; i++) {
                 array[i] = productNames.get(i);
             }
-            JComboBox productList = new JComboBox(array);
+            JComboBox<String> productList = new JComboBox<>(array);
             productList.setEditable(true);
             AutoCompletion.enable(productList);
 
@@ -751,13 +743,12 @@ public class SellerPage extends JFrame {
                                 productId = productObj.getString("product_id");
                         }
 
-                        ArrayList<String> data = new ArrayList<>();
-                        data.add("[addProduct]");
-                        data.add(store.getString("id"));
-                        data.add(productId);
-                        data.add(quantity.getText());
-                        data.add(price.getText());
-                        Client.sendToServer(data);
+                        Client.sendToServer("addProduct",
+                                store.getString("id"),
+                                productId,
+                                quantity.getText(),
+                                price.getText()
+                        );
 
                         model.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText())), productId});
                     } else {
@@ -780,12 +771,13 @@ public class SellerPage extends JFrame {
             if (!productTable.getSelectionModel().isSelectionEmpty()) {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + productTable.getValueAt(productTable.getSelectedRow(), 0) + "?");
                 if (input == 0) {
-                    ArrayList<String> data = new ArrayList<>();
-                    data.add("[removeProduct]");
-                    data.add(store.getString("id"));
-                    data.add(productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString());
-                    Client.sendToServer(data);
-                    ((DefaultTableModel)productTable.getModel()).removeRow(productTable.getSelectedRow());
+
+                    Client.sendToServer("removeProduct",
+                        store.getString("id"),
+                        productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString()
+                    );
+
+                    ((DefaultTableModel) productTable.getModel()).removeRow(productTable.getSelectedRow());
                 }
             }
         });
@@ -794,7 +786,7 @@ public class SellerPage extends JFrame {
         closeProduct.setBounds(24, 397, 185, 24);
         closeProduct.addActionListener(e -> storePage.dispose());
 
-        JScrollPane sp= new  JScrollPane(productTable);
+        JScrollPane sp = new JScrollPane(productTable);
         sp.setBounds(233, 56, 365, 365);
 
         storePage.add(optionsTitle);
