@@ -307,6 +307,16 @@ public class ClientThread extends Thread {
 
                             ss.importProducts(new JSONObject(data.get(0)), data.get(1));
                         }
+                        case "createProduct" -> {
+                            // Product Name
+                            // Product Description
+                            // Product Quantity
+                            // Product Price
+                            // Store id
+                            data = readData(input, 5);
+                            JSONObject product = ss.createProduct(data.get(0), data.get(1));
+                            ss.addProduct(data.get(4), product.getString("product_id"), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)));
+                        }
                         case "exit" -> {
                             break loop;
                         }

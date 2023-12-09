@@ -221,7 +221,7 @@ public class StoreService {
         return false;
     }
 
-    public void createProduct(String name, String description) {
+    public JSONObject createProduct(String name, String description) {
 
         JSONObject productObj = as.getJSONFromFile(productFileDirectory);
         JSONArray products = productObj.getJSONArray("products");
@@ -235,7 +235,10 @@ public class StoreService {
             products.put(product);
             productObj.put("products", products);
             writeJSONObjectToFile(productObj, productFileDirectory);
+            return product;
         }
+
+        return null;
     }
 
     public boolean updateStoreProduct(String storeId, String productId, String type, String value) {

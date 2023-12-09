@@ -760,6 +760,37 @@ public class SellerPage extends JFrame {
         createProductButton.setBounds(24, 120, 185, 24);
         createProductButton.addActionListener(e -> {
 
+            JTextField productName = new JTextField();
+            JTextArea productDescription = new JTextArea();
+            productDescription.setLineWrap(true);
+            productDescription.setWrapStyleWord(true);
+
+            JScrollPane descriptionScroll = new JScrollPane(productDescription);
+            descriptionScroll.setPreferredSize(new Dimension(120, 64));
+
+            JTextField productQuantity = new JTextField();
+            JTextField productPrice = new JTextField();
+            Object[] message = {
+                    "Product Name: ", productName,
+                    "Description: ", descriptionScroll,
+                    "Quantity (1-9999): ", productQuantity,
+                    "Price: $", productPrice
+            };
+
+            int input = JOptionPane.showConfirmDialog(null, message, "Create a product", JOptionPane.OK_CANCEL_OPTION);
+
+            if (input == JOptionPane.OK_OPTION) {
+                System.out.println("Create product request...");
+
+                Client.sendToServer("createProduct",
+                        productName.getText(),
+                        productDescription.getText(),
+                        productQuantity.getText(),
+                        productPrice.getText(),
+                        store.getString("id")
+                );
+            }
+
         });
         storePage.add(createProductButton);
 
