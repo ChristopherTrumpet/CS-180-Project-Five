@@ -23,265 +23,289 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-        try {
-
-            // Send data to the client
-            BufferedReader input = new BufferedReader(
-                new InputStreamReader(socket.getInputStream())
-            );
+        try(BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
             AccountService as = new AccountService();
             TransactionService ts = new TransactionService();
             StoreService ss = new StoreService();
+            SearchService searchService = new SearchService();
 
-            boolean run = true;
-
-            while (run) {
+            loop: while (true) {
 
                 String clientData = input.readLine();
                 ArrayList<String> data = new ArrayList<>();
 
                 if (clientData != null) {
+
                     data.add(clientData);
-                }
 
-                switch (data.get(0)) {
-                    case "signUpButton" -> {
-                        for(int i = 0; i < 4; i++) {
-                            data.add(input.readLine());
+                    switch (data.get(0)) {
+
+                        case "signUpButton" -> {
+
+                            data = readData(input, 4);
+
+                            char accountType = data.get(1).charAt(0);
+                            String username = data.get(2);
+                            String password = data.get(3);
+                            String email = data.get(4);
+
+                            as.createAccount(accountType, username, password, email);
+
+                            writer.println(as.getUserByUsername(username));
+                            writer.flush();
                         }
-                        char accountType = data.get(1).charAt(0);
-                        String username = data.get(2);
-                        String password = data.get(3);
-                        String email = data.get(4);
-                        as.createAccount(accountType, username, password, email);
-                        writer.println(as.getUserByUsername(username));
-                        writer.flush();
-                        data.clear();
-                    }
-                    case "loginButton" -> {
+                        case "loginButton" -> {
 
-                        data.add(input.readLine());
-                        data.add(input.readLine());
+                            // identifier
+                            // password
+                            data = readData(input, 2);
 
-                        String usernameOrEmail = data.get(1);
-                        String password = data.get(2);
+                            String usernameOrEmail = data.get(1);
+                            String password = data.get(2);
 
-                        JSONObject user = as.validateLogin(usernameOrEmail, password);
+                            JSONObject user = as.validateLogin(usernameOrEmail, password);
 
-                        if(user != null) {
-                            writer.println("true");
-                            writer.println(user);
+                            if (user != null) {
+                                writer.println("true");
+                                writer.println(user);
+                            } else {
+                                writer.println("false"); // False - could not validate user
+                                writer.println("False"); // False - There is no user to pass
+                            }
+                            writer.flush();
+
                         }
-                        else {
-                            writer.println("false"); // False - could not validate user
-                            writer.println("False"); // False - There is no user to pass
+                        case "getStores" -> {
+
+                            JSONObject storeFile = new JSONObject(ss.getStoreFile());
+
+                            if (!storeFile.isEmpty()) {
+                                writer.println(storeFile.getJSONArray("stores"));
+                                System.out.println("[SERVER] Transferred stores.");
+
+                            } else {
+                                writer.println("empty");
+                            }
+                            writer.flush();
                         }
-                        writer.flush();
-                        data.clear();
+                        case "getProducts" -> {
 
-                    }
-                    case "getStores" -> {
-                        System.out.println("[SERVER] Receiving stores...");
-                        JSONObject storeFile = new JSONObject(ss.getStoreFile());
-                        if (!storeFile.isEmpty()) {
-                            writer.println(storeFile.getJSONArray("stores"));
-                        } else {
-                            writer.println("empty");
+                            // Retrieve product file
+                            JSONObject productFile = new JSONObject(ss.getProductFile());
+
+                            if (!productFile.isEmpty()) {
+                                writer.println(productFile.getJSONArray("products"));
+                                System.out.println("[SERVER] Transferred products.");
+                            } else {
+                                writer.println("empty");
+                            }
+                            writer.flush();
                         }
-                        writer.flush();
-                        data.clear();
+                        case "changeStoreName" -> {
 
-                    }
-                    case "getProducts" -> {
-                        System.out.println("[SERVER] Receiving products...");
-                        JSONObject productFile = new JSONObject(ss.getProductFile());
-                        if (!productFile.isEmpty()) {
-                            writer.println(productFile.getJSONArray("products"));
-                        } else {
-                            writer.println("empty");
+                            // Store id
+                            // New Name
+                            data = readData(input, 2);
+
+
+                            ss.updateStoreName(data.get(1), data.get(2));
+                            System.out.println("[SERVER] Changed store name...");
                         }
-                        writer.flush();
-                        data.clear();
-                    }
-                    case "changeStoreName" -> {
+                        case "removeStore" -> {
 
-                        data.add(input.readLine());
-                        data.add(input.readLine());
+                            // Seller id
+                            // Store id
+                            data = readData(input, 2);
 
-                        ss.updateStoreName(data.get(1), data.get(2));
-                        System.out.println("[SERVER] Changed store name...");
-                        data.clear();
-                    }
-                    case "removeStore" -> {
-
-                        data.add(input.readLine()); // Seller id
-                        data.add(input.readLine()); // Store id
-
-                        System.out.printf("Seller ID: %s\nStore ID: %s\n", data.get(1), data.get(2));
-
-                        if (ss.removeStore(data.get(2), data.get(1)))
-                            System.out.println("[SERVER] Removed store...");
-                        else
-                            System.out.println("[SERVER] Problem occurred removing store...");
-                    }
-                    case "removeProduct" -> {
-
-                        data.add(input.readLine()); // Store Id
-                        data.add(input.readLine()); // Product Id
-
-                        if (ss.removeProduct(data.get(1), data.get(2)))
-                            System.out.println("[SERVER] Removed product name...");
-                        else
-                            System.out.println("[SERVER] Product could not be removed...");
-                        data.clear();
-                    }
-                    case "addProduct" -> {
-                        data.add(input.readLine()); // Store id
-                        data.add(input.readLine()); // Product id
-                        data.add(input.readLine()); // Quantity
-                        data.add(input.readLine()); // Price
-
-                        if (ss.addProduct(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
-                            System.out.println("[SERVER] Added product");
-                        } else {
-                            System.out.println("[SERVER] Could not add product...");
+                            if (ss.removeStore(data.get(2), data.get(1)))
+                                System.out.println("[SERVER] Removed store...");
+                            else
+                                System.out.println("[SERVER] Problem occurred removing store...");
                         }
-                        data.clear();
-                    }
-                    case "createStore" -> {
-                        data.add(input.readLine()); // Seller Id
-                        data.add(input.readLine()); // Store Name
+                        case "removeProduct" -> {
 
-                        if (ss.createStore(data.get(1), data.get(2))) {
-                            writer.println(ss.getStoreByName(data.get(2)));
-                            System.out.println("[SERVER] Created store and add to users store");
-                        } else {
-                            System.out.println("[SERVER] Store could not be created...");
+                            // Store id
+                            // Product id
+                            data = readData(input, 2);
+
+                            if (ss.removeProduct(data.get(1), data.get(2)))
+                                System.out.println("[SERVER] Removed product name...");
+                            else
+                                System.out.println("[SERVER] Product could not be removed...");
                         }
-                        writer.flush();
-                    }
-                    case "updateProduct" -> {
-                        data.add(input.readLine()); // Store Id
-                        data.add(input.readLine()); // Product Id
-                        data.add(input.readLine()); // Type
-                        data.add(input.readLine()); // Value
+                        case "addProduct" -> {
 
-                        if (ss.updateStoreProduct(data.get(1), data.get(2), data.get(3), data.get(4))) {
-                            System.out.println("Changed details successfully");
-                        } else {
-                            System.out.println("Error occurred");
-                        }
-                    }
-                    case "updateUserDetails" -> {
-                        data.add(input.readLine()); // User id
-                        data.add(input.readLine()); // User info to change
-                        data.add(input.readLine()); // New value
+                            // Store id
+                            // Product id
+                            // Quantity
+                            // Price
+                            data = readData(input, 4);
 
-                        if (as.updateUserDetails(data.get(1), data.get(2), data.get(3))) {
-                            System.out.println("Changed details successfully");
-                        } else {
-                            System.out.println("Error occurred");
-                        }
-                    }
-                    case "deleteAccount" -> {
-                        data.add(input.readLine()); // User id
-
-                        if (as.removeAccount(data.get(1))) {
-                            System.out.println("[SERVER] Account removed successfully!");
-                        } else {
-                            System.out.println("[SERVER] Error occurred, account was not removed.");
-                        }
-                    }
-                    case "addToCart" -> {
-                        data.add(input.readLine()); // User ID
-                        data.add(input.readLine()); // Product ID
-                        data.add(input.readLine()); // Store ID
-                        data.add(input.readLine()); // Quantity
-                        data.add(input.readLine()); // Price
-
-                        System.out.println("Store id " + data.get(3));
-
-                        if (ts.addToCart(data.get(1), data.get(2), data.get(3), Integer.parseInt(data.get(4)), Double.parseDouble(data.get(5)))) {
-                            System.out.println("[SERVER] Added to cart successfully!");
-                        } else {
-                            System.out.println("[SERVER] Error occurred writing cart.");
-                        }
-                    }
-                    case "placeOrder" -> {
-                        data.add(input.readLine()); // User id
-
-                        if (ts.placeOrder(data.get(1))) {
-                            System.out.println("[SERVER] Order successfully placed!");
-                            writer.println("true");
-                        } else {
-                            writer.println("false");
-                            System.out.println("[SERVER] Error occurred placing order.");
-                        }
-                        writer.flush();
-                    }
-                    case "addFunds" -> {
-
-                        data.add(input.readLine()); // Buyer id
-                        data.add(input.readLine()); // New Balance Amount
-
-                        if (ts.addFunds(data.get(1), Double.parseDouble(data.get(2)))) {
-                            System.out.println("[SERVER] Funds added!");
-                        } else {
-                            System.out.println("[SERVER] Funds were not successfully added...");
-                        }
-                    }
-                    case "getUser" -> {
-
-                        data.add(input.readLine()); // Id
-
-                        String user = ts.getUser(data.get(1));
-                        writer.println(user);
-                        writer.flush();
-                    }
-                    case "getStore" -> {
-
-                        data.add(input.readLine()); // Id
-
-                        String store = ss.getStoreById(data.get(1)).toString();
-                        writer.println(store);
-                        writer.flush();
-                    }
-                    case "exportHistory" -> {
-                        data.add(input.readLine()); // ID
-                        data.add(input.readLine()); // filePath
-
-                        ts.exportProductHistory(data.get(1), data.get(2));
-                    }
-                    case "removeFromCart" -> {
-                        data.add(input.readLine()); // ID
-                        data.add(input.readLine()); // Product Name
-                        data.add(input.readLine()); // Store ID
-
-                        ts.removeFromCart(data.get(1), data.get(2), data.get(3));
-                    }
-                    case "search" -> {
-                        data.add(input.readLine()); // Search Query
-                        SearchService searchService = new SearchService();
-                        ArrayList<String> results = searchService.search(data.get(1));
-
-                        if (results == null) {
-                            writer.println("null");
-                        } else {
-                            for (String result : results) {
-                                writer.println(result);
+                            if (ss.addProduct(data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
+                                System.out.println("[SERVER] Added product");
+                            } else {
+                                System.out.println("[SERVER] Could not add product...");
                             }
                         }
+                        case "createStore" -> {
 
-                        writer.flush();
-                    }
-                    case "importProducts" -> {
-                        data.add(input.readLine()); // ID
-                        data.add(input.readLine()); // filePath
+                            // Seller id
+                            // Store name
+                            data = readData(input, 2);
 
-                        ss.importProducts(new JSONObject(data.get(1)), data.get(2));
+                            if (ss.createStore(data.get(1), data.get(2))) {
+                                writer.println(ss.getStoreByName(data.get(2)));
+                                System.out.println("[SERVER] Created store and add to users store");
+                            } else {
+                                System.out.println("[SERVER] Store could not be created...");
+                            }
+                            writer.flush();
+                        }
+                        case "updateProduct" -> {
+
+                            // Store id
+                            // Product id
+                            // Type
+                            // Value
+                            data = readData(input, 4);
+
+                            if (ss.updateStoreProduct(data.get(1), data.get(2), data.get(3), data.get(4))) {
+                                System.out.println("Changed details successfully");
+                            } else {
+                                System.out.println("Error occurred");
+                            }
+                        }
+                        case "updateUserDetails" -> {
+
+                            // User id
+                            // User detail
+                            // New value
+                            data = readData(input, 3);
+
+                            if (as.updateUserDetails(data.get(1), data.get(2), data.get(3))) {
+                                System.out.println("Changed details successfully");
+                            } else {
+                                System.out.println("Error occurred");
+                            }
+                        }
+                        case "deleteAccount" -> {
+
+                            // User id
+                            data = readData(input, 1);
+
+                            if (as.removeAccount(data.get(1))) {
+                                System.out.println("[SERVER] Account removed successfully!");
+                            } else {
+                                System.out.println("[SERVER] Error occurred, account was not removed.");
+                            }
+                        }
+                        case "addToCart" -> {
+
+                            // User id
+                            // Product id
+                            // Store id
+                            // Quantity
+                            // Price
+                            data = readData(input, 5);
+
+                            if (ts.addToCart(data.get(1), data.get(2), data.get(3), Integer.parseInt(data.get(4)), Double.parseDouble(data.get(5)))) {
+                                System.out.println("[SERVER] Added to cart successfully!");
+                            } else {
+                                System.out.println("[SERVER] Error occurred writing cart.");
+                            }
+                        }
+                        case "placeOrder" -> {
+
+                            // User id
+                            data = readData(input, 1);
+
+                            if (ts.placeOrder(data.get(1))) {
+                                System.out.println("[SERVER] Order successfully placed!");
+                                writer.println("true");
+                            } else {
+                                writer.println("false");
+                                System.out.println("[SERVER] Error occurred placing order.");
+                            }
+                            writer.flush();
+                        }
+                        case "addFunds" -> {
+
+                            // Buyer id
+                            // New Balance Amount
+                            data = readData(input, 2);
+
+                            if (ts.addFunds(data.get(1), Double.parseDouble(data.get(2)))) {
+                                System.out.println("[SERVER] Funds added!");
+                            } else {
+                                System.out.println("[SERVER] Funds were not successfully added...");
+                            }
+                        }
+                        case "getUser" -> {
+
+                            // User id
+                            data = readData(input, 1);
+
+                            String user = ts.getUser(data.get(1));
+                            writer.println(user);
+                            writer.flush();
+                        }
+                        case "getStore" -> {
+
+                            // Store id
+                            data = readData(input, 1);
+
+                            String store = ss.getStoreById(data.get(1)).toString();
+                            writer.println(store);
+                            writer.flush();
+                        }
+                        case "exportHistory" -> {
+
+                            // User id
+                            // File Path
+
+                            data = readData(input, 2);
+                            ts.exportProductHistory(data.get(1), data.get(2));
+                        }
+                        case "removeFromCart" -> {
+                            // User id
+                            // Product Name
+                            // Store id
+
+                            data = readData(input, 3);
+                            ts.removeFromCart(data.get(1), data.get(2), data.get(3));
+                        }
+                        case "search" -> {
+
+                            // Search Query
+                            data = readData(input, 1);
+
+                            ArrayList<String> results = searchService.search(data.get(1));
+
+                            if (results == null) {
+                                writer.println("null");
+                            } else {
+                                for (String result : results) {
+                                    writer.println(result);
+                                }
+                            }
+
+                            writer.flush();
+                        }
+                        case "importProducts" -> {
+
+                            // Seller id
+                            // File path
+                            data = readData(input, 2);
+
+                            ss.importProducts(new JSONObject(data.get(1)), data.get(2));
+                        }
+                        case "exit" -> {
+                            break loop;
+                        }
+
                     }
                 }
             }
@@ -299,5 +323,17 @@ public class ClientThread extends Thread {
                 // Oh, well!
             }
         }
+    }
+
+    public ArrayList<String> readData(BufferedReader input, int lines) throws IOException {
+
+        ArrayList<String> data = new ArrayList<>();
+
+        for (int i = 0; i < lines; i++) {
+            data.add(input.readLine());
+        }
+
+        return data;
+
     }
 }
