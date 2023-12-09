@@ -1,1 +1,52 @@
-{"stores":[{"name":"Best Buy","id":"L7UIPCx0CvUC1rZ27zvh","sales":0,"products":[{"price":2699,"qty":9761,"id":"XBmfdW4QFeTUkyydff"}]},{"name":"Target","id":"GaTxIKHqVBpNZ5fBOCWB","sales":0,"products":[{"price":29.99,"qty":150,"id":"D2AoTw3MEbe1MgMjmd"},{"price":4.99,"qty":23,"id":"g12OIpIGfiDTn5nQnf"}]},{"name":"Walmart","id":"L5kyZiAmW0TvdtN8EDwP","sales":0,"products":[{"price":254.99,"qty":13453,"id":"aDQsfXsltPHu6mGQDc"}]},{"name":"GameStop","id":"CvdkroDP5HuFEmRXlKVl","sales":29.99,"products":[{"price":29.99,"qty":123,"id":"5CJxmgmWFp4cLsxIuh"}]}]}
+{
+  "stores": [
+    {
+      "name": "Best Buy",
+      "id": "4TnAMsrY06hxfnK1jSNn",
+      "sales": 0,
+      "products": [
+        {
+          "price": 99.99,
+          "qty": 1,
+          "id": "o00Bq80y8QDHzcQB4W"
+        }
+      ]
+    },
+    {
+      "name": "Target",
+      "id": "p5rOCoIza0HfwW4nbB8W",
+      "sales": 0,
+      "products": [
+        {
+          "price": 29.99,
+          "qty": 1,
+          "id": "oOvlWzuAKbeHXzU48G"
+        }
+      ]
+    },
+    {
+      "name": "Walmart",
+      "id": "otW4KD7CIDb2Ab4eElxX",
+      "sales": 0,
+      "products": [
+        {
+          "price": 99.99,
+          "qty": 1,
+          "id": "6gCib8NO43xiACjnu4"
+        }
+      ]
+    },
+    {
+      "name": "GameStop",
+      "id": "BOZoBb7tfvKpiNeaMU0a",
+      "sales": 0,
+      "products": [
+        {
+          "price": 29.99,
+          "qty": 1,
+          "id": "KDE4GjarfWPFIf1c9s"
+        }
+      ]
+    }
+  ]
+}
