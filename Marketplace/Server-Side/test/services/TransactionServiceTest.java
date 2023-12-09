@@ -29,11 +29,6 @@ class TransactionServiceTest {
         assertTrue(transactionService.clearCart("PztsCpytYcTxgAKCJVb"));
     }
 
-    @Test
-    void getCartContents() {
-        System.out.println(transactionService.getCartContents("PztsCpytYcTxgAKCJVb"));
-
-    }
 
 
 }

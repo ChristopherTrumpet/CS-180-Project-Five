@@ -2,17 +2,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -131,7 +126,7 @@ public class SellerPage extends JFrame {
 
                 // UPDATE SELLER DATA
                 Client.sendToServer("getUser", seller.getString("id"));
-                String userString = Client.readFromServer(1).get(0);
+                String userString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
                 this.seller = new JSONObject(userString);
 
                 container.remove(Stores());
@@ -203,7 +198,7 @@ public class SellerPage extends JFrame {
 
         Client.sendToServer("getStores");
 
-        String allStoresString = Client.readFromServer(1).get(0);
+        String allStoresString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
         if (allStoresString.equals("empty"))
             System.out.println("User has no stores");
@@ -247,7 +242,7 @@ public class SellerPage extends JFrame {
                             new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
                     );
 
-                    JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
+                    JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                     editStore(store);
                 }
             }
@@ -279,7 +274,7 @@ public class SellerPage extends JFrame {
                         new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
                 );
 
-                JSONObject store = new JSONObject(Client.readFromServer(1).get(0));
+                JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                 editStore(store);
             }
 
@@ -538,7 +533,6 @@ public class SellerPage extends JFrame {
 
         // Create a dialog box with a text field and a button
         String storeName = JOptionPane.showInputDialog("Enter store name (Must be less than 16 characters)", "Store");
-        ArrayList<String> data = new ArrayList<>();
 
         if (storeName != null) {
             if (storeName.length() <= 16) {
@@ -548,7 +542,7 @@ public class SellerPage extends JFrame {
                         storeName
                 );
 
-                String storeId = Client.readFromServer(1).get(0);
+                String storeId = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
                 // Create a DefaultTableModel
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -639,22 +633,18 @@ public class SellerPage extends JFrame {
 
             // Type
             switch (column) {
-                case 1 -> {
-                    Client.sendToServer("updateProduct",
-                            store.getString("id"),
-                            model.getValueAt(row, 3).toString(),
-                            "quantity",
-                            valueStr
-                    );
-                }
-                case 2 -> {
-                    Client.sendToServer("updateProduct",
-                            store.getString("id"),
-                            model.getValueAt(row, 3).toString(),
-                            "price",
-                            valueStr.substring(1)
-                    );
-                }
+                case 1 -> Client.sendToServer("updateProduct",
+                        store.getString("id"),
+                        model.getValueAt(row, 3).toString(),
+                        "quantity",
+                        valueStr
+                );
+                case 2 -> Client.sendToServer("updateProduct",
+                        store.getString("id"),
+                        model.getValueAt(row, 3).toString(),
+                        "price",
+                        valueStr.substring(1)
+                );
             }
 
         });
@@ -678,7 +668,7 @@ public class SellerPage extends JFrame {
                     boolean storeExists = false;
 
                     Client.sendToServer("getStores");
-                    String storesString = Client.readFromServer(1).get(0);
+                    String storesString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
                     JSONArray stores = new JSONArray(storesString);
 
                     for (Object storeObj : stores) {
@@ -723,7 +713,7 @@ public class SellerPage extends JFrame {
             JTextField price = new JTextField();
             Object[] message = {
                     "Select a Product: ", productList,
-                    "Quantity (1-99):", quantity,
+                    "Quantity (1-9999):", quantity,
                     "Price: $", price
             };
 
@@ -731,11 +721,11 @@ public class SellerPage extends JFrame {
 
             String productId = "";
 
-            if (option == JOptionPane.OK_OPTION) {
+            if (option == JOptionPane.OK_OPTION && productList.getSelectedItem() != null) {
 
-                if (isValidQuantity(quantity.getText(), 100)) {
+                if (isValidQuantity(quantity.getText(), 9999)) {
                     if (isValidPrice(price.getText(), 1000000.00)) {
-                        String productName = Objects.requireNonNull(productList.getSelectedItem()).toString();
+                        String productName = productList.getSelectedItem().toString();
 
                         for (Object product : allProducts) {
                             JSONObject productObj = (JSONObject) product;
@@ -773,8 +763,8 @@ public class SellerPage extends JFrame {
                 if (input == 0) {
 
                     Client.sendToServer("removeProduct",
-                        store.getString("id"),
-                        productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString()
+                            store.getString("id"),
+                            productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString()
                     );
 
                     ((DefaultTableModel) productTable.getModel()).removeRow(productTable.getSelectedRow());

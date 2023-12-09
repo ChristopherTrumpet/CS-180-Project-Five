@@ -8,20 +8,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
-import java.util.SortedMap;
 
 public class TransactionService {
 
-    private final AccountService accountService = new AccountService();
+    private final AccountService as = new AccountService();
 
     public boolean addToCart(String userId, String productId, String storeId, int quantity, double price) {
 
-        // TODO: Do NOT allow duplicates!
-
-        if (accountService.isBuyer(userId))
+        if (as.isBuyer(userId))
         {
-            JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
+            JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             JSONObject product = new JSONObject();
 
             product.put("product_id", productId);
@@ -30,18 +26,18 @@ public class TransactionService {
             product.put("price", price);
 
             cart.put(product);
-            return accountService.updateUserDetails(userId, "cart", cart);
+            return as.updateUserDetails(userId, "cart", cart);
         }
         return false;
     }
 
 
     public boolean removeFromCart(String userId, String productName, String storeId) {
-        if (accountService.isBuyer(userId))
+        if (as.isBuyer(userId))
         {
-            JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
+            JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             StoreService ss = new StoreService();
-            String productId = ss.getProductByName(productName).getString("product_id");
+            String productId = ss.getProduct(productName).getString("product_id");
             for (int i = 0; i < cart.length(); i++) {
                 JSONObject product = (JSONObject) cart.get(i);
                 String currProductId = product.getString("product_id");
@@ -50,7 +46,7 @@ public class TransactionService {
                 {
                     cart.remove(i);
                     System.out.println("Updating cart...");
-                    return accountService.updateCart(userId, cart);
+                    return as.updateUserDetails(userId, "cart", cart);
                 }
             }
         }
@@ -59,64 +55,46 @@ public class TransactionService {
     }
 
     public boolean clearCart(String userId) {
-        if (accountService.isBuyer(userId))
+        if (as.isBuyer(userId))
         {
-            JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
+            JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             cart.clear();
 
-            return accountService.updateUserDetails(userId, "cart", cart);
+            return as.updateUserDetails(userId, "cart", cart);
         }
 
         return false;
     }
 
-    public String getCartContents(String userId) {
-
-        // TODO: Get actual product name and improve formatting instead of displaying raw data
-
-        if (accountService.isBuyer(userId))
-        {
-            JSONArray cart = accountService.getUserById(userId).getJSONArray("cart");
-            return cart.isEmpty() ? "Cart is currently empty..." : cart.toString();
-        }
-
-        return null;
-    }
-
     public boolean addFunds(String buyerId, double newBalance) {
-        JSONObject users = new JSONObject(accountService.getJSONFile(accountService.getUserFileDirectory()));
+        JSONObject users = new JSONObject(as.getJSONFromFile(as.getUserFileDirectory()));
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
             JSONObject user = (JSONObject) users.getJSONArray("users").get(i);
             if (user.getString("id").equals(buyerId)) {
                 user.put("funds", user.getDouble("funds") + newBalance);
                 users.getJSONArray("users").put(i, user);
-                return accountService.writeJSONObjectToFile(users, accountService.getUserFileDirectory());
+                return as.writeJSONObjectToFile(users, as.getUserFileDirectory());
             }
         }
 
         return false;
     }
 
-    public String getUser(String buyerId) {
-        JSONObject user = accountService.getUserById(buyerId);
-        return user.toString();
-    }
-
     public boolean exportProductHistory(String buyerId, String filePath) {
 
-        JSONObject buyer = accountService.getUserById(buyerId);
+        JSONObject buyer = as.getUser("id", buyerId);
         String csvString = CDL.toString(buyer.getJSONArray("product_history"));
 
-        try {
-            FileWriter file = new FileWriter(filePath+".csv");
-            file.write(csvString);
-            file.flush();
-            file.close();
+        try (FileWriter fileWriter = new FileWriter(filePath+".csv")) {
+
+            fileWriter.write(csvString);
+            fileWriter.flush();
+            fileWriter.close();
             return true;
 
         } catch (IOException e) {
-            System.out.println("Error occurred writing json object to file...\n" + e.getMessage());
+            System.out.println("Error occurred exporting product file...\n" + e.getMessage());
         }
 
         return false;
@@ -125,8 +103,8 @@ public class TransactionService {
     public boolean placeOrder(String userId) {
 
         StoreService ss = new StoreService();
-        JSONObject stores = new JSONObject(ss.getStoreFile());
-        JSONObject users = new JSONObject(accountService.getJSONFile(accountService.getUserFileDirectory()));
+        JSONObject stores = as.getJSONFromFile(ss.getStoreFileDirectory());
+        JSONObject users = as.getJSONFromFile(as.userFileDirectory);
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
             JSONObject user = (JSONObject) users.getJSONArray("users").get(i);
@@ -185,7 +163,7 @@ public class TransactionService {
                     user.getJSONArray("cart").clear();
                     user.put("funds", round((user.getDouble("funds") - totalCost), 2));
                     ss.writeJSONObjectToFile(stores, ss.getStoreFileDirectory());
-                    return accountService.writeJSONObjectToFile(users, accountService.getUserFileDirectory());
+                    return as.writeJSONObjectToFile(users, as.getUserFileDirectory());
                 } else {
                     return false;
                 }

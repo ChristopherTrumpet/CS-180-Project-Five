@@ -1,6 +1,5 @@
 package services;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
@@ -11,9 +10,10 @@ public class SearchService {
         ArrayList<String> finalResults = new ArrayList<>();
 
         StoreService ss = new StoreService();
+        AccountService as = new AccountService();
 
-        JSONObject products = new JSONObject(ss.getProductFile());
-        JSONObject stores = new JSONObject(ss.getStoreFile());
+        JSONObject products = as.getJSONFromFile(ss.getProductFileDirectory());
+        JSONObject stores = as.getJSONFromFile(ss.getStoreFileDirectory());
 
         for (Object product : products.getJSONArray("products")) {
             for (Object store : stores.getJSONArray("stores")) {

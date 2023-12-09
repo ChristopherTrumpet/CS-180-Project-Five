@@ -3,13 +3,11 @@ package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -59,8 +57,8 @@ public class AccountService {
                 JSONObject userObj = new JSONObject();
 
                 // Ensures users.json file exists
-                if (getJSONFile(getUserFileDirectory()) != null)
-            userObj = new JSONObject(getJSONFile(getUserFileDirectory()));
+                if (getJSONFromFile(getUserFileDirectory()) != null)
+            userObj = new JSONObject(getJSONFromFile(getUserFileDirectory()));
 
         // Uses user email as it is unique, user id cannot be used as it generated upon creation
         if (userExists(email, userName))
@@ -98,7 +96,7 @@ public class AccountService {
      * @return True if user exists, false otherwise
      */
     private boolean userExists(String email, String username) {
-        return getUserByEmail(email) != null && getUserByUsername(username) != null;
+        return getUser("email",email) != null && getUser("username", username) != null;
     }
 
     /**
@@ -111,51 +109,26 @@ public class AccountService {
         return userId.charAt(userId.length() - 1) == 'b';
     }
 
-    /**
-     * Checks if the user is a seller
-     *
-     * @param userId Gets user from database using their unique user id
-     * @return True if the user is a seller, false otherwise
-     */
-    public boolean isSeller(String userId) {
-        return userId.charAt(userId.length() - 1) == 's';
-    }
-
-
     public String getUserFileDirectory() {
         return userFileDirectory;
     }
 
-    public JSONObject getUserById(String userId) {
-        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray("users")) {
-            if (((JSONObject) user).get("id").toString().equals(userId)) {
-                return (JSONObject) user;
-            }
-        }
-        return null;
-    }
+    public JSONObject getUser(String identifier, String value) {
 
-    private JSONObject getUserByEmail(String email) {
-        for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
-            if (((JSONObject) user).get("email").toString().equals(email)) {
-                return (JSONObject) user;
-            }
-        }
-        return null;
-    }
+        JSONObject users =getJSONFromFile(userFileDirectory);
 
-    public JSONObject getUserByUsername(String username) {
-        for (Object user : new JSONObject(getJSONFile(getUserFileDirectory())).getJSONArray("users")) {
-            if (((JSONObject) user).get("username").toString().equals(username)) {
+        for (Object user : users.getJSONArray("users")) {
+
+            String indexedUserUsername = ((JSONObject) user).get(identifier).toString();
+            if (indexedUserUsername.equals(value))
                 return (JSONObject) user;
-            }
         }
         return null;
     }
 
     public boolean updateUserDetails(String userId, String key, Object value) {
 
-        JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
+        JSONObject users = getJSONFromFile(userFileDirectory);
 
         for (Object user : users.getJSONArray("users")) {
             if (((JSONObject) user).getString("id").equals(userId)) {
@@ -168,39 +141,29 @@ public class AccountService {
         return false;
     }
 
-    public boolean updateCart(String userId, JSONArray value) {
-
-        JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
-
-        for (Object user : users.getJSONArray("users")) {
-            if (((JSONObject) user).getString("id").equals(userId)) {
-                ((JSONObject) user).put("cart", value);
-                writeJSONObjectToFile(users, getUserFileDirectory());
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public boolean removeAccount(String userId) {
 
-        JSONObject userObj = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
+        JSONObject userObj = getJSONFromFile(userFileDirectory);
         JSONArray users = userObj.getJSONArray("users");
-        for (int i = 0; i < users.length(); i++) {
-            if (((JSONObject) users.get(i)).get("id").toString().equals(userId)) {
 
+        for (int i = 0; i < users.length(); i++) {
+
+            // Indexed users id
+            String indexedUserId = ((JSONObject) users.get(i)).get("id").toString();
+
+            if (indexedUserId.equals(userId)) {
                 users.remove(i);
                 return writeJSONObjectToFile(userObj, getUserFileDirectory());
             }
         }
-
         return false;
     }
 
-    public String getJSONFile(String fileDirectory) {
+
+
+    public JSONObject getJSONFromFile(String fileDirectory) {
         try {
-            return Files.readString(Path.of(fileDirectory));
+            return new JSONObject(Files.readString(Path.of(fileDirectory)));
         } catch (IOException e) {
             System.out.println("Error occurred retrieving user file...");
         }
@@ -210,12 +173,11 @@ public class AccountService {
 
     public boolean writeJSONObjectToFile(JSONObject userObj, String fileDirectory) {
 
-        try {
+        try (FileWriter fileWriter = new FileWriter(fileDirectory)) {
 
-            FileWriter file = new FileWriter(fileDirectory);
-            file.write(userObj.toString());
-            file.flush();
-            file.close();
+            fileWriter.write(userObj.toString());
+            fileWriter.flush();
+            fileWriter.close();
             return true;
 
         } catch (IOException e) {
@@ -225,27 +187,10 @@ public class AccountService {
         return false;
     }
 
-    public String[] getAccountDetails(String userId) {
-
-        String[] accountDetails = new String[4];
-
-        JSONObject user = getUserById(userId);
-
-        if (user == null)
-            return null;
-
-        accountDetails[0] = user.get("username").toString();
-        accountDetails[1] = user.get("password").toString();
-        accountDetails[2] = user.get("email").toString();
-        accountDetails[3] = userId.charAt(userId.length() - 1) == 'b' ? "Buyer" : "Seller";
-
-        return accountDetails;
-    }
-
     /**
      * Generates a unique user id string
-     * @param AccountType
-     * @return
+     * @param AccountType appends either 'b' or 's' to signify whether account is buyer or seller
+     * @return unique randomized id of user
      */
     public String generateUserId(char AccountType) {
 
@@ -262,21 +207,21 @@ public class AccountService {
     }
 
 
-    public JSONObject validateLogin(String usernameOrEmail, String password) {
-        JSONObject user;
-        if(getUserByEmail(usernameOrEmail) == null) {
-            if(getUserByUsername(usernameOrEmail) == null) {
+    public JSONObject validateLogin(String identifier, String password) {
+
+        JSONObject user = getUser("username", identifier);
+
+        if (user == null)
+        {
+            user = getUser("email", identifier);
+
+            if (user == null)
                 return null;
-            }
-            else {
-                user = getUserByUsername(usernameOrEmail);
-            }
         }
-        else {
-            user = getUserByEmail(usernameOrEmail);
-        }
-        if(user.get("password").toString().equals(password))
+
+        if(user.getString("password").equals(password))
             return user;
+
         return null;
     }
 }

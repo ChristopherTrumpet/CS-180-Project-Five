@@ -54,7 +54,7 @@ public class ClientThread extends Thread {
 
                             as.createAccount(accountType, username, password, email);
 
-                            writer.println(as.getUserByUsername(username));
+                            writer.println(as.getUser("username", username));
                             writer.flush();
                         }
                         case "loginButton" -> {
@@ -80,10 +80,10 @@ public class ClientThread extends Thread {
                         }
                         case "getStores" -> {
 
-                            JSONObject storeFile = new JSONObject(ss.getStoreFile());
+                            JSONObject stores = as.getJSONFromFile(ss.getStoreFileDirectory());
 
-                            if (!storeFile.isEmpty()) {
-                                writer.println(storeFile.getJSONArray("stores"));
+                            if (!stores.isEmpty()) {
+                                writer.println(stores.getJSONArray("stores"));
                                 System.out.println("[SERVER] Transferred stores.");
 
                             } else {
@@ -94,7 +94,7 @@ public class ClientThread extends Thread {
                         case "getProducts" -> {
 
                             // Retrieve product file
-                            JSONObject productFile = new JSONObject(ss.getProductFile());
+                            JSONObject productFile = as.getJSONFromFile(ss.getProductFileDirectory());
 
                             if (!productFile.isEmpty()) {
                                 writer.println(productFile.getJSONArray("products"));
@@ -110,9 +110,10 @@ public class ClientThread extends Thread {
                             // New Name
                             data = readData(input, 2);
 
-
-                            ss.updateStoreName(data.get(1), data.get(2));
-                            System.out.println("[SERVER] Changed store name...");
+                            if (ss.updateStoreName(data.get(1), data.get(2)))
+                                System.out.println("[SERVER] Changed store name...");
+                            else
+                                System.out.println("[SERVER] Error occurred changing name.");
                         }
                         case "removeStore" -> {
 
@@ -248,7 +249,7 @@ public class ClientThread extends Thread {
                             // User id
                             data = readData(input, 1);
 
-                            String user = ts.getUser(data.get(1));
+                            String user = as.getUser("id", data.get(1)).toString();
                             writer.println(user);
                             writer.flush();
                         }
@@ -265,9 +266,13 @@ public class ClientThread extends Thread {
 
                             // User id
                             // File Path
-
                             data = readData(input, 2);
-                            ts.exportProductHistory(data.get(1), data.get(2));
+
+                            if (ts.exportProductHistory(data.get(1), data.get(2))) {
+                                System.out.println("[SERVER] Successfully export product history");
+                            } else {
+                                System.out.println("[SERVER] Error occurred exporting product history.");
+                            }
                         }
                         case "removeFromCart" -> {
                             // User id
