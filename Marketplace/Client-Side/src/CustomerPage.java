@@ -96,17 +96,17 @@ public class CustomerPage extends JFrame {
         c.gridy = 2;
         c.gridx = 0;
         c.gridwidth = 2;
-        c.insets = new Insets(4,80,0,24);
+        c.insets = new Insets(4,80,4,24);
         gridLayout.setConstraints(accountDetailsDivider, c);
         panel.add(accountDetailsDivider);
 
 
-        balanceMessage = new JLabel("Balance: $" + buyer.getDouble("funds"));
+        balanceMessage = new JLabel("Balance: $" + String.format("%.2f", buyer.getDouble("funds")));
         balanceMessage.setFont(new Font("sans-serif", Font.PLAIN, 14));
         c.gridy = 3;
         c.gridx = 0;
         c.gridwidth = 2;
-        c.insets = new Insets(0,80,4,24);
+        c.insets = new Insets(4,80,4,24);
 
         gridLayout.setConstraints(balanceMessage,c);
         balanceMessage.setMaximumSize(new Dimension(300, 24));
@@ -267,9 +267,9 @@ public class CustomerPage extends JFrame {
         cartTable.setRowSorter(sorter);
 
         // SORTING BROKEN FIX THIS LATER
-//        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-//        sorter.setSortKeys(sortKeys);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
 
         JScrollPane scrollPane= new  JScrollPane(cartTable);
         scrollPane.setBounds(24, 66, 400, 306);
@@ -300,6 +300,7 @@ public class CustomerPage extends JFrame {
                     this.buyer = new JSONObject(userString);
 
                     balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
+                    totalCostLabel.setText("Total Cost: $0.00");
 
                     for (int i = 0; i < cartTable.getRowCount(); i++) {
                         ((DefaultTableModel)cartTable.getModel()).removeRow(i);
@@ -556,7 +557,7 @@ public class CustomerPage extends JFrame {
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(marketTable.getModel());
         marketTable.setRowSorter(sorter);
 
-        // SORTING BROKEN FIX THIS LATER
+//        // SORTING BROKEN FIX THIS LATER
 //        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
@@ -572,7 +573,10 @@ public class CustomerPage extends JFrame {
         selectProductButton.addActionListener(e -> {
             if (!marketTable.getSelectionModel().isSelectionEmpty())
             {
-                viewProductPage(new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 3).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 4).toString()), new JSONObject(marketTable.getModel().getValueAt(marketTable.getSelectedRow(), 5).toString()).getString("id"));
+                JSONObject product = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 3).toString());
+                JSONObject storeProduct = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 4).toString());
+                String storeId = new JSONObject(marketTable.getModel().getValueAt(marketTable.convertRowIndexToView(marketTable.getSelectedRow()), 5).toString()).getString("id");
+                viewProductPage(product, storeProduct, storeId);
             } else {
                 JOptionPane.showMessageDialog (null, "Please highlight a product to select!", "No Product Highlighted!", JOptionPane.INFORMATION_MESSAGE);
 
