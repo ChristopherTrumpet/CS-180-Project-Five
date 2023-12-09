@@ -63,8 +63,6 @@ public class ClientThread extends Thread {
                             // password
                             data = readData(input, 2);
 
-                            System.out.println(data);
-
                             String usernameOrEmail = data.get(0);
                             String password = data.get(1);
 

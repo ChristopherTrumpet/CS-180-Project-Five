@@ -591,7 +591,6 @@ public class SellerPage extends JFrame {
         model.addColumn("Id");
 
         JSONArray products = store.getJSONArray("products");
-
         Client.sendToServer("getProducts");
 
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
@@ -601,19 +600,18 @@ public class SellerPage extends JFrame {
         if (allProductsString.equals("empty"))
             System.out.println("Store has no products");
         else {
-            for (Object productGeneric : allProducts) {
-                JSONObject productGenericObj = (JSONObject) productGeneric;
-                String storeGenericId = productGenericObj.getString("product_id");
+            for (Object product : allProducts) {
+                for (Object storeProduct : products) {
+                    String indexedProductId = ((JSONObject) product).getString("product_id");
+                    String productId = ((JSONObject) storeProduct).getString("id");
 
-                productNames.add(productGenericObj.getString("name"));
+                    String name = ((JSONObject) product).getString("name");
+                    int quantity = ((JSONObject) storeProduct).getInt("qty");
+                    double price = ((JSONObject) storeProduct).getDouble("price");
 
-                for (Object product : products) {
-                    JSONObject productObj = (JSONObject) product;
-                    String productId = productObj.getString("id");
-
-                    if (productId.equals(storeGenericId)) {
-                        productNames.remove(productGenericObj.getString("name"));
-                        model.addRow(new Object[]{productGenericObj.getString("name"), productObj.getInt("qty"), String.format("$%.2f", productObj.getDouble("price")), productObj.getString("id")});
+                    if(indexedProductId.equals(productId)) {
+                        model.addRow(new Object[]{name, quantity, price, productId});
+                        productNames.add(name);
                     }
                 }
             }
@@ -763,6 +761,7 @@ public class SellerPage extends JFrame {
         createProductButton.addActionListener(e -> {
 
         });
+        storePage.add(createProductButton);
 
         JButton removeProduct = new JButton("Remove Product");
         removeProduct.setBounds(24, 152, 185, 24);
@@ -784,7 +783,7 @@ public class SellerPage extends JFrame {
         storePage.add(removeProduct);
 
         JButton closeProduct = new JButton("Close");
-        closeProduct.setBounds(24, 429, 185, 24);
+        closeProduct.setBounds(24, 397, 185, 24);
         closeProduct.addActionListener(e -> storePage.dispose());
         storePage.add(closeProduct);
 

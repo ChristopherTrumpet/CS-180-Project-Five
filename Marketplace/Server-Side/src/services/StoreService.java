@@ -85,7 +85,7 @@ public class StoreService {
     }
 
     public JSONObject getStoreByName(String storeName) {
-        JSONObject stores = new JSONObject(as.getJSONFromFile(storeFileDirectory));
+        JSONObject stores = as.getJSONFromFile(storeFileDirectory);
         for (Object store : stores.getJSONArray("stores")) {
             if (((JSONObject) store).getString("name").equals(storeName)) {
                 return (JSONObject) store;
@@ -121,7 +121,7 @@ public class StoreService {
             createProduct(productObj.getString("name"), productObj.getString("description"));
             String storeName = ((JSONObject) product).getString("store");
 
-            JSONObject storeObj =  new JSONObject(as.getJSONFromFile(getStoreFileDirectory()));
+            JSONObject storeObj =  as.getJSONFromFile(storeFileDirectory);
             JSONArray storeArray = storeObj.getJSONArray("stores");
             JSONObject store = new JSONObject();
 
