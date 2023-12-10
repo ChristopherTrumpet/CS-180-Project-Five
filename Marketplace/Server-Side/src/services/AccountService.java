@@ -60,10 +60,6 @@ public class AccountService {
                 if (getJSONFromFile(getUserFileDirectory()) != null)
             userObj = getJSONFromFile(userFileDirectory);
 
-        // Uses user email as it is unique, user id cannot be used as it generated upon creation
-        if (userExists(email, userName))
-            return false;
-
         JSONArray users = userObj.getJSONArray("users");
         JSONObject user = new JSONObject();
 
@@ -95,8 +91,8 @@ public class AccountService {
      * @param email The email of the sought out user
      * @return True if user exists, false otherwise
      */
-    private boolean userExists(String email, String username) {
-        return getUser("email",email) != null && getUser("username", username) != null;
+    public boolean userExists(String email, String username) {
+        return getUser("email",email) != null || getUser("username", username) != null;
     }
 
     /**

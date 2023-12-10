@@ -611,9 +611,10 @@ public class SellerPage extends JFrame {
 
                     if(indexedProductId.equals(productId)) {
                         model.addRow(new Object[]{name, quantity, price, productId});
-                        productNames.add(name);
                     }
                 }
+                productNames.add(((JSONObject) product).getString("name"));
+
             }
         }
 

@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class OnboardingPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -125,6 +126,7 @@ public class OnboardingPage extends JFrame {
 
             ArrayList<String> data = Client.readFromServer(2);
 
+            assert data != null;
             if (data.get(0).equals("true")) {
                 JSONObject user = new JSONObject(data.get(1));
                 if (user.getString("id").endsWith("b")) {
@@ -202,6 +204,15 @@ public class OnboardingPage extends JFrame {
             signUpButton.addActionListener(e -> {
                 String password = String.valueOf(passwordField.getPassword());
                 outer: if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
+
+                    Client.sendToServer("userExists", emailField.getText(), usernameField.getText());
+                    String result = Objects.requireNonNull(Client.readFromServer(1)).get(0);
+
+                    if (result.equals("true")) {
+                        Client.showErrorMessage("Email or username has already been taken!");
+                        break outer;
+                    }
+
                     if (sellerType.isSelected() || buyerType.isSelected()) {
 
                         String userAccountType;
@@ -235,7 +246,7 @@ public class OnboardingPage extends JFrame {
                                 emailField.getText()
                         );
 
-                        String userString = Client.readFromServer(1).get(0);
+                        String userString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
                         JSONObject user = new JSONObject(userString);
 
                         reference.dispose();

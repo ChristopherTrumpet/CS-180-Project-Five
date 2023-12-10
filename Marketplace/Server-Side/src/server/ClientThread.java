@@ -254,6 +254,18 @@ public class ClientThread extends Thread {
                             writer.println(user);
                             writer.flush();
                         }
+                        case "userExists" -> {
+                            // Email
+                            // Username
+                            data = readData(input, 2);
+
+                            if (as.userExists(data.get(0), data.get(1)))
+                                writer.println("true");
+                            else
+                                writer.println("false");
+
+                            writer.flush();
+                        }
                         case "getStore" -> {
 
                             // Store id
