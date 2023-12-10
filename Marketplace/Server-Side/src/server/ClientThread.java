@@ -91,6 +91,14 @@ public class ClientThread extends Thread {
                             }
                             writer.flush();
                         }
+                        case "getProduct" -> {
+                            // Product Name
+                            data = readData(input, 1);
+
+                            JSONObject product = ss.getProduct("name", data.get(0));
+                            writer.println(product.toString());
+                            writer.flush();
+                        }
                         case "getProducts" -> {
 
                             // Retrieve product file
@@ -272,7 +280,7 @@ public class ClientThread extends Thread {
                         }
                         case "getStore" -> {
 
-                            // Store id
+                            // Store name
                             data = readData(input, 1);
 
                             String store = ss.getStoreByName(data.get(0)).toString();
@@ -296,8 +304,10 @@ public class ClientThread extends Thread {
                             // Product Name
                             // Store id
 
-                            data = readData(input, 3);
-                            ts.removeFromCart(data.get(0), data.get(1), data.get(2));
+                            data = readData(input, 2);
+
+                            String storeId = ss.getStoreProduct(data.get(1)).getString("id");
+                            ts.removeFromCart(data.get(0), data.get(1), storeId);
                         }
                         case "search" -> {
 

@@ -589,7 +589,6 @@ public class SellerPage extends JFrame {
 
         String allProductsString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
         JSONArray allProducts = new JSONArray(allProductsString);
-        ArrayList<String> productNames = new ArrayList<>();
 
         // Removes products already in store list from being added again.
         if (allProductsString.equals("empty"))
@@ -607,9 +606,6 @@ public class SellerPage extends JFrame {
 
                     if(indexedProductId.equals(productId)) {
                         productModel.addRow(new Object[]{name, quantity, price});
-                    } else {
-                        productNames.add(((JSONObject) product).getString("name"));
-
                     }
                 }
             }
@@ -698,6 +694,27 @@ public class SellerPage extends JFrame {
         });
 
         storePage.add(changeStoreName);
+
+        ArrayList<String> productNames = new ArrayList<>();
+
+        // Removes products already in store list from being added again.
+        if (allProductsString.equals("empty"))
+            System.out.println("Store has no products");
+        else {
+            for (Object product : allProducts) {
+                for (Object storeProduct : products) {
+
+                    String indexedProductId = ((JSONObject) product).getString("product_id");
+                    String productId = ((JSONObject) storeProduct).getString("id");
+
+                    String name = ((JSONObject) product).getString("name");
+
+                    if(!indexedProductId.equals(productId)) {
+                        productNames.add(name);
+                    }
+                }
+            }
+        }
 
         JButton addProduct = new JButton("Add Product");
         addProduct.setBounds(24, 88, 185, 24);

@@ -138,6 +138,8 @@ public class StoreService {
         JSONArray productList = new JSONArray(jsonContents);
         JSONArray storeIdList = new JSONArray();
 
+        storeIdList.putAll(seller.getJSONArray("stores"));
+
         for (Object product : productList) {
             JSONObject productObj = (JSONObject) product;
             createProduct(productObj.getString("name"), productObj.getString("description"));
@@ -205,6 +207,20 @@ public class StoreService {
         for (Object storeProduct : storeProducts) {
             if (((JSONObject) storeProduct).getString("id").equals(productId))
                 return (JSONObject) storeProduct;
+        }
+
+        return null;
+    }
+
+    public JSONObject getStoreProduct(String productId) {
+
+        JSONObject stores = as.getJSONFromFile(storeFileDirectory);
+
+        for (Object store : stores.getJSONArray("stores")) {
+            for (Object product : ((JSONObject) store).getJSONArray("products")) {
+                if (((JSONObject) product).getString("id").equals(productId))
+                    return (JSONObject) product;
+            }
         }
 
         return null;
