@@ -118,10 +118,11 @@ public class ClientThread extends Thread {
                         case "removeStore" -> {
 
                             // Seller id
-                            // Store id
+                            // Store Name
                             data = readData(input, 2);
+                            String storeId = ss.getStoreByName(data.get(1)).getString("id");
 
-                            if (ss.removeStore(data.get(1), data.get(0)))
+                            if (ss.removeStore(storeId, data.get(0)))
                                 System.out.println("[SERVER] Removed store...");
                             else
                                 System.out.println("[SERVER] Problem occurred removing store...");
@@ -272,7 +273,7 @@ public class ClientThread extends Thread {
                             // Store id
                             data = readData(input, 1);
 
-                            String store = ss.getStoreById(data.get(0)).toString();
+                            String store = ss.getStoreByName(data.get(0)).toString();
                             writer.println(store);
                             writer.flush();
                         }

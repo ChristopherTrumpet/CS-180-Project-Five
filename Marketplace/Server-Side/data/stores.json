@@ -1,5 +1,10 @@
 {
   "stores": [
-
+    {
+      "name": "My Old Store",
+      "id": "Ny5D6ziAKE439O9EPbyI",
+      "sales": 0,
+      "products": []
+    }
   ]
 }

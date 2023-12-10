@@ -4,7 +4,6 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -17,7 +16,6 @@ public class SellerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
     Container container = new Container();
     JFrame reference;
-    JTable table;
     JSONObject seller;
 
     public SellerPage(JSONObject seller) {
@@ -192,7 +190,6 @@ public class SellerPage extends JFrame {
         // Add some data to the model
         model.addColumn("Stores");
         model.addColumn("Sales");
-        model.addColumn("Id");
 
         JSONArray stores = seller.getJSONArray("stores");
 
@@ -219,47 +216,44 @@ public class SellerPage extends JFrame {
                             }
                         }
                         if (!storeExists)
-                            model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales"), storeGenericObj.toString()});
+                            model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales")});
                     }
                 }
             }
         }
 
         // Create a JTable using the model
-        table = new JTable(model);
+        JTable storesTable = new JTable(model);
 
-        for (int c = 0; c < table.getColumnCount(); c++) {
-            Class<?> col_class = table.getColumnClass(c);
-            table.setDefaultEditor(col_class, null);        // remove editor
+        for (int c = 0; c < storesTable.getColumnCount(); c++) {
+            Class<?> col_class = storesTable.getColumnClass(c);
+            storesTable.setDefaultEditor(col_class, null);        // remove editor
         }
 
-        table.addMouseListener(new MouseAdapter() {
+        storesTable.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 JTable table = (JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
 
                     Client.sendToServer("getStore",
-                            new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                            table.getModel().getValueAt(table.getSelectedRow(), 0).toString()
                     );
 
                     JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
-                    editStore(store);
+                    editStore(store, storesTable, storesTable.getSelectedRow());
                 }
             }
         });
 
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(storesTable.getModel());
+        storesTable.setRowSorter(sorter);
 
         // SORTING BROKEN FIX THIS LATER
 //        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 //        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 //        sorter.setSortKeys(sortKeys);
 
-        TableColumnModel tcm = table.getColumnModel();
-        tcm.removeColumn(tcm.getColumn(2));
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(storesTable);
         scrollPane.setBounds(24, 66, 400, 330);
 
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
@@ -268,35 +262,35 @@ public class SellerPage extends JFrame {
         JButton selectStoreButton = new JButton("Select Store");
         selectStoreButton.setBounds(24, 404, 400 / 3 - 4, 24);
         selectStoreButton.addActionListener(e -> {
-            if (!table.getSelectionModel().isSelectionEmpty()) {
+            if (!storesTable.getSelectionModel().isSelectionEmpty()) {
 
                 Client.sendToServer("getStore",
-                        new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                        storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString()
                 );
 
                 JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
-                editStore(store);
+                editStore(store, storesTable, storesTable.getSelectedRow());
             }
 
         });
 
         JButton addStore = new JButton("Add Store");
         addStore.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 8, 24);
-        addStore.addActionListener(e -> addStore());
+        addStore.addActionListener(e -> addStore(model));
 
         JButton removeStore = new JButton("Remove Store");
         removeStore.setBounds(24 + 400 / 3 * 2 + 4, 404, 400 / 3 - 4, 24);
         removeStore.addActionListener(e -> {
-            if (!table.getSelectionModel().isSelectionEmpty()) {
-                int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + table.getValueAt(table.getSelectedRow(), 0).toString() + "?");
+            if (!storesTable.getSelectionModel().isSelectionEmpty()) {
+                int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + storesTable.getValueAt(storesTable.getSelectedRow(), 0).toString() + "?");
                 if (input == 0) {
 
                     Client.sendToServer("removeStore",
                             seller.getString("id"),
-                            new JSONObject(table.getModel().getValueAt(table.getSelectedRow(), 2).toString()).getString("id")
+                            storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString()
                     );
 
-                    ((DefaultTableModel) table.getModel()).removeRow(table.getSelectedRow());
+                    ((DefaultTableModel) storesTable.getModel()).removeRow(storesTable.getSelectedRow());
                 }
             }
         });
@@ -529,7 +523,7 @@ public class SellerPage extends JFrame {
         return panel;
     }
 
-    public void addStore() {
+    public void addStore(DefaultTableModel storeModel) {
 
         // Create a dialog box with a text field and a button
         String storeName = JOptionPane.showInputDialog("Enter store name (Must be less than 16 characters)", "Store");
@@ -545,8 +539,8 @@ public class SellerPage extends JFrame {
                 String storeId = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
                 // Create a DefaultTableModel
-                DefaultTableModel model = (DefaultTableModel) table.getModel();
-                model.addRow(new Object[]{storeName, "$0.00", storeId});
+                storeModel.addRow(new Object[]{storeName, "$0.00", storeId});
+                storeModel.fireTableDataChanged();
             } else {
                 Client.showErrorMessage("Store name cannot be more than 16 characters!");
             }
@@ -555,7 +549,7 @@ public class SellerPage extends JFrame {
 
     }
 
-    public void editStore(JSONObject store) {
+    public void editStore(JSONObject store, JTable storeTable, int storeRow) {
 
         JFrame storePage = new JFrame();
 
@@ -660,6 +654,7 @@ public class SellerPage extends JFrame {
         JButton changeStoreName = new JButton("Change Store Name");
         changeStoreName.setBounds(24, 56, 185, 24);
         changeStoreName.addActionListener(e -> {
+
             String storeName = JOptionPane.showInputDialog("What would you like to change the name to?");
 
             if (storeName != null) {
@@ -688,7 +683,8 @@ public class SellerPage extends JFrame {
 
                         // UPDATE TITLE NAME
                         titleMessage.setText(storeName + "'s Products");
-                        table.getModel().setValueAt(storeName, table.getSelectedRow(), 0);
+                        storeTable.getModel().setValueAt(storeName, storeRow, 0);
+
                     }
                 } else {
                     Client.showErrorMessage("Please enter a store name that is less than 16 characters!");

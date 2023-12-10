@@ -43,21 +43,24 @@ public class StoreService {
         writeJSONObjectToFile(users, as.getUserFileDirectory());
     }
 
-    public boolean removeStore(String storeId, String userId) {
+    public boolean removeStore(String storeId, String sellerId) {
 
         AccountService as = new AccountService();
-        JSONObject users = new JSONObject(as.getJSONFromFile(as.getUserFileDirectory()));
+        JSONObject users = as.getJSONFromFile(as.getUserFileDirectory());
 
         for (Object user : users.getJSONArray("users")) {
             JSONObject userObj = (JSONObject) user;
-            if (userObj.getString("id").equals(userId)) {
+
+            if (userObj.getString("id").equals(sellerId)) {
+
                 JSONArray stores = userObj.getJSONArray("stores");
+
                 for (int i = 0; i < stores.length(); i++) {
-                    String userStoreId = (String) stores.get(i);
-                    if (storeId.equals(userStoreId)) {
+                    String userStoreId = stores.get(i).toString();
+                    if (storeId.equals(userStoreId))
+                    {
                         stores.remove(i);
-                        as.writeJSONObjectToFile(users, as.getUserFileDirectory());
-                        return true;
+                        return as.writeJSONObjectToFile(users, as.getUserFileDirectory());
                     }
                 }
             }
@@ -168,7 +171,6 @@ public class StoreService {
 
     public JSONObject getProduct(String identifier, String value) {
         for (Object product : as.getJSONFromFile(productFileDirectory).getJSONArray("products")) {
-            System.out.println((JSONObject) product);
             if (((JSONObject) product).getString(identifier).equals(value))
                 return (JSONObject) product;
         }
