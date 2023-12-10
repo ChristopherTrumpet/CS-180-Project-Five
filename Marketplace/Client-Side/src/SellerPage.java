@@ -576,7 +576,7 @@ public class SellerPage extends JFrame {
 
         storePage.setLayout(null);
 
-        DefaultTableModel model = new DefaultTableModel() {
+        DefaultTableModel productModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // make read only fields except column 1 and 2
@@ -585,10 +585,9 @@ public class SellerPage extends JFrame {
         };
 
         // Add some data to the model
-        model.addColumn("Product Name");
-        model.addColumn("Quantity");
-        model.addColumn("Price");
-        model.addColumn("Id");
+        productModel.addColumn("Product Name");
+        productModel.addColumn("Quantity");
+        productModel.addColumn("Price");
 
         JSONArray products = store.getJSONArray("products");
         Client.sendToServer("getProducts");
@@ -610,7 +609,7 @@ public class SellerPage extends JFrame {
                     double price = ((JSONObject) storeProduct).getDouble("price");
 
                     if(indexedProductId.equals(productId)) {
-                        model.addRow(new Object[]{name, quantity, price, productId});
+                        productModel.addRow(new Object[]{name, quantity, price});
                     }
                 }
                 productNames.add(((JSONObject) product).getString("name"));
@@ -619,32 +618,32 @@ public class SellerPage extends JFrame {
         }
 
         // Create a JTable using the model
-        JTable productTable = new JTable(model);
+        JTable productTable = new JTable(productModel);
 
-        TableColumnModel tcm = productTable.getColumnModel();
-        tcm.removeColumn(tcm.getColumn(3));
-
-        model.addTableModelListener(e -> {
+        productModel.addTableModelListener(e -> {
 
             int row = e.getFirstRow();
             int column = e.getColumn();
-            String valueStr = productTable.getValueAt(row, column).toString();
 
-            // Type
-            switch (column) {
-                case 1 -> Client.sendToServer("updateProduct",
-                        store.getString("id"),
-                        model.getValueAt(row, 3).toString(),
-                        "quantity",
-                        valueStr
-                );
-                case 2 -> Client.sendToServer("updateProduct",
-                        store.getString("id"),
-                        model.getValueAt(row, 3).toString(),
-                        "price",
-                        valueStr.substring(1)
-                );
-            }
+            try {
+                String valueStr = productTable.getValueAt(row, column).toString();
+
+                // Type
+                switch (column) {
+                    case 1 -> Client.sendToServer("updateProduct",
+                            store.getString("id"),
+                            productModel.getValueAt(row, 0).toString(),
+                            "quantity",
+                            valueStr
+                    );
+                    case 2 -> Client.sendToServer("updateProduct",
+                            store.getString("id"),
+                            productModel.getValueAt(row, 0).toString(),
+                            "price",
+                            valueStr.substring(1)
+                    );
+                }
+            } catch (ArrayIndexOutOfBoundsException ignore) {}
 
         });
 
@@ -703,58 +702,66 @@ public class SellerPage extends JFrame {
         addProduct.setBounds(24, 88, 185, 24);
         addProduct.addActionListener(e -> {
 
-            String[] array = new String[productNames.size()];
-            for (int i = 0; i < array.length; i++) {
-                array[i] = productNames.get(i);
-            }
-            JComboBox<String> productList = new JComboBox<>(array);
-            productList.setEditable(true);
-            AutoCompletion.enable(productList);
+            if (!productNames.isEmpty()) {
 
-            JTextField quantity = new JTextField();
-            JTextField price = new JTextField();
-            Object[] message = {
-                    "Select a Product: ", productList,
-                    "Quantity (1-9999):", quantity,
-                    "Price: $", price
-            };
+                String[] array = new String[productNames.size()];
+                for (int i = 0; i < array.length; i++) {
+                    array[i] = productNames.get(i);
+                }
+                JComboBox<String> productList = new JComboBox<>(array);
+                productList.setEditable(true);
+                AutoCompletion.enable(productList);
 
-            int option = JOptionPane.showConfirmDialog(null, message, "Add a product", JOptionPane.OK_CANCEL_OPTION);
+                JTextField quantity = new JTextField();
+                JTextField price = new JTextField();
+                Object[] message = {
+                        "Select a Product: ", productList,
+                        "Quantity (1-9999):", quantity,
+                        "Price: $", price
+                };
 
-            String productId = "";
+                int option = JOptionPane.showConfirmDialog(null, message, "Add a product", JOptionPane.OK_CANCEL_OPTION);
 
-            if (option == JOptionPane.OK_OPTION && productList.getSelectedItem() != null) {
+                String productId = "";
 
-                if (isValidQuantity(quantity.getText(), 9999)) {
-                    if (isValidPrice(price.getText(), 1000000.00)) {
-                        String productName = productList.getSelectedItem().toString();
+                if (option == JOptionPane.OK_OPTION && productList.getSelectedItem() != null) {
 
-                        for (Object product : allProducts) {
-                            JSONObject productObj = (JSONObject) product;
-                            if (productObj.getString("name").equals(productName))
-                                productId = productObj.getString("product_id");
+                    if (isValidQuantity(quantity.getText(), 9999)) {
+                        if (isValidPrice(price.getText(), 1000000.00)) {
+                            String productName = productList.getSelectedItem().toString();
+
+                            for (Object product : allProducts) {
+                                JSONObject productObj = (JSONObject) product;
+                                if (productObj.getString("name").equals(productName))
+                                    productId = productObj.getString("product_id");
+                            }
+
+                            Client.sendToServer("addProduct",
+                                    store.getString("id"),
+                                    productId,
+                                    quantity.getText(),
+                                    price.getText()
+                            );
+
+                            productModel.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText()))});
+
+                        } else {
+                            Client.showErrorMessage("Please enter a valid price. Must be less than $1,000,000");
                         }
 
-                        Client.sendToServer("addProduct",
-                                store.getString("id"),
-                                productId,
-                                quantity.getText(),
-                                price.getText()
-                        );
-
-                        model.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText())), productId});
                     } else {
-                        Client.showErrorMessage("Please enter a valid price. Must be less than $1,000,000");
+                        Client.showErrorMessage("Please enter a valid quantity!");
                     }
 
                 } else {
-                    Client.showErrorMessage("Please enter a valid quantity!");
+                    System.out.println("Product addition canceled");
                 }
-
             } else {
-                System.out.println("Product addition canceled");
+                Client.showErrorMessage("There are currently no items in the system, please create a new product!");
             }
+
         });
+
         storePage.add(addProduct);
 
         JButton createProductButton = new JButton("Create Product");
@@ -790,6 +797,9 @@ public class SellerPage extends JFrame {
                         productPrice.getText(),
                         store.getString("id")
                 );
+
+                productModel.addRow(new Object[]{productName.getText(), productQuantity.getText(), String.format("$%.2f", Double.parseDouble(productPrice.getText()))});
+                productModel.fireTableDataChanged();
             }
 
         });

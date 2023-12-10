@@ -172,8 +172,9 @@ public class ClientThread extends Thread {
                             // Type
                             // Value
                             data = readData(input, 4);
+                            String productId = ss.getProduct("name", data.get(1)).getString("product_id");
 
-                            if (ss.updateStoreProduct(data.get(0), data.get(1), data.get(2), data.get(3))) {
+                            if (ss.updateStoreProduct(data.get(0), productId, data.get(2), data.get(3))) {
                                 System.out.println("Changed details successfully");
                             } else {
                                 System.out.println("Error occurred");
