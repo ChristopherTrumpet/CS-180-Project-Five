@@ -45,7 +45,7 @@ public class ClientThread extends Thread {
 
                         case "signUpButton" -> {
 
-                            data = readData(input, 4);
+                            data = read(input, 4);
 
                             char accountType = data.get(0).charAt(0);
                             String username = data.get(1);
@@ -61,7 +61,7 @@ public class ClientThread extends Thread {
 
                             // identifier
                             // password
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             String usernameOrEmail = data.get(0);
                             String password = data.get(1);
@@ -93,7 +93,7 @@ public class ClientThread extends Thread {
                         }
                         case "getProduct" -> {
                             // Product Name
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             JSONObject product = ss.getProduct("name", data.get(0));
                             writer.println(product.toString());
@@ -116,7 +116,7 @@ public class ClientThread extends Thread {
 
                             // Store id
                             // New Name
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             if (ss.updateStoreName(data.get(0), data.get(1)))
                                 System.out.println("[SERVER] Changed store name...");
@@ -127,7 +127,7 @@ public class ClientThread extends Thread {
 
                             // Seller id
                             // Store Name
-                            data = readData(input, 2);
+                            data = read(input, 2);
                             String storeId = ss.getStoreByName(data.get(1)).getString("id");
 
                             if (ss.removeStoreFromSeller(storeId, data.get(0)))
@@ -139,7 +139,7 @@ public class ClientThread extends Thread {
 
                             // Store id
                             // Product id
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             String productId = ss.getProduct("name", data.get(1)).getString("product_id");
 
@@ -154,7 +154,7 @@ public class ClientThread extends Thread {
                             // Product id
                             // Quantity
                             // Price
-                            data = readData(input, 4);
+                            data = read(input, 4);
 
                             if (ss.addProduct(data.get(0), data.get(1), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)))) {
                                 System.out.println("[SERVER] Added product");
@@ -166,7 +166,7 @@ public class ClientThread extends Thread {
 
                             // Seller id
                             // Store name
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             if (ss.createStore(data.get(0), data.get(1))) {
                                 writer.println(ss.getStoreByName(data.get(1)));
@@ -182,7 +182,7 @@ public class ClientThread extends Thread {
                             // Product id
                             // Type
                             // Value
-                            data = readData(input, 4);
+                            data = read(input, 4);
                             String productId = ss.getProduct("name", data.get(1)).getString("product_id");
 
                             if (ss.updateStoreProduct(data.get(0), productId, data.get(2), data.get(3))) {
@@ -196,7 +196,7 @@ public class ClientThread extends Thread {
                             // User id
                             // User detail
                             // New value
-                            data = readData(input, 3);
+                            data = read(input, 3);
 
                             if (as.updateUserDetails(data.get(0), data.get(1), data.get(2))) {
                                 System.out.println("Changed details successfully");
@@ -207,7 +207,7 @@ public class ClientThread extends Thread {
                         case "deleteAccount" -> {
 
                             // User id
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             if (as.removeAccount(data.get(0))) {
                                 System.out.println("[SERVER] Account removed successfully!");
@@ -222,7 +222,7 @@ public class ClientThread extends Thread {
                             // Store id
                             // Quantity
                             // Price
-                            data = readData(input, 5);
+                            data = read(input, 5);
 
                             if (ts.addToCart(data.get(0), data.get(1), data.get(2), Integer.parseInt(data.get(3)), Double.parseDouble(data.get(4)))) {
                                 System.out.println("[SERVER] Added to cart successfully!");
@@ -233,7 +233,7 @@ public class ClientThread extends Thread {
                         case "placeOrder" -> {
 
                             // User id
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             if (ts.placeOrder(data.get(0))) {
                                 System.out.println("[SERVER] Order successfully placed!");
@@ -249,7 +249,7 @@ public class ClientThread extends Thread {
 
                             // Buyer id
                             // New Balance Amount
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             if (ts.addFunds(data.get(0), Double.parseDouble(data.get(1)))) {
                                 System.out.println("[SERVER] Funds added!");
@@ -260,7 +260,7 @@ public class ClientThread extends Thread {
                         case "getUser" -> {
 
                             // User id
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             String user = as.getUser("id", data.get(0)).toString();
                             writer.println(user);
@@ -283,7 +283,7 @@ public class ClientThread extends Thread {
                         case "userExists" -> {
                             // Email
                             // Username
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             if (as.userExists(data.get(0), data.get(1)))
                                 writer.println("true");
@@ -295,9 +295,17 @@ public class ClientThread extends Thread {
                         case "getStore" -> {
 
                             // Store name
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             String store = ss.getStoreByName(data.get(0)).toString();
+                            writer.println(store);
+                            writer.flush();
+                        }
+                        case "getStoreById" -> {
+                            // Store id
+                            data = read(input, 1);
+                            System.out.println(data.get(0));
+                            String store = ss.getStoreById(data.get(0)).toString();
                             writer.println(store);
                             writer.flush();
                         }
@@ -305,7 +313,7 @@ public class ClientThread extends Thread {
 
                             // User id
                             // File Path
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             if (ts.exportProductHistory(data.get(0), data.get(1))) {
                                 System.out.println("[SERVER] Successfully export product history");
@@ -318,7 +326,7 @@ public class ClientThread extends Thread {
                             // Product Name
                             // Store id
 
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             try {
                                 String storeId = ss.getStoreProduct(data.get(1)).getString("id");
@@ -334,7 +342,7 @@ public class ClientThread extends Thread {
                         case "search" -> {
 
                             // Search Query
-                            data = readData(input, 1);
+                            data = read(input, 1);
 
                             ArrayList<String> results = searchService.search(data.get(0));
 
@@ -352,7 +360,7 @@ public class ClientThread extends Thread {
 
                             // Seller id
                             // File path
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             ss.importProducts(new JSONObject(data.get(0)), data.get(1));
                         }
@@ -362,7 +370,7 @@ public class ClientThread extends Thread {
                             // Product Quantity
                             // Product Price
                             // Store id
-                            data = readData(input, 5);
+                            data = read(input, 5);
                             JSONObject product = ss.createProduct(data.get(0), data.get(1));
                             if (ss.addProduct(data.get(4), product.getString("product_id"), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)))) {
                                 System.out.println("Created a new product");
@@ -375,7 +383,7 @@ public class ClientThread extends Thread {
                         }
                         case "getStoreProduct" -> {
                             // Product Object
-                            data = readData(input, 2);
+                            data = read(input, 2);
 
                             JSONObject updatedProduct = ss.getStoreProduct(data.get(0), data.get(1));
 
@@ -406,7 +414,7 @@ public class ClientThread extends Thread {
         }
     }
 
-    public ArrayList<String> readData(BufferedReader input, int lines) throws IOException {
+    public ArrayList<String> read(BufferedReader input, int lines) throws IOException {
 
         ArrayList<String> data = new ArrayList<>();
 

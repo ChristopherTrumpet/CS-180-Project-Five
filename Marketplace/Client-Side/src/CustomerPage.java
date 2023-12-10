@@ -1,4 +1,5 @@
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -326,7 +327,10 @@ public class CustomerPage extends JFrame {
         JButton removeFromCartButton = new JButton("Remove Item");
         removeFromCartButton.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 4, 24);
 
-        removeFromCartButton.addActionListener(e -> removeFromCart(cartTable));
+        removeFromCartButton.addActionListener(e -> {
+            if (cartTable.getSelectedRow() > 0)
+                removeFromCart(cartTable);
+        });
 
         cartPanel.add(removeFromCartButton);
 
@@ -843,7 +847,47 @@ public class CustomerPage extends JFrame {
         productModel.addColumn("Store");
         productModel.addColumn("Product");
 
-        productModel.addRow(new Object[]{"Product Name", "Sales"});
+        ArrayList<JSONObject> userProducts = new ArrayList<>();
+
+        try {
+            if (!buyer.getJSONArray("product_history").isEmpty()) {
+                for (Object product : buyer.getJSONArray("product_history")) {
+                    JSONObject productToAdd = (JSONObject) product;
+
+                    for (Object allProduct : products) {
+
+                        String historyId = productToAdd.getString("product_id");
+                        String productId = ((JSONObject) allProduct).getString("product_id");
+
+                        if (historyId.equals(productId))
+                        {
+                            System.out.println("Found me!");
+                            Client.sendToServer("getStoreById", productToAdd.getString("store_id"));
+                            JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
+                            productToAdd.put("store", store.getString("name"));
+                            productToAdd.put("name", ((JSONObject) allProduct).getString("name"));
+                            productToAdd.put("sales", (Double) (productToAdd.getInt("quantity") * productToAdd.getDouble("price")));
+                        }
+                    }
+
+                    userProducts.add(productToAdd);
+                }
+            } else {
+                System.out.println("[CLIENT] Buyer has no product history.");
+            }
+        } catch (JSONException ignore) {
+            System.out.println("User not a buyer");
+        }
+
+        if (!userProducts.isEmpty()) {
+            userProducts.sort(Comparator.comparingDouble(o -> o.getDouble("sales")));
+            Collections.reverse(userProducts);
+
+            for (JSONObject product : userProducts) {
+                productModel.addRow(new Object[]{product.getString("store"), product.getDouble("name")});
+            }
+
+        }
 
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);

@@ -344,7 +344,9 @@ public class StoreService {
 
     public JSONObject getStoreById(String storeId) {
         for (Object store : as.getJSONFromFile(storeFileDirectory).getJSONArray("stores")) {
-            if (((JSONObject) store).get("id").toString().equals(storeId)) {
+            System.out.println(store);
+            if (((JSONObject) store).getString("id").equals(storeId)) {
+                System.out.println(store);
                 return (JSONObject) store;
             }
         }
