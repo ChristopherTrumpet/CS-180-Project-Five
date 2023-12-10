@@ -266,6 +266,20 @@ public class ClientThread extends Thread {
                             writer.println(user);
                             writer.flush();
                         }
+                        case "getUsers" -> {
+
+                            JSONObject users = as.getJSONFromFile(as.getUserFileDirectory());
+
+                            if (!users.isEmpty()) {
+                                writer.println(users.getJSONArray("users"));
+                                System.out.println("[SERVER] Transferred users.");
+
+                            } else {
+                                writer.println("empty");
+                            }
+                            writer.flush();
+
+                        }
                         case "userExists" -> {
                             // Email
                             // Username

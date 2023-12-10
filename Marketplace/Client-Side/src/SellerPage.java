@@ -1,4 +1,5 @@
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class SellerPage extends JFrame {
@@ -472,9 +474,39 @@ public class SellerPage extends JFrame {
 
         // Add some data to the model
         customerModel.addColumn("Customer");
-        customerModel.addColumn("Product");
+        customerModel.addColumn("Items");
 
-        customerModel.addRow(new Object[]{"Customer Name", "Product Name"});
+        Client.sendToServer("getUsers");
+        JSONArray users = new JSONArray(Objects.requireNonNull(Client.readFromServer(1)).get(0));
+
+        Client.sendToServer("getStores");
+        JSONArray stores = new JSONArray(Objects.requireNonNull(Client.readFromServer(1)).get(0));
+
+        HashMap<String, Integer> customerSort = new HashMap<>();
+
+        for (Object user : users) {
+
+            try {
+                for (Object cart : ((JSONObject) user).getJSONArray("cart")) {
+                    for (Object store : stores) {
+                        String storeId = ((JSONObject) store).getString("id");
+                        String cartStoreId = ((JSONObject) cart).getString("store_id");
+                        if (storeId.equals(cartStoreId)) {
+
+                            String customerName = ((JSONObject) user).getString("username");
+                            int qtyLength = ((JSONObject) user).getJSONArray("cart").length();
+                            System.out.printf("Customer Name: %s\nCart Length: %s\n", customerName, qtyLength);
+                            customerSort.put(customerName, qtyLength);
+                        }
+                    }
+                }
+            } catch (JSONException ignore) {}
+        }
+
+        System.out.println(customerSort);
+        for (String customer : customerSort.keySet()) {
+            customerModel.addRow(new Object[]{customer, customerSort.get(customer)});
+        }
 
         // Create a JTable using the model
         JTable customerTable = new JTable(customerModel);
