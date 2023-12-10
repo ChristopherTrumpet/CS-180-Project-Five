@@ -9,6 +9,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class CustomerPage extends JFrame {
@@ -312,7 +314,7 @@ public class CustomerPage extends JFrame {
         // END OF TABLE CREATION
 
         // TOTAL COST LABEL
-        JLabel totalCostLabel = new JLabel("Total Cost: $" + totalCost);
+        JLabel totalCostLabel = new JLabel("Total Cost: $" + round(totalCost, 2));
         totalCostLabel.setBounds(24, 372 + 4, 400, 24);
         cartPanel.add(totalCostLabel);
 
@@ -350,6 +352,14 @@ public class CustomerPage extends JFrame {
         return panel;
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
 
     private void placeOrder(JTable cartTable, JLabel totalCostLabel) {
         if (cartTable.getRowCount() > 0) {
@@ -364,7 +374,7 @@ public class CustomerPage extends JFrame {
                 this.buyer = new JSONObject(userString);
 
                 // UPDATE BALANCE
-                balanceMessage.setText("Balance: $" + buyer.getDouble("funds"));
+                balanceMessage.setText("Balance: $" + round(buyer.getDouble("funds"), 2));
 
                 // RESET TOTAL
                 totalCostLabel.setText("Total Cost: $0.00");
@@ -878,16 +888,16 @@ public class CustomerPage extends JFrame {
         } catch (JSONException ignore) {
             System.out.println("User not a buyer");
         }
+        System.out.println(userProducts);
 
-        if (!userProducts.isEmpty()) {
+        try {
             userProducts.sort(Comparator.comparingDouble(o -> o.getDouble("sales")));
             Collections.reverse(userProducts);
 
             for (JSONObject product : userProducts) {
                 productModel.addRow(new Object[]{product.getString("store"), product.getDouble("name")});
             }
-
-        }
+        } catch (JSONException ignore) {}
 
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);
