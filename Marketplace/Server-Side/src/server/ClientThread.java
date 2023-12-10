@@ -320,8 +320,16 @@ public class ClientThread extends Thread {
 
                             data = readData(input, 2);
 
-                            String storeId = ss.getStoreProduct(data.get(1)).getString("id");
-                            ts.removeFromCart(data.get(0), data.get(1), storeId);
+                            try {
+                                String storeId = ss.getStoreProduct(data.get(1)).getString("id");
+                                ts.removeFromCart(data.get(0), data.get(1), storeId);
+                            } catch (NullPointerException e) {
+                                System.out.println("[SERVER] Product no longer exists...");
+                                ts.removeFromCart(data.get(0), data.get(1));
+
+                            }
+
+
                         }
                         case "search" -> {
 

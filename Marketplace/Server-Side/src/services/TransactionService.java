@@ -54,6 +54,28 @@ public class TransactionService {
         return false;
     }
 
+    public boolean removeFromCart(String userId, String productName) {
+        if (as.isBuyer(userId))
+        {
+            JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
+            StoreService ss = new StoreService();
+            String productId = ss.getProduct("name", productName).getString("product_id");
+            for (int i = 0; i < cart.length(); i++) {
+                JSONObject product = (JSONObject) cart.get(i);
+                String currProductId = product.getString("product_id");
+
+                if (currProductId.equals(productId))
+                {
+                    cart.remove(i);
+                    System.out.println("Updating cart...");
+                    return as.updateUserDetails(userId, "cart", cart);
+                }
+            }
+        }
+
+        return false;
+    }
+
     public boolean clearCart(String userId) {
         if (as.isBuyer(userId))
         {
@@ -138,9 +160,10 @@ public class TransactionService {
 
                                     // Checks if store has sufficient quantity
                                     if (((JSONObject) storeProduct).getInt("qty") >= productObj.getInt("quantity")){
-                                        System.out.println("Product in stock");
                                         ((JSONObject) storeProduct).put("qty", ((JSONObject) storeProduct).getInt("qty") - productObj.getInt("quantity"));
-                                        store.put("sales", productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity"))));
+                                        Double sale = productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity")));
+                                        ((JSONObject) storeProduct).put("sales", sale);
+                                        store.put("sales", sale);
                                     } else {
                                         return false;
                                     }

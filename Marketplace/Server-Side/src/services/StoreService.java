@@ -178,6 +178,7 @@ public class StoreService {
                 newProduct.put("qty", productObj.getInt("quantity"));
                 String id = getProduct("name", productObj.getString("name")).getString("product_id");
                 newProduct.put("id", id);
+                newProduct.put("sales", 0.0);
                 products.put(newProduct);
                 store.put("products", products);
                 storeArray.put(index, store);
@@ -239,6 +240,7 @@ public class StoreService {
                 newProduct.put("id", productId);
                 newProduct.put("price", price);
                 newProduct.put("qty", qty);
+                newProduct.put("sales", 0.0);
                 products.put(newProduct);
                 store.put("products", products);
                 stores.put(i, store);

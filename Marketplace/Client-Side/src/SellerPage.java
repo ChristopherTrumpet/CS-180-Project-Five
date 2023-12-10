@@ -531,8 +531,29 @@ public class SellerPage extends JFrame {
         productModel.addColumn("Product");
         productModel.addColumn("Sales");
 
-        productModel.addRow(new Object[]{"Product Name", "Sales"});
+        Client.sendToServer("getProducts");
+        JSONArray products = new JSONArray(Client.readFromServer(1).get(0));
 
+        HashMap<String, Double> productSort = new HashMap<>();
+
+
+        for (Object sellerStores : seller.getJSONArray("stores")) {
+            for (Object store : stores) {
+                if (sellerStores.equals(((JSONObject) store).getString("id"))) {
+                    for (Object storeProduct : ((JSONObject) store).getJSONArray("products")) {
+                        for (Object product : products) {
+                            if (((JSONObject) product).getString("product_id").equals(((JSONObject) storeProduct).getString("id"))) {
+                                productSort.put(((JSONObject) product).getString("name"), ((JSONObject) storeProduct).getDouble("sales"));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (String product : productSort.keySet()) {
+            productModel.addRow(new Object[]{product, productSort.get(product)});
+        }
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);
 
