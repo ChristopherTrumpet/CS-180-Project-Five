@@ -919,6 +919,9 @@ public class CustomerPage extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(gridLayout);
 
+        Client.sendToServer("getStoreProduct", storeId, storeProduct.getString("id"));
+        storeProduct = new JSONObject(Client.readFromServer(1).get(0));
+
         // Set title of window
         storePage.setTitle(product.getString("name"));
 
