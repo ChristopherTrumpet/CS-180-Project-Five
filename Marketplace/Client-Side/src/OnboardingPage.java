@@ -169,10 +169,10 @@ public class OnboardingPage extends JFrame {
             signUpLabel.setBounds(250, 90, 300, 24);
 
             usernameLabel.setBounds(250, start + 48, 300, 24); // 24
-            usernameField.setBounds(250, start + 24, 300, 24); // 24
+            usernameField.setBounds(250, start + 72, 300, 24); // 24
 
             emailLabel.setBounds(250,start,300,24);
-            emailField.setBounds(250, start + 72, 300, 24); // 24
+            emailField.setBounds(250, start + 24, 300, 24); // 24
 
             passwordLabel.setBounds(250, start + 96, 300, 24);
             passwordField.setBounds(250, start + 120, 300, 24);
@@ -212,7 +212,7 @@ public class OnboardingPage extends JFrame {
                             userAccountType = "b";
                         }
 
-                        if (!emailField.getText().matches("^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")) {
+                        if (!emailField.getText().contains("@")) {
                             Client.showErrorMessage("Please enter a valid email");
                             break outer;
                         }
