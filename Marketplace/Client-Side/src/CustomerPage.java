@@ -374,7 +374,7 @@ public class CustomerPage extends JFrame {
                     ((DefaultTableModel) cartTable.getModel()).removeRow(i);
                 }
             } else {
-                Client.showErrorMessage("Could not place order! Not enough funds.");
+                Client.showErrorMessage("Could not place order! Insufficient funds or unable to meet stock demand (quantity is greater than stock).");
             }
         } else {
             Client.showErrorMessage("Please add items to cart to purchase!");
