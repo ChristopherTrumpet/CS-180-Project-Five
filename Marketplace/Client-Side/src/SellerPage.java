@@ -485,25 +485,26 @@ public class SellerPage extends JFrame {
         HashMap<String, Integer> customerSort = new HashMap<>();
 
         for (Object user : users) {
-
             try {
-                for (Object cart : ((JSONObject) user).getJSONArray("cart")) {
-                    for (Object store : stores) {
-                        String storeId = ((JSONObject) store).getString("id");
-                        String cartStoreId = ((JSONObject) cart).getString("store_id");
-                        if (storeId.equals(cartStoreId)) {
+                if (!((JSONObject) user).getJSONArray("product_history").isEmpty()) {
+                    for (Object productHistory : ((JSONObject) user).getJSONArray("product_history")) {
+                        for (Object store : stores) {
+                            String storeId = ((JSONObject) store).getString("id");
+                            String historyStoreId = ((JSONObject) productHistory).getString("store_id");
+                            if (storeId.equals(historyStoreId)) {
 
-                            String customerName = ((JSONObject) user).getString("username");
-                            int qtyLength = ((JSONObject) user).getJSONArray("cart").length();
-                            System.out.printf("Customer Name: %s\nCart Length: %s\n", customerName, qtyLength);
-                            customerSort.put(customerName, qtyLength);
+                                String customerName = ((JSONObject) user).getString("username");
+                                int qtyLength = ((JSONObject) user).getJSONArray("product_history").length();
+                                customerSort.put(customerName, qtyLength);
+                            }
                         }
                     }
                 }
-            } catch (JSONException ignore) {}
+            } catch (JSONException ignore) {
+                System.out.println("User not a buyer");
+            }
         }
 
-        System.out.println(customerSort);
         for (String customer : customerSort.keySet()) {
             customerModel.addRow(new Object[]{customer, customerSort.get(customer)});
         }
@@ -532,7 +533,7 @@ public class SellerPage extends JFrame {
         productModel.addColumn("Sales");
 
         Client.sendToServer("getProducts");
-        JSONArray products = new JSONArray(Client.readFromServer(1).get(0));
+        JSONArray products = new JSONArray(Objects.requireNonNull(Client.readFromServer(1)).get(0));
 
         HashMap<String, Double> productSort = new HashMap<>();
 
