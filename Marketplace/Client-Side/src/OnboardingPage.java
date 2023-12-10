@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 public class OnboardingPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -94,9 +91,7 @@ public class OnboardingPage extends JFrame {
             loginButton.setBounds(250, start + 112, 300, 24); // 48
             loginButton.setFocusable(false);
 
-            loginButton.addActionListener(e -> {
-                login(passwordField, identifierField);
-            });
+            loginButton.addActionListener(e -> login(passwordField, identifierField));
 
             createAccountButton.setBackground(Color.decode("#f4f4f4"));
             createAccountButton.setForeground(Color.decode("#A77F20"));
@@ -105,9 +100,7 @@ public class OnboardingPage extends JFrame {
             createAccountButton.setBounds(250, start + 112 + 32, 300, 24); // 48
             createAccountButton.setFocusable(false);
 
-            createAccountButton.addActionListener(e -> {
-                cardLayout.next(container);
-            });
+            createAccountButton.addActionListener(e -> cardLayout.next(container));
 
             this.add(applicationNameLabel);
             this.add(loginLabel);
@@ -175,11 +168,11 @@ public class OnboardingPage extends JFrame {
             signUpLabel.setFont(new Font("sans-serif", Font.PLAIN, 16));
             signUpLabel.setBounds(250, 90, 300, 24);
 
-            emailLabel.setBounds(250,start,300,24);
-            emailField.setBounds(250, start + 24, 300, 24); // 24
-
             usernameLabel.setBounds(250, start + 48, 300, 24); // 24
-            usernameField.setBounds(250, start + 72, 300, 24); // 24
+            usernameField.setBounds(250, start + 24, 300, 24); // 24
+
+            emailLabel.setBounds(250,start,300,24);
+            emailField.setBounds(250, start + 72, 300, 24); // 24
 
             passwordLabel.setBounds(250, start + 96, 300, 24);
             passwordField.setBounds(250, start + 120, 300, 24);
@@ -208,7 +201,7 @@ public class OnboardingPage extends JFrame {
             signUpButton.setFocusable(false);
             signUpButton.addActionListener(e -> {
                 String password = String.valueOf(passwordField.getPassword());
-                if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
+                outer: if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
                     if (sellerType.isSelected() || buyerType.isSelected()) {
 
                         String userAccountType;
@@ -217,6 +210,21 @@ public class OnboardingPage extends JFrame {
                             userAccountType = "s";
                         } else {
                             userAccountType = "b";
+                        }
+
+                        if (!emailField.getText().matches("^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")) {
+                            Client.showErrorMessage("Please enter a valid email");
+                            break outer;
+                        }
+
+                        if (usernameField.getText().length() > 24) {
+                            Client.showErrorMessage("Please enter a username less than 24 characters!");
+                            break outer;
+                        }
+
+                        if (password.length() > 32) {
+                            Client.showErrorMessage("Please enter a password less than 32 characters");
+                            break outer;
                         }
 
                         Client.sendToServer(
@@ -237,6 +245,8 @@ public class OnboardingPage extends JFrame {
                         } else {
                             new CustomerPage(user);
                         }
+                    } else {
+                        Client.showErrorMessage("Please select account type!");
                     }
                 }
                 else {
@@ -250,9 +260,7 @@ public class OnboardingPage extends JFrame {
             existingAccountButton.setOpaque(false);
             existingAccountButton.setBounds(250, 326 + 32, 300, 24); // 48
             existingAccountButton.setFocusable(false);
-            existingAccountButton.addActionListener(e -> {
-                cardLayout.next(container);
-            });
+            existingAccountButton.addActionListener(e -> cardLayout.next(container));
 
             this.add(applicationNameLabel);
             this.add(signUpLabel);
