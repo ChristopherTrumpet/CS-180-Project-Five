@@ -825,7 +825,6 @@ public class CustomerPage extends JFrame {
             }
         }
 
-
         productList.sort(Comparator.comparingDouble(o -> o.getDouble("sales")));
         Collections.reverse(productList);
 
@@ -871,16 +870,17 @@ public class CustomerPage extends JFrame {
 
                         if (historyId.equals(productId))
                         {
-                            System.out.println("Found me!");
                             Client.sendToServer("getStoreById", productToAdd.getString("store_id"));
                             JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                             productToAdd.put("store", store.getString("name"));
                             productToAdd.put("name", ((JSONObject) allProduct).getString("name"));
                             productToAdd.put("sales", (Double) (productToAdd.getInt("quantity") * productToAdd.getDouble("price")));
+                            System.out.println(productToAdd);
+                            userProducts.add(productToAdd);
+
                         }
                     }
 
-                    userProducts.add(productToAdd);
                 }
             } else {
                 System.out.println("[CLIENT] Buyer has no product history.");
@@ -888,14 +888,15 @@ public class CustomerPage extends JFrame {
         } catch (JSONException ignore) {
             System.out.println("User not a buyer");
         }
-        System.out.println(userProducts);
 
         try {
             userProducts.sort(Comparator.comparingDouble(o -> o.getDouble("sales")));
             Collections.reverse(userProducts);
 
             for (JSONObject product : userProducts) {
-                productModel.addRow(new Object[]{product.getString("store"), product.getDouble("name")});
+                String productName = product.getString("name");
+                String productStore = product.getString("store");
+                productModel.addRow(new Object[]{productStore, productName});
             }
         } catch (JSONException ignore) {}
 
