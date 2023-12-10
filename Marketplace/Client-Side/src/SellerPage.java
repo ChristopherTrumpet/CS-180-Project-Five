@@ -766,7 +766,7 @@ public class SellerPage extends JFrame {
             productDescription.setWrapStyleWord(true);
 
             JScrollPane descriptionScroll = new JScrollPane(productDescription);
-            descriptionScroll.setPreferredSize(new Dimension(120, 64));
+            descriptionScroll.setPreferredSize(new Dimension(300, 64));
 
             JTextField productQuantity = new JTextField();
             JTextField productPrice = new JTextField();

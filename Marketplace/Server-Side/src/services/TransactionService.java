@@ -67,7 +67,8 @@ public class TransactionService {
     }
 
     public boolean addFunds(String buyerId, double newBalance) {
-        JSONObject users = new JSONObject(as.getJSONFromFile(as.getUserFileDirectory()));
+
+        JSONObject users = as.getJSONFromFile(as.getUserFileDirectory());
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
             JSONObject user = (JSONObject) users.getJSONArray("users").get(i);

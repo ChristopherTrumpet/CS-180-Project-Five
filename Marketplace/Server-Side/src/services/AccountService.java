@@ -58,7 +58,7 @@ public class AccountService {
 
                 // Ensures users.json file exists
                 if (getJSONFromFile(getUserFileDirectory()) != null)
-            userObj = new JSONObject(getJSONFromFile(getUserFileDirectory()));
+            userObj = getJSONFromFile(userFileDirectory);
 
         // Uses user email as it is unique, user id cannot be used as it generated upon creation
         if (userExists(email, userName))

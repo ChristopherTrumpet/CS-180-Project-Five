@@ -9,7 +9,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -147,18 +146,32 @@ public class CustomerPage extends JFrame {
         // FUNDING BUTTON
         JButton fundsButton = new JButton("Add Funding");
         fundsButton.addActionListener(e -> {
+            String funding;
+            do {
+                funding = JOptionPane.showInputDialog(null, "How much would you like to add?", "Funding Panel", JOptionPane.QUESTION_MESSAGE);
 
-            String funding = JOptionPane.showInputDialog(null, "How much would you like to add?", "Funding Panel", JOptionPane.QUESTION_MESSAGE);
-            if (funding != null && !funding.isEmpty()) {
+                if (funding == null) {
+                    break;
+                }
 
-                Client.sendToServer("addFunds",
-                        buyer.getString("id"),
-                        funding
-                );
+                if (!funding.matches("([0-9]{1,12})") || !(Double.parseDouble(funding) > 0)) {
+                    Client.showErrorMessage("Invalid input! Numbers only.");
+                }
+            } while (!funding.matches("([0-9]{1,12})") || !(Double.parseDouble(funding) > 0));
 
-                balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
-                JOptionPane.showMessageDialog(null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
+            if (funding != null) {
+                if (!funding.isEmpty()) {
+
+                    Client.sendToServer("addFunds",
+                            buyer.getString("id"),
+                            funding
+                    );
+
+                    balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
+                    JOptionPane.showMessageDialog(null, "Succesfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
+
         });
         c.gridy = 7;
         c.gridx = 0;
@@ -321,9 +334,7 @@ public class CustomerPage extends JFrame {
         // PLACE ORDER BUTTON
         JButton placeOrderButton = new JButton("Place Order");
         placeOrderButton.setBounds(24, 404, 400 / 3 - 4, 24);
-        placeOrderButton.addActionListener(e -> {
-            placeOrder(cartTable, totalCostLabel);
-        });
+        placeOrderButton.addActionListener(e -> placeOrder(cartTable, totalCostLabel));
 
         cartPanel.add(placeOrderButton);
 
@@ -331,9 +342,7 @@ public class CustomerPage extends JFrame {
         JButton removeFromCartButton = new JButton("Remove Item");
         removeFromCartButton.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 4, 24);
 
-        removeFromCartButton.addActionListener(e -> {
-            removeFromCart(cartTable, cartModel);
-        });
+        removeFromCartButton.addActionListener(e -> removeFromCart(cartTable, cartModel));
 
         cartPanel.add(removeFromCartButton);
 
@@ -867,7 +876,7 @@ public class CustomerPage extends JFrame {
 
             Client.sendToServer("search", searchQuery);
 
-            int numOfResults = -1;
+            int numOfResults;
             try {
                 numOfResults = Integer.parseInt(Client.readFromServer(1).get(0));
                 ArrayList<String> results = Client.readFromServer(numOfResults);
@@ -876,7 +885,7 @@ public class CustomerPage extends JFrame {
                 for (int i = 0; i < array.length; i++) {
                     array[i] = results.get(i);
                 }
-                JComboBox resultList = new JComboBox(array);
+                JComboBox<String> resultList = new JComboBox<>(array);
                 resultList.setEditable(true);
                 AutoCompletion.enable(resultList);
 
@@ -1018,12 +1027,7 @@ public class CustomerPage extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            spinner.updateUI();
-                        }
-                    });
+                    SwingUtilities.invokeLater(spinner::updateUI);
                 }
             }
         });
@@ -1082,9 +1086,7 @@ public class CustomerPage extends JFrame {
         closeWindow.setMinimumSize(new Dimension(150, 24));
         closeWindow.setPreferredSize(new Dimension(150, 24));
         gridLayout.setConstraints(closeWindow, c);
-        closeWindow.addActionListener(e -> {
-            productFrame.dispose();
-        });
+        closeWindow.addActionListener(e -> productFrame.dispose());
         panel.add(closeWindow);
 
         return panel;

@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Random;
 
 public class StoreService {
@@ -32,7 +31,7 @@ public class StoreService {
 
     public void addStoreToSeller(String userId, String storeId) {
 
-        JSONObject users = new JSONObject(Objects.requireNonNull(as.getJSONFromFile(as.getUserFileDirectory())));
+        JSONObject users = as.getJSONFromFile(as.userFileDirectory);
 
         for (Object user : users.getJSONArray("users")) {
             JSONObject userObj = (JSONObject) user;
