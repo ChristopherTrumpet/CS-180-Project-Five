@@ -8,8 +8,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
@@ -786,7 +785,40 @@ public class CustomerPage extends JFrame {
         storeModel.addColumn("Store");
         storeModel.addColumn("Product");
 
-        storeModel.addRow(new Object[]{"Store Name", "Product Name"});
+        Client.sendToServer("getStores");
+        JSONArray stores = new JSONArray(Objects.requireNonNull(Client.readFromServer(1)).get(0));
+
+        Client.sendToServer("getProducts");
+        JSONArray products = new JSONArray(Objects.requireNonNull(Client.readFromServer(1)).get(0));
+
+        ArrayList<JSONObject> productList = new ArrayList<>();
+
+        for (Object store : stores) {
+            JSONArray productsArray = ((JSONObject) store).getJSONArray("products");
+
+
+            for (Object product : productsArray) {
+
+                JSONObject productToAdd = (JSONObject) product;
+
+                for (Object allProduct : products) {
+                    if (((JSONObject) allProduct).getString("product_id").equals(((JSONObject) product).getString("id")))
+                        productToAdd.put("name", ((JSONObject) allProduct).getString("name"));
+                }
+
+
+                productList.add(productToAdd);
+            }
+        }
+
+
+        productList.sort(Comparator.comparingDouble(o -> o.getDouble("sales")));
+        Collections.reverse(productList);
+
+        for (JSONObject product : productList) {
+            storeModel.addRow(new Object[]{product.getString("name"), product.getDouble("sales")});
+        }
+
 
         // Create a JTable using the model
         JTable storesTable = new JTable(storeModel);
