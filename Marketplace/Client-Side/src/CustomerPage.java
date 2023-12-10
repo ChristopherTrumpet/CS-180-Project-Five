@@ -363,7 +363,7 @@ public class CustomerPage extends JFrame {
     }
 
 
-    private void placeOrder(JTable cartTable, JLabel totalCostLabel) {
+    private void  placeOrder(JTable cartTable, JLabel totalCostLabel) {
         if (cartTable.getRowCount() > 0) {
 
             Client.sendToServer("placeOrder", buyer.getString("id"));

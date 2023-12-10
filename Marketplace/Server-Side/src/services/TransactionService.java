@@ -37,7 +37,7 @@ public class TransactionService {
         {
             JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             StoreService ss = new StoreService();
-            String productId = ss.getProduct(productName).getString("product_id");
+            String productId = ss.getProduct("name", productName).getString("product_id");
             for (int i = 0; i < cart.length(); i++) {
                 JSONObject product = (JSONObject) cart.get(i);
                 String currProductId = product.getString("product_id");
@@ -105,7 +105,7 @@ public class TransactionService {
 
         StoreService ss = new StoreService();
         JSONObject stores = as.getJSONFromFile(ss.getStoreFileDirectory());
-        JSONObject users = as.getJSONFromFile(as.userFileDirectory);
+        JSONObject users = as.getJSONFromFile(as.getUserFileDirectory());
 
         for (int i = 0; i < users.getJSONArray("users").length(); i++) {
             JSONObject user = (JSONObject) users.getJSONArray("users").get(i);

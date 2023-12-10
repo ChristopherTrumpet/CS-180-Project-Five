@@ -151,7 +151,7 @@ public class StoreService {
                 JSONObject newProduct = new JSONObject();
                 newProduct.put("price", productObj.getDouble("price"));
                 newProduct.put("qty", productObj.getInt("quantity"));
-                String id = getProduct(productObj.getString("name")).getString("product_id");
+                String id = getProduct("name", productObj.getString("name")).getString("product_id");
                 newProduct.put("id", id);
                 products.put(newProduct);
                 store.put("products", products);
@@ -166,9 +166,10 @@ public class StoreService {
     }
 
 
-    public JSONObject getProduct(String productName) {
+    public JSONObject getProduct(String identifier, String value) {
         for (Object product : as.getJSONFromFile(productFileDirectory).getJSONArray("products")) {
-            if (((JSONObject) product).getString("name").equals(productName))
+            System.out.println((JSONObject) product);
+            if (((JSONObject) product).getString(identifier).equals(value))
                 return (JSONObject) product;
         }
         return null;
@@ -227,7 +228,7 @@ public class StoreService {
         JSONObject product = new JSONObject();
         String product_id = generateProductId();
 
-        if (getProduct(name) == null) {
+        if (getProduct("name", name) == null) {
             product.put("product_id", product_id);
             product.put("name", name);
             product.put("description", description);

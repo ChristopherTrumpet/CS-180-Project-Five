@@ -225,9 +225,7 @@ public class ClientThread extends Thread {
 
                             if (ts.placeOrder(data.get(0))) {
                                 System.out.println("[SERVER] Order successfully placed!");
-                                writer.println("true");
                             } else {
-                                writer.println("false");
                                 System.out.println("[SERVER] Error occurred placing order.");
                             }
                             writer.flush();
@@ -316,6 +314,17 @@ public class ClientThread extends Thread {
                             data = readData(input, 5);
                             JSONObject product = ss.createProduct(data.get(0), data.get(1));
                             ss.addProduct(data.get(4), product.getString("product_id"), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)));
+                        }
+                        case "getStoreProduct" -> {
+                            // Product Object
+                            data = readData(input, 1);
+                            JSONObject product = new JSONObject(data.get(0));
+                            System.out.println(product);
+                            JSONObject updatedProduct = ss.getProduct("product_id", product.getString("id"));
+
+                            writer.println(updatedProduct.toString());
+                            writer.flush();
+
                         }
                         case "exit" -> {
                             break loop;
