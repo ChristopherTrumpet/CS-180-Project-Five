@@ -9,6 +9,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -216,7 +217,10 @@ public class SellerPage extends JFrame {
                             }
                         }
                         if (!storeExists)
-                            model.addRow(new Object[]{storeGenericObj.getString("name"), storeGenericObj.getDouble("sales")});
+                        {
+                            DecimalFormat decimalFormat = new DecimalFormat("###,###,###.##");
+                            model.addRow(new Object[]{storeGenericObj.getString("name"), "$" + decimalFormat.format(storeGenericObj.getDouble("sales"))});
+                        }
                     }
                 }
             }
@@ -248,11 +252,6 @@ public class SellerPage extends JFrame {
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(storesTable.getModel());
         storesTable.setRowSorter(sorter);
 
-        // SORTING BROKEN FIX THIS LATER
-//        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-//        sorter.setSortKeys(sortKeys);
-
         JScrollPane scrollPane = new JScrollPane(storesTable);
         scrollPane.setBounds(24, 66, 400, 330);
 
@@ -270,13 +269,15 @@ public class SellerPage extends JFrame {
 
                 JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                 editStore(store, storesTable, storesTable.getSelectedRow());
+            } else {
+                Client.showErrorMessage("Please add or select a store from the list!");
             }
 
         });
 
-        JButton addStore = new JButton("Add Store");
-        addStore.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 8, 24);
-        addStore.addActionListener(e -> addStore(model));
+        JButton createStore = new JButton("Create Store");
+        createStore.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 8, 24);
+        createStore.addActionListener(e -> addStore(model));
 
         JButton removeStore = new JButton("Remove Store");
         removeStore.setBounds(24 + 400 / 3 * 2 + 4, 404, 400 / 3 - 4, 24);
@@ -299,7 +300,7 @@ public class SellerPage extends JFrame {
         storesPanel.add(helpfulLabel);
         storesPanel.add(scrollPane);
 
-        storesPanel.add(addStore);
+        storesPanel.add(createStore);
         storesPanel.add(selectStoreButton);
         storesPanel.add(removeStore);
 
@@ -590,11 +591,13 @@ public class SellerPage extends JFrame {
         JSONArray allProducts = new JSONArray(allProductsString);
         ArrayList<String> productNames = new ArrayList<>();
 
+        // Removes products already in store list from being added again.
         if (allProductsString.equals("empty"))
             System.out.println("Store has no products");
         else {
             for (Object product : allProducts) {
                 for (Object storeProduct : products) {
+
                     String indexedProductId = ((JSONObject) product).getString("product_id");
                     String productId = ((JSONObject) storeProduct).getString("id");
 
@@ -604,10 +607,11 @@ public class SellerPage extends JFrame {
 
                     if(indexedProductId.equals(productId)) {
                         productModel.addRow(new Object[]{name, quantity, price});
+                    } else {
+                        productNames.add(((JSONObject) product).getString("name"));
+
                     }
                 }
-                productNames.add(((JSONObject) product).getString("name"));
-
             }
         }
 
@@ -692,6 +696,7 @@ public class SellerPage extends JFrame {
             }
 
         });
+
         storePage.add(changeStoreName);
 
         JButton addProduct = new JButton("Add Product");
@@ -704,6 +709,7 @@ public class SellerPage extends JFrame {
                 for (int i = 0; i < array.length; i++) {
                     array[i] = productNames.get(i);
                 }
+
                 JComboBox<String> productList = new JComboBox<>(array);
                 productList.setEditable(true);
                 AutoCompletion.enable(productList);
@@ -781,7 +787,44 @@ public class SellerPage extends JFrame {
                     "Price: $", productPrice
             };
 
-            int input = JOptionPane.showConfirmDialog(null, message, "Create a product", JOptionPane.OK_CANCEL_OPTION);
+            int input;
+            boolean validResponse;
+            do {
+                input = JOptionPane.showConfirmDialog(null, message, "Create a product", JOptionPane.OK_CANCEL_OPTION);
+
+                if (input == JOptionPane.CANCEL_OPTION)
+                    break;
+
+                if (productName.getText() == null || productDescription.getText() == null || productQuantity.getText() == null) {
+                    Client.showErrorMessage("Please ensure all fields are filled out!");
+                    validResponse = false;
+                    continue;
+                }
+
+                try {
+                    if (Integer.parseInt(productQuantity.getText()) < 0 || Integer.parseInt(productQuantity.getText()) > 9999) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException ex) {
+                    Client.showErrorMessage("Please input a valid quantity");
+                    validResponse = false;
+                    continue;
+                }
+
+                try {
+                    if (Double.parseDouble(productPrice.getText()) < 0 ||  Double.parseDouble(productPrice.getText()) > 999999999) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException ex) {
+                    Client.showErrorMessage("Please input a valid price");
+                    validResponse = false;
+                    continue;
+                }
+
+                validResponse = true;
+
+
+            } while (!validResponse);
 
             if (input == JOptionPane.OK_OPTION) {
                 System.out.println("Create product request...");
@@ -794,8 +837,14 @@ public class SellerPage extends JFrame {
                         store.getString("id")
                 );
 
-                productModel.addRow(new Object[]{productName.getText(), productQuantity.getText(), String.format("$%.2f", Double.parseDouble(productPrice.getText()))});
-                productModel.fireTableDataChanged();
+                boolean success = Objects.requireNonNull(Client.readFromServer(1)).get(0).equals("true");
+
+                if (success) {
+                    productModel.addRow(new Object[]{productName.getText(), productQuantity.getText(), String.format("$%.2f", Double.parseDouble(productPrice.getText()))});
+                    productModel.fireTableDataChanged();
+                } else {
+                    Client.showErrorMessage("Error occurred. Product may already exist!");
+                }
             }
 
         });
@@ -811,7 +860,7 @@ public class SellerPage extends JFrame {
 
                     Client.sendToServer("removeProduct",
                             store.getString("id"),
-                            productTable.getModel().getValueAt(productTable.getSelectedRow(), 3).toString()
+                            productTable.getValueAt(productTable.getSelectedRow(), 0).toString()
                     );
 
                     ((DefaultTableModel) productTable.getModel()).removeRow(productTable.getSelectedRow());

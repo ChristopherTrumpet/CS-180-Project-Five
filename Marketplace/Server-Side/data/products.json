@@ -1,5 +1,19 @@
 {
   "products": [
-
+    {
+      "product_id": "wJZvuLEOJWoDXp2EXR",
+      "name": "New Product",
+      "description": "A description"
+    },
+    {
+      "product_id": "fuQP3kFNBSWKAYSmMJ",
+      "name": "asdf",
+      "description": "asdf"
+    },
+    {
+      "product_id": "MCznXWt3JVgjOmGpfj",
+      "name": "new one",
+      "description": "asdfjlk"
+    }
   ]
 }

@@ -122,7 +122,7 @@ public class ClientThread extends Thread {
                             data = readData(input, 2);
                             String storeId = ss.getStoreByName(data.get(1)).getString("id");
 
-                            if (ss.removeStore(storeId, data.get(0)))
+                            if (ss.removeStoreFromSeller(storeId, data.get(0)))
                                 System.out.println("[SERVER] Removed store...");
                             else
                                 System.out.println("[SERVER] Problem occurred removing store...");
@@ -133,7 +133,9 @@ public class ClientThread extends Thread {
                             // Product id
                             data = readData(input, 2);
 
-                            if (ss.removeProduct(data.get(0), data.get(1)))
+                            String productId = ss.getProduct("name", data.get(1)).getString("product_id");
+
+                            if (ss.removeProduct(data.get(0), productId))
                                 System.out.println("[SERVER] Removed product name...");
                             else
                                 System.out.println("[SERVER] Product could not be removed...");
@@ -330,7 +332,14 @@ public class ClientThread extends Thread {
                             // Store id
                             data = readData(input, 5);
                             JSONObject product = ss.createProduct(data.get(0), data.get(1));
-                            ss.addProduct(data.get(4), product.getString("product_id"), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)));
+                            if (ss.addProduct(data.get(4), product.getString("product_id"), Integer.parseInt(data.get(2)), Double.parseDouble(data.get(3)))) {
+                                System.out.println("Created a new product");
+                                writer.println("true");
+                            } else {
+                                System.out.println("Error occurred creating new product.");
+                                writer.println("true");
+                            }
+                            writer.flush();
                         }
                         case "getStoreProduct" -> {
                             // Product Object
