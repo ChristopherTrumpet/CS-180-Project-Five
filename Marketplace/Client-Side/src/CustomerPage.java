@@ -348,8 +348,12 @@ public class CustomerPage extends JFrame {
         JButton removeFromCartButton = new JButton("Remove Item");
         removeFromCartButton.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 4, 24);
 
+        double finalTotalCost = totalCost;
         removeFromCartButton.addActionListener(e -> {
-            if (cartTable.getSelectedRow() > 0) removeFromCart(cartTable);
+            if (cartTable.getSelectedRow() != -1) {
+                removeFromCart(cartTable, totalCostLabel, finalTotalCost);
+                System.out.println("selected");
+            }
         });
 
         cartPanel.add(removeFromCartButton);
@@ -400,17 +404,23 @@ public class CustomerPage extends JFrame {
         }
     }
 
-    private void removeFromCart(JTable cartTable) {
-        if (cartTable.getRowCount() > 0) {
+    private void removeFromCart(JTable cartTable, JLabel cost, double costValue) {
+        try {
+            if (cartTable.getRowCount() > 0) {
 
-            // REMOVE CART ITEM FROM DATABASE
-            Client.sendToServer("removeFromCart", buyer.getString("id"), cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
+                // REMOVE CART ITEM FROM DATABASE
+                Client.sendToServer("removeFromCart", buyer.getString("id"), cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
+                // REMOVE ITEM FROM CART TABLE
+                ((DefaultTableModel) cartTable.getModel()).removeRow(cartTable.getSelectedRow());
+                cost.setText("Total Cost: $" + (costValue - (Double.parseDouble(cartTable.getValueAt(cartTable.getSelectedRow(), 1).toString()) * Double.parseDouble(cartTable.getValueAt(cartTable.getSelectedRow(), 2).toString()) )));
 
-            // REMOVE ITEM FROM CART TABLE
-            ((DefaultTableModel) cartTable.getModel()).removeRow(cartTable.getSelectedRow());
-        } else {
-            Client.showErrorMessage("There is nothing in the cart to remove!");
+            } else {
+                Client.showErrorMessage("There is nothing in the cart to remove!");
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Nothing Selected");
         }
+
     }
 
     private void productHistory() {

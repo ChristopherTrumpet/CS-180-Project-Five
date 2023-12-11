@@ -6,18 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="60257811-be0c-4e7d-9e55-c379dacfaebb" name="Changes" comment="Formatting">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Client-Side/src/AutoCompletion.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Client-Side/src/AutoCompletion.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Marketplace/Client-Side/src/CustomerPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Client-Side/src/CustomerPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/Server-Side.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/Server-Side.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/data/products.json" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/data/products.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/data/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/data/users.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/src/services/CSVtoJSON.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/src/services/CSVtoJSON.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/src/services/StatService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/src/services/StoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/src/services/StoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/AccountServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/AccountServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/SearchServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/SearchServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/StatServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/StoreServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/StoreServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/TransactionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Marketplace/Server-Side/test/services/TransactionServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,40 +25,47 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2ZPmOgduVkEQks8bG0UsMUvf3Nb" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager">
+}</component>
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Client" type="Application" factoryName="Application" singleton="false">
       <option name="MAIN_CLASS_NAME" value="Client" />
       <module name="Client-Side" />
@@ -95,8 +95,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1702332057820</updated>
-      <workItem from="1702332058945" duration="911000" />
+      <workItem from="1702332058945" duration="2953000" />
     </task>
+    <task id="LOCAL-00001" summary="Formatting">
+      <option name="closed" value="true" />
+      <created>1702332989432</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702332989432</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

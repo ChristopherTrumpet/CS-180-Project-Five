@@ -1,1 +1,9 @@
-{"products":[{"product_id":"YNjlSlX6J35VSLMbOO","name":"New Product","description":"Here is a description"}]}
+{
+  "products": [
+    {
+      "product_id": "YNjlSlX6J35VSLMbOO",
+      "name": "New Product",
+      "description": "Here is a description"
+    }
+  ]
+}
