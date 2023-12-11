@@ -1,0 +1,316 @@
+Index: Marketplace/Server-Side/src/server/Server.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package server;\n\nimport java.io.IOException;\nimport java.net.ServerSocket;\n\npublic class Server {\n    public static void main(String[] args) {\n\n        // Arbitrary port number\n        try (ServerSocket serverSocket = new ServerSocket(5000)) {\n\n            while (true) {\n                new ClientThread(serverSocket.accept()).start();\n            }\n\n        } catch (IOException e) {\n            System.err.println(\"Server exception \" + e.getMessage());\n        }\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Server-Side/src/server/Server.java b/Marketplace/Server-Side/src/server/Server.java
+--- a/Marketplace/Server-Side/src/server/Server.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Server-Side/src/server/Server.java	(date 1701847531026)
+@@ -2,19 +2,27 @@
+ 
+ import java.io.IOException;
+ import java.net.ServerSocket;
++import java.net.Socket;
++import java.util.ArrayList;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
+ 
+ public class Server {
+-    public static void main(String[] args) {
++    private static final int PORT = 9090;
++    private static final ArrayList<ClientHandler> clients = new ArrayList<>();
++    private static final ExecutorService pool = Executors.newFixedThreadPool(4);
++    public static void main(String[] args) throws IOException {
+ 
+-        // Arbitrary port number
+-        try (ServerSocket serverSocket = new ServerSocket(5000)) {
++        ServerSocket listener = new ServerSocket(PORT);
+ 
+-            while (true) {
+-                new ClientThread(serverSocket.accept()).start();
+-            }
++        while (true) {
++            System.out.println("[SERVER] Waiting for client connection...");
++            Socket client = listener.accept();
++            System.out.println("[SERVER] Connected to client!");
++            ClientHandler clientThread = new ClientHandler(client);
++            clients.add(clientThread);
+ 
+-        } catch (IOException e) {
+-            System.err.println("Server exception " + e.getMessage());
++            pool.execute(clientThread);
+         }
+ 
+     }
+Index: Marketplace/Client-Side/src/pages/OnboardingPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pages;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.HashMap;\n\npublic class OnboardingPage extends JFrame {\n    CardLayout cardLayout = new CardLayout();\n    Container container;\n    boolean firstTime;\n\n    JFrame reference;\n\n    HashMap<String, String> users = new HashMap<>();\n\n    public OnboardingPage(HashMap<String, String> users, boolean firstTime) {\n\n        this.reference = this;\n        this.firstTime = firstTime;\n        container = getContentPane();\n\n        // Set title of window\n        this.setTitle(\"Login Page\");\n\n        // Set behavior to \"destroy\" window when closed\n        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        this.setSize(800, 500);\n\n        // Does not allow user to resize window\n        this.setResizable(false);\n\n        // Set window to open in the center of the screen\n        this.setLocationRelativeTo(null);\n\n        this.setBackground(Color.decode(\"#f4f4f4\"));\n\n        JPanel login = new LoginPanel();\n        JPanel signUp = new SignUpPanel();\n\n        container.setLayout(cardLayout);\n        container.add(\"a\", login);\n        container.add(\"b\", signUp);\n\n        container.setVisible(true);\n        this.setVisible(true);\n\n    }\n\n    public class LoginPanel extends JPanel {\n        JLabel applicationNameLabel = new JLabel(\"Purdue Marketplace\");\n        JLabel loginLabel = new JLabel(\"Welcome back!\");\n        JLabel identifierLabel = new JLabel(\"Email or Username\");\n        JTextField identifierField = new JTextField(16);\n        JLabel passwordLabel = new JLabel(\"Password\");\n        JPasswordField passwordField = new JPasswordField(16);\n        JButton loginButton = new JButton(\"Login\");\n        JButton createAccountButton = new JButton(\"Create a new account\");\n\n        public LoginPanel() {\n\n            this.setLayout(null);\n\n            applicationNameLabel.setFont(new Font(\"Serif\", Font.PLAIN, 36));\n            applicationNameLabel.setBounds(250, 54, 300, 36);\n\n            loginLabel.setFont(new Font(\"sans-serif\", Font.PLAIN, 16));\n            loginLabel.setBounds(250, 90, 300, 24);\n\n            int start = 130;\n\n            identifierLabel.setBounds(250,start,300,24);\n            identifierField.setBounds(250, start + 24, 300, 24); // 24\n\n            passwordLabel.setBounds(250, start + 48, 300, 24); // 24\n            passwordField.setBounds(250, start + 72, 300, 24); // 24\n\n            loginButton.setBackground(Color.decode(\"#A77F20\"));\n            loginButton.setOpaque(true);\n            loginButton.setForeground(Color.white);\n            loginButton.setBorder(null);\n            loginButton.setBounds(250, start + 112, 300, 24); // 48\n            loginButton.setFocusable(false);\n\n            loginButton.addActionListener(e -> {\n                reference.dispose();\n                new SellerPage();\n                cardLayout.next(container);\n            });\n\n            createAccountButton.setBackground(Color.decode(\"#f4f4f4\"));\n            createAccountButton.setForeground(Color.decode(\"#A77F20\"));\n            createAccountButton.setBorder(null);\n            createAccountButton.setOpaque(false);\n            createAccountButton.setBounds(250, start + 112 + 32, 300, 24); // 48\n            createAccountButton.setFocusable(false);\n\n            createAccountButton.addActionListener(e -> {\n                cardLayout.next(container);\n            });\n\n            this.add(applicationNameLabel);\n            this.add(loginLabel);\n            this.add(identifierLabel);\n            this.add(identifierField);\n            this.add(passwordLabel);\n            this.add(passwordField);\n            this.add(loginButton);\n            this.add(createAccountButton);\n        }\n    }\n\n    public class SignUpPanel extends JPanel {\n        JLabel applicationNameLabel = new JLabel(\"Purdue Marketplace\");\n        JLabel signUpLabel = new JLabel(\"Let's create an account!\");\n        JLabel emailLabel = new JLabel(\"Email\");\n        JTextField emailField = new JTextField(16);\n        JLabel passwordLabel = new JLabel(\"Password\");\n        JPasswordField passwordField = new JPasswordField(16);\n        JLabel usernameLabel = new JLabel(\"Username\");\n        JTextField usernameField = new JTextField(16);\n        JButton signUpButton = new JButton(\"Sign up\");\n        JButton existingAccountButton = new JButton(\"Login to existing account\");\n        JRadioButton buyerType, sellerType;\n\n        public SignUpPanel() {\n\n            this.setLayout(null);\n\n            int start = 130;\n\n            applicationNameLabel.setFont(new Font(\"Serif\", Font.PLAIN, 36));\n            applicationNameLabel.setBounds(250, 54, 300, 36);\n\n            signUpLabel.setFont(new Font(\"sans-serif\", Font.PLAIN, 16));\n            signUpLabel.setBounds(250, 90, 300, 24);\n\n            emailLabel.setBounds(250,start,300,24);\n            emailField.setBounds(250, start + 24, 300, 24); // 24\n\n            usernameLabel.setBounds(250, start + 48, 300, 24); // 24\n            usernameField.setBounds(250, start + 72, 300, 24); // 24\n\n            passwordLabel.setBounds(250, start + 96, 300, 24);\n            passwordField.setBounds(250, start + 120, 300, 24);\n\n            ButtonGroup accountType = new ButtonGroup();\n\n            buyerType = new JRadioButton();\n            sellerType = new JRadioButton();\n\n            accountType.add(buyerType);\n            accountType.add(sellerType);\n\n            JLabel accountTypeLabel = new JLabel(\"Account Type\");\n            accountTypeLabel.setBounds(250, 274, 300, 24);\n\n            buyerType.setText(\"Buyer\");\n            buyerType.setBounds(250, 294, 75, 24);\n            sellerType.setText(\"Seller\");\n            sellerType.setBounds(250+75,294, 75, 24);\n\n            signUpButton.setBackground(Color.decode(\"#A77F20\"));\n            signUpButton.setOpaque(true);\n            signUpButton.setForeground(Color.white);\n            signUpButton.setBorder(null);\n            signUpButton.setBounds(250, 326, 300, 24); // 48\n            signUpButton.setFocusable(false);\n            signUpButton.addActionListener(e -> {\n                reference.dispose();\n                new SellerPage();\n            });\n\n            existingAccountButton.setBackground(Color.decode(\"#f4f4f4\"));\n            existingAccountButton.setForeground(Color.decode(\"#A77F20\"));\n            existingAccountButton.setBorder(null);\n            existingAccountButton.setOpaque(false);\n            existingAccountButton.setBounds(250, 326 + 32, 300, 24); // 48\n            existingAccountButton.setFocusable(false);\n            existingAccountButton.addActionListener(e -> {\n                cardLayout.next(container);\n            });\n\n            this.add(applicationNameLabel);\n            this.add(signUpLabel);\n            this.add(emailLabel);\n            this.add(emailField);\n            this.add(usernameLabel);\n            this.add(usernameField);\n            this.add(passwordLabel);\n            this.add(passwordField);\n            this.add(accountTypeLabel);\n            this.add(buyerType);\n            this.add(sellerType);\n            this.add(existingAccountButton);\n            this.add(signUpButton);\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/pages/OnboardingPage.java b/Marketplace/Client-Side/src/pages/OnboardingPage.java
+--- a/Marketplace/Client-Side/src/pages/OnboardingPage.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Client-Side/src/pages/OnboardingPage.java	(date 1701822489231)
+@@ -2,19 +2,22 @@
+ 
+ import javax.swing.*;
+ import java.awt.*;
++import java.io.DataOutputStream;
++import java.io.IOException;
++import java.io.PrintWriter;
++import java.util.Arrays;
+ import java.util.HashMap;
+ 
+ public class OnboardingPage extends JFrame {
+     CardLayout cardLayout = new CardLayout();
+     Container container;
+     boolean firstTime;
+-
+     JFrame reference;
+-
++    DataOutputStream dataOutputStream;
+     HashMap<String, String> users = new HashMap<>();
+ 
+-    public OnboardingPage(HashMap<String, String> users, boolean firstTime) {
+-
++    public OnboardingPage(DataOutputStream dOut, HashMap<String, String> users, boolean firstTime) {
++        this.dataOutputStream = dOut;
+         this.reference = this;
+         this.firstTime = firstTime;
+         container = getContentPane();
+@@ -169,6 +172,17 @@
+             signUpButton.setFocusable(false);
+             signUpButton.addActionListener(e -> {
+                 reference.dispose();
++                try {
++                    dataOutputStream.writeInt(0);
++                    if (buyerType.isSelected())
++                        dataOutputStream.writeChar('b');
++                    if (sellerType.isSelected())
++                        dataOutputStream.writeChar('s');
++                    dataOutputStream.writeUTF(String.format("%s\n%s\n%s", usernameField.getText(), emailField.getText(), Arrays.toString(passwordField.getPassword())));
++                    dataOutputStream.flush();
++                } catch (IOException ex) {
++                    throw new RuntimeException(ex);
++                }
+                 new SellerPage();
+             });
+ 
+Index: Marketplace/Client-Side/src/Client.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pages.OnboardingPage;\n\nimport javax.swing.*;\nimport java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.PrintWriter;\nimport java.net.Socket;\nimport java.net.SocketTimeoutException;\nimport java.util.Scanner;\n\npublic class Client {\n    public static void main(String[] args) {\n\n        // MAKE SURE the port number is IDENTICAL to that of the server\n        try (Socket socket = new Socket(\"localhost\", 5000)) {\n\n            socket.setSoTimeout(5000);\n\n            BufferedReader echoes = new BufferedReader(\n                    new InputStreamReader(socket.getInputStream())\n            );\n\n            PrintWriter stringToServer = new PrintWriter(socket.getOutputStream(), true);\n\n            // Initialize GUI for Program\n            SwingUtilities.invokeLater(() -> new OnboardingPage(null, true));\n\n            Scanner scanner = new Scanner(System.in);\n            String echoString;\n            String reponse;\n\n            do {\n                System.out.println(\"Enter string to be echoed: \");\n                echoString = scanner.nextLine();\n\n                // Send input result to server\n                stringToServer.println(echoString);\n\n                if (!echoString.equals(\"exit\")) {\n                    reponse = echoes.readLine();\n                    System.out.println(reponse);\n                }\n            } while (!echoString.equals(\"exit\"));\n\n        } catch (SocketTimeoutException e) {\n            System.err.println(\"The socket timed out\");\n\n        } catch (IOException e) {\n            System.err.println(\"Client Error: \" + e.getMessage());\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/Client.java b/Marketplace/Client-Side/src/Client.java
+--- a/Marketplace/Client-Side/src/Client.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Client-Side/src/Client.java	(date 1701847531023)
+@@ -1,53 +1,25 @@
+-import pages.OnboardingPage;
+-
+-import javax.swing.*;
+-import java.io.BufferedReader;
++import java.io.DataInputStream;
++import java.io.DataOutputStream;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
+-import java.io.PrintWriter;
+ import java.net.Socket;
+-import java.net.SocketTimeoutException;
+-import java.util.Scanner;
+ 
+ public class Client {
+-    public static void main(String[] args) {
+-
+-        // MAKE SURE the port number is IDENTICAL to that of the server
+-        try (Socket socket = new Socket("localhost", 5000)) {
+-
+-            socket.setSoTimeout(5000);
+-
+-            BufferedReader echoes = new BufferedReader(
+-                    new InputStreamReader(socket.getInputStream())
+-            );
+-
+-            PrintWriter stringToServer = new PrintWriter(socket.getOutputStream(), true);
+-
+-            // Initialize GUI for Program
+-            SwingUtilities.invokeLater(() -> new OnboardingPage(null, true));
+-
+-            Scanner scanner = new Scanner(System.in);
+-            String echoString;
+-            String reponse;
++    private static final String SERVER_IP = "localhost";
++    private static final int SERVER_PORT = 9090;
++    public static void main(String[] args) throws IOException {
++        Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+ 
+-            do {
+-                System.out.println("Enter string to be echoed: ");
+-                echoString = scanner.nextLine();
++        DataInputStream input = new DataInputStream(socket.getInputStream());
++        DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+ 
+-                // Send input result to server
+-                stringToServer.println(echoString);
++        while (true) {
++            System.out.println("client -> server: hello");
++            output.writeUTF("hello");
+ 
+-                if (!echoString.equals("exit")) {
+-                    reponse = echoes.readLine();
+-                    System.out.println(reponse);
+-                }
+-            } while (!echoString.equals("exit"));
+-
+-        } catch (SocketTimeoutException e) {
+-            System.err.println("The socket timed out");
++            System.out.println("client: waiting...");
++            String response = input.readUTF();
++            System.out.printf("client: got response: %s\n", response);
++        }
+ 
+-        } catch (IOException e) {
+-            System.err.println("Client Error: " + e.getMessage());
+-        }
+     }
+ }
+Index: Marketplace/Server-Side/src/server/ClientThread.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Server-Side/src/server/ClientThread.java b/Marketplace/Server-Side/src/server/ClientHandler.java
+rename from Marketplace/Server-Side/src/server/ClientThread.java
+rename to Marketplace/Server-Side/src/server/ClientHandler.java
+--- a/Marketplace/Server-Side/src/server/ClientThread.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Server-Side/src/server/ClientHandler.java	(date 1701847722880)
+@@ -1,51 +1,57 @@
+ package server;
+ 
+-import java.io.BufferedReader;
++import java.io.DataInputStream;
++import java.io.DataOutputStream;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+-import java.io.PrintWriter;
+ import java.net.Socket;
+ 
+-public class ClientThread extends Thread {
++public class ClientHandler implements Runnable {
++
++    private Socket client;
++    private DataOutputStream output;
++    private DataInputStream input;
+ 
+-    private final Socket socket;
++    public ClientHandler(Socket clientSocket) {
++        this.client = clientSocket;
+ 
+-    public ClientThread(Socket socket) {
+-        this.socket = socket;
++        try {
++            input = new DataInputStream(client.getInputStream());
++            output = new DataOutputStream(client.getOutputStream());
++        } catch (IOException e) {
++            System.out.println(e.getMessage());
++        }
+     }
+-
+     @Override
+     public void run() {
++
++        System.out.println(this.client.getPort() + " working or sleeping for 5 seconds");
++
+         try {
+-
+-            // Send data to the client
+-            BufferedReader input = new BufferedReader(
+-                new InputStreamReader(socket.getInputStream())
+-            );
++            Thread.sleep(1000);
++        } catch (InterruptedException e) {
++            System.out.println(e.getMessage());
++        }
+ 
+-            // Receive data from the client, auto flushes to ensure data is sent
+-            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+-
++        try {
+             while (true) {
+-                String echoString = input.readLine();
+-                System.out.println("Received client input: " + echoString);
+-
+-                if (echoString.equals("exit"))
+-                    break;
+-
+-                output.println(echoString);
++                System.out.println("reading...");
++                String sentence = input.readUTF();
++                System.out.printf("read: %s", sentence);
++                output.writeUTF(String.format("answer: %s", sentence));
+             }
+-
+         } catch (IOException e) {
+-            System.err.println("Oops: " + e.getMessage());
+-
+-        } finally {
+-
++            System.out.println(e.getMessage());
++        }
++        finally {
+             try {
+-                socket.close();
++                input.close();
++                output.close();
++                client.close();
+             } catch (IOException e) {
+-                // Oh, well!
++                System.out.println(e.getMessage());
+             }
+         }
++
+     }
+-}
++}
+\ No newline at end of file
+Index: Marketplace/Client-Side/src/pages/SellerPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pages;\n\nimport javax.swing.*;\nimport javax.swing.filechooser.FileNameExtensionFilter;\nimport javax.swing.table.DefaultTableModel;\nimport javax.swing.table.TableModel;\nimport javax.swing.table.TableRowSorter;\nimport javax.swing.RowSorter;\nimport javax.swing.SortOrder;\nimport java.awt.*;\nimport java.util.List;\nimport java.awt.event.MouseAdapter;\nimport java.awt.event.MouseEvent;\nimport java.util.ArrayList;\n\npublic class SellerPage extends JFrame {\n    CardLayout cardLayout = new CardLayout();\n    Container container = new Container();\n    JFrame reference;\n    JTable table;\n\n    public SellerPage() {\n\n        this.reference = this;\n\n        // Set title of window\n        this.setTitle(\"Purdue Marketplace (SELLER)\");\n\n        // Set behavior to \"destroy\" window when closed\n        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        this.setSize(800, 500);\n\n        // Does not allow user to resize window\n        this.setResizable(false);\n\n        // Set window to open in the center of the screen\n        this.setLocationRelativeTo(null);\n\n        this.setLayout(new BorderLayout());\n\n        container.setLayout(cardLayout);\n        container.add(\"stores\", Stores());\n        container.add(\"settings\", settings());\n        container.add(\"statistics\", statistics());\n        container.setVisible(true);\n\n\n        this.add(SidePanel(), BorderLayout.WEST);\n        this.add(container, BorderLayout.CENTER);\n        this.setVisible(true);\n    }\n\n    public JPanel SidePanel() {\n\n        JPanel panel = new JPanel();\n        GridBagLayout gridLayout = new GridBagLayout();\n        GridBagConstraints c = new GridBagConstraints();\n        c.insets = new Insets(0,80,0,24);\n        c.fill = GridBagConstraints.HORIZONTAL;\n        c.anchor = GridBagConstraints.NORTH;\n        panel.setLayout(gridLayout);\n\n        JLabel welcomeMessage = new JLabel(\"Purdue Marketplace\");\n        welcomeMessage.setFont(new Font(\"serif\", Font.BOLD, 18));\n        c.gridy = 0;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(welcomeMessage, c);\n        panel.add(welcomeMessage);\n\n        c.insets = new Insets(0,80,8,24);\n\n        JLabel nameMessage = new JLabel(\"Hey, John Doe\");\n        nameMessage.setFont(new Font(\"Serif\", Font.PLAIN, 14));\n        c.gridy = 1;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(nameMessage,c);\n        nameMessage.setMaximumSize(new Dimension(300, 24));\n        panel.add(nameMessage);\n\n        c.insets = new Insets(4,80,4,24);\n\n        JButton storesButton = new JButton(\"Stores\");\n        storesButton.addActionListener(e -> cardLayout.show(container, \"stores\"));\n        c.gridy = 2;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(storesButton, c);\n        panel.add(storesButton);\n\n        JButton settingsButton = new JButton(\"Settings\");\n        settingsButton.addActionListener(e -> cardLayout.show(container, \"settings\"));\n        c.gridy = 3;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(settingsButton, c);\n        panel.add(settingsButton);\n\n        JButton statisticsButton = new JButton(\"Statistics\");\n        statisticsButton.addActionListener(e -> cardLayout.show(container, \"statistics\"));\n        c.gridy = 4;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(statisticsButton, c);\n        panel.add(statisticsButton);\n\n        JButton importProductsButton = new JButton(\"Import Products\");\n        importProductsButton.addActionListener(e -> {\n            JFileChooser chooser = new JFileChooser();\n            FileNameExtensionFilter filter = new FileNameExtensionFilter(\".csv\", \"csv\");\n            chooser.setFileFilter(filter);\n            chooser.showOpenDialog(null);\n        });\n        c.gridy = 5;\n        c.gridwidth = 4;\n        gridLayout.setConstraints(importProductsButton, c);\n        panel.add(importProductsButton);\n\n        JButton logoutButton = new JButton(\"Logout\");\n        logoutButton.addActionListener(e -> {\n            int input = JOptionPane.showConfirmDialog(null, \"Are you sure you want to logout\");\n            if (input == 0) {\n                reference.dispose();\n                new OnboardingPage(null, true);\n            }\n        });\n        c.gridy = 6;\n        c.gridwidth = 2;\n        c.gridx = 0;\n        c.insets = new Insets(4,80,4,4);\n        gridLayout.setConstraints(logoutButton, c);\n        panel.add(logoutButton);\n\n        JButton exitButton = new JButton(\"Exit\");\n        exitButton.addActionListener(e -> {\n            int input = JOptionPane.showConfirmDialog(null, \"Are you sure you want to exit\");\n            if (input == 0) {\n                reference.dispose();\n            }\n        });\n        c.gridy = 6;\n        c.gridx = 2;\n        c.gridwidth = 2;\n        c.insets = new Insets(4,4,4,24);\n        gridLayout.setConstraints(exitButton, c);\n        panel.add(exitButton);\n\n        return panel;\n    }\n\n    public JPanel Stores() {\n        JPanel panel = new JPanel(new BorderLayout());\n        JPanel storesPanel = new JPanel();\n        storesPanel.setLayout(null);\n\n        JLabel storesLabel = new JLabel(\"Your Stores\");\n        storesLabel.setFont(new Font(\"Serif\", Font.BOLD, 18));\n        storesLabel.setBounds(24, 16, 400, 24);\n\n        JLabel helpfulLabel = new JLabel(\"Select a store to view\");\n        helpfulLabel.setFont(new Font(\"serif\", Font.PLAIN, 14));\n        helpfulLabel.setBounds(24, 36, 400, 24);\n\n        // Create a DefaultTableModel\n        DefaultTableModel model = new DefaultTableModel();\n\n        // Add some data to the model\n        model.addColumn(\"Stores\");\n        model.addColumn(\"Sales\");\n\n        model.addRow(new Object[]{\"Apple\", 20});\n        model.addRow(new Object[]{\"Five Guy's Burgers and Fries\", 25.32});\n        model.addRow(new Object[]{\"Barnes and Noble\", 35.11});\n        model.addRow(new Object[]{\"Keller Williams\", 9534.45});\n        model.addRow(new Object[]{\"Raising Cane's\", 9384.67});\n        model.addRow(new Object[]{\"Blackberry Farms\", 9384.24});\n        model.addRow(new Object[]{\"General Electric\", 9384.52});\n\n        // Create a JTable using the model\n        table = new JTable(model);\n\n        for (int c = 0; c < table.getColumnCount(); c++)\n        {\n            Class<?> col_class = table.getColumnClass(c);\n            table.setDefaultEditor(col_class, null);        // remove editor\n        }\n\n        table.getColumnModel().getColumn(1).setPreferredWidth(175);\n        table.getColumnModel().getColumn(1).setMaxWidth(175);\n        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);\n\n        table.addMouseListener(new MouseAdapter() {\n            public void mousePressed(MouseEvent mouseEvent) {\n                JTable table =(JTable) mouseEvent.getSource();\n                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {\n                    editStore(table.getValueAt(table.getSelectedRow(), 0).toString());\n                }\n            }\n        });\n\n        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());\n        table.setRowSorter(sorter);\n\n        List<RowSorter.SortKey> sortKeys = new ArrayList<>();\n        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));\n        sorter.setSortKeys(sortKeys);\n\n        JScrollPane scrollPane= new  JScrollPane(table);\n        scrollPane.setBounds(24, 66, 400, 330);\n\n        UIDefaults defaults = UIManager.getLookAndFeelDefaults();\n        if (defaults.get(\"Table.alternateRowColor\") == null)\n            defaults.put(\"Table.alternateRowColor\", new Color(240, 240, 240));\n\n        JButton sortStoreButton = new JButton(\"Select Store\");\n        sortStoreButton.setBounds(24, 404, 400/3 - 4, 24);\n        sortStoreButton.addActionListener(e -> {\n            if(!table.getSelectionModel().isSelectionEmpty()) {\n                editStore(table.getValueAt(table.getSelectedRow(), 0).toString());\n            }\n\n        });\n\n        JButton addStore = new JButton(\"Add Store\");\n        addStore.setBounds(24 + 400/3 + 4, 404, 400/3 - 8, 24);\n        addStore.addActionListener(e -> addStore());\n\n        JButton removeStore = new JButton(\"Remove Store\");\n        removeStore.setBounds(24 + 400/3 * 2 + 4, 404, 400/3 - 4, 24);\n        removeStore.addActionListener(e -> {\n            if(!table.getSelectionModel().isSelectionEmpty()) {\n                int input = JOptionPane.showConfirmDialog(null, \"Are you sure you want to remove \" + table.getValueAt(table.getSelectedRow(), 0).toString() + \"?\");\n                if (input == 0) {\n                    ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());\n                }\n            }\n        });\n\n        storesPanel.add(storesLabel);\n        storesPanel.add(helpfulLabel);\n        storesPanel.add(scrollPane);\n\n        storesPanel.add(addStore);\n        storesPanel.add(sortStoreButton);\n        storesPanel.add(removeStore);\n\n        panel.add(storesPanel, BorderLayout.CENTER);\n        JSeparator divider = new JSeparator(JSeparator.VERTICAL);\n        divider.setBackground(Color.decode(\"#dbdbdb\"));\n        divider.setForeground(Color.decode(\"#dbdbdb\"));\n        panel.add(divider, BorderLayout.LINE_START);\n\n        return panel;\n    }\n\n    public JPanel settings() {\n        JPanel panel = new JPanel(new BorderLayout());\n        JPanel settingsPanel = new JPanel();\n        settingsPanel.setLayout(null);\n\n        JLabel accountDetailsLabel = new JLabel(\"Account Details\");\n        accountDetailsLabel.setFont(new Font(\"Serif\", Font.BOLD, 18));\n        accountDetailsLabel.setBounds(24, 16, 200, 24);\n\n        JLabel supportLabel = new JLabel(\"View your account details\");\n        supportLabel.setFont(new Font(\"serif\", Font.PLAIN, 14));\n        supportLabel.setBounds(24, 36, 400, 24);\n\n        JLabel usernameLabel = new JLabel(\"Username\");\n        usernameLabel.setBounds(24, 60, 200, 24);\n\n        JTextField usernameField = new JTextField(12);\n        usernameField.setBounds(24, 84, 268, 24);\n        usernameField.setText(\"JDoe\");\n\n        JButton usernameButton = new JButton(\"Change Username\");\n        usernameButton.setOpaque(true);\n        usernameButton.setBorderPainted(false);\n        usernameButton.setBackground(Color.black);\n        usernameButton.setForeground(Color.white);\n        usernameButton.setBounds(300, 84, 174, 24);\n\n        settingsPanel.add(usernameLabel);\n        settingsPanel.add(usernameField);\n        settingsPanel.add(usernameButton);\n\n        JLabel emailLabel = new JLabel(\"Email\");\n        emailLabel.setBounds(24, 108, 200, 24);\n\n        JTextField emailField = new JTextField(12);\n        emailField.setBounds(24, 132, 268, 24);\n        emailField.setText(\"jdoe@purdue.edu\");\n\n        JButton emailButton = new JButton(\"Change Email\");\n        emailButton.setOpaque(true);\n        emailButton.setBackground(Color.black);\n        emailButton.setForeground(Color.white);\n        emailButton.setBorderPainted(false);\n\n        emailButton.setBounds(300, 132, 174, 24);\n\n        settingsPanel.add(emailLabel);\n        settingsPanel.add(emailField);\n        settingsPanel.add(emailButton);\n\n        JLabel passwordLabel = new JLabel(\"Password\");\n        passwordLabel.setBounds(24, 156, 200, 24);\n\n        JPasswordField passwordField = new JPasswordField(12);\n        passwordField.setBounds(24, 180, 268, 24);\n        passwordField.setText(\"secret_password\");\n\n        JButton passwordButton = new JButton(\"Change Password\");\n        passwordButton.setBorderPainted(false);\n        passwordButton.setOpaque(true);\n        passwordButton.setBackground(Color.black);\n        passwordButton.setForeground(Color.white);\n        passwordButton.setBounds(300, 180, 174, 24);\n\n        settingsPanel.add(passwordLabel);\n        settingsPanel.add(passwordField);\n        settingsPanel.add(passwordButton);\n\n        JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);\n        accountDetailsDivider.setBounds(24, 228, 450,24);\n        accountDetailsDivider.setBackground(Color.decode(\"#dbdbdb\"));\n        accountDetailsDivider.setForeground(Color.decode(\"#dbdbdb\"));\n\n        JButton deleteAccountButton = new JButton(\"Delete Account\");\n        deleteAccountButton.setBackground(Color.decode(\"#f4f4f4\"));\n        deleteAccountButton.setOpaque(false);\n        deleteAccountButton.setForeground(Color.decode(\"#d11111\"));\n        deleteAccountButton.setBounds(24, 253, 150, 24);\n\n        settingsPanel.add(accountDetailsDivider);\n        settingsPanel.add(deleteAccountButton);\n\n        settingsPanel.add(accountDetailsLabel);\n        settingsPanel.add(supportLabel);\n\n        JSeparator divider = new JSeparator(JSeparator.VERTICAL);\n        divider.setBackground(Color.decode(\"#dbdbdb\"));\n        divider.setForeground(Color.decode(\"#dbdbdb\"));\n\n        panel.add(settingsPanel, BorderLayout.CENTER);\n        panel.add(divider, BorderLayout.LINE_START);\n\n        return panel;\n    }\n\n    public JPanel statistics() {\n        JPanel panel = new JPanel(new BorderLayout());\n        JPanel statisticsPanel = new JPanel();\n        statisticsPanel.setLayout(null);\n\n        JLabel statisticsLabel = new JLabel(\"Seller Statistics\");\n        statisticsLabel.setFont(new Font(\"Serif\", Font.BOLD, 18));\n        statisticsLabel.setBounds(24, 16, 200, 24);\n\n        JLabel supportLabel = new JLabel(\"View your sales statistics\");\n        supportLabel.setFont(new Font(\"serif\", Font.PLAIN, 14));\n        supportLabel.setBounds(24, 36, 400, 24);\n\n        statisticsPanel.add(statisticsLabel);\n        statisticsPanel.add(supportLabel);\n\n        JSeparator divider = new JSeparator(JSeparator.VERTICAL);\n        divider.setBackground(Color.decode(\"#dbdbdb\"));\n        divider.setForeground(Color.decode(\"#dbdbdb\"));\n\n        panel.add(statisticsPanel, BorderLayout.CENTER);\n        panel.add(divider, BorderLayout.LINE_START);\n\n        return panel;\n    }\n\n    public void addStore() {\n\n        // Create a dialog box with a text field and a button\n        String storeName = JOptionPane.showInputDialog(\"Enter store name\", \"Store\");\n\n        if(storeName != null) {\n            System.out.println(\"User created store: \" + storeName);\n\n            // Create a DefaultTableModel\n            DefaultTableModel model = (DefaultTableModel) table.getModel();\n            model.addRow(new Object[]{storeName, \"$0.00\"});\n        }\n\n    }\n\n    public void editStore(String storeName) {\n\n        JFrame storePage = new JFrame();\n\n        // Set title of window\n        storePage.setTitle(\"Store Details\");\n\n        // Set behavior to \"destroy\" window when closed\n        storePage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        storePage.setSize(640, 480);\n\n        // Does not allow user to resize window\n        storePage.setResizable(false);\n\n        // Set window to open in the center of the screen\n        storePage.setLocationRelativeTo(null);\n\n        storePage.setLayout(null);\n\n        DefaultTableModel model = new DefaultTableModel();\n\n        // Add some data to the model\n        model.addColumn(\"Product Name\");\n        model.addColumn(\"Quantity\");\n        model.addColumn(\"Price\");\n\n        model.addRow(new Object[]{\"iPhone\", \"1000\", \"$999.99\"});\n        model.addRow(new Object[]{\"MacBook\", \"75\", \"$1499.99\"});\n        model.addRow(new Object[]{\"AirPods\", \"225\", \"199.99\"});\n\n        // Create a JTable using the model\n        JTable productTable = new JTable(model);\n\n        JLabel titleMessage = new JLabel(storeName + \"'s Products\");\n        titleMessage.setFont(new Font(\"serif\", Font.BOLD, 18));\n        titleMessage.setBounds(233, 24, 365, 24);\n\n        JLabel optionsTitle = new JLabel(\"Options\");\n        optionsTitle.setFont(new Font(\"serif\", Font.BOLD, 18));\n        optionsTitle.setBounds(24, 24, 200, 24);\n\n        JButton changeStoreName = new JButton(\"Change Store Name\");\n        changeStoreName.setBounds(24, 56, 185, 24);\n\n        JButton addProduct = new JButton(\"Add Product\");\n        addProduct.setBounds(24, 88, 185, 24);\n\n        JButton removeProduct = new JButton(\"Remove Product\");\n        removeProduct.setBounds(24, 120, 185, 24);\n        removeProduct.addActionListener(e -> {\n            if (!productTable.getSelectionModel().isSelectionEmpty()) {\n                int input = JOptionPane.showConfirmDialog(null, \"Are you sure you want to delete \" + productTable.getValueAt(productTable.getSelectedRow(), 0) + \"?\");\n                if (input == 0) {\n                    ((DefaultTableModel)productTable.getModel()).removeRow(productTable.getSelectedRow());\n                }\n            }\n        });\n\n        JButton closeProduct = new JButton(\"Close\");\n        closeProduct.setBounds(24, 397, 185, 24);\n        closeProduct.addActionListener(e -> storePage.dispose());\n\n        JScrollPane sp= new  JScrollPane(productTable);\n        sp.setBounds(233, 56, 365, 365);\n\n        storePage.add(optionsTitle);\n        storePage.add(changeStoreName);\n        storePage.add(addProduct);\n        storePage.add(removeProduct);\n        storePage.add(closeProduct);\n        storePage.add(titleMessage);\n        storePage.add(sp);\n\n        storePage.setVisible(true);\n\n    }\n}\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/pages/SellerPage.java b/Marketplace/Client-Side/src/pages/SellerPage.java
+--- a/Marketplace/Client-Side/src/pages/SellerPage.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Client-Side/src/pages/SellerPage.java	(date 1701822255223)
+@@ -119,7 +119,7 @@
+             int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout");
+             if (input == 0) {
+                 reference.dispose();
+-                new OnboardingPage(null, true);
++//                new OnboardingPage(null, true);
+             }
+         });
+         c.gridy = 6;
+Index: Marketplace/Client-Side/src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pages.OnboardingPage;\n\npublic class Main {\n    public static void main(String[] args) {\n        new OnboardingPage(null, false);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/Main.java b/Marketplace/Client-Side/src/Main.java
+--- a/Marketplace/Client-Side/src/Main.java	(revision fb16e8d7b52bebce6f0d660e2d5c8ad1d7153c62)
++++ b/Marketplace/Client-Side/src/Main.java	(date 1701821516395)
+@@ -2,6 +2,6 @@
+ 
+ public class Main {
+     public static void main(String[] args) {
+-        new OnboardingPage(null, false);
++//        new OnboardingPage(null, false);
+     }
+ }

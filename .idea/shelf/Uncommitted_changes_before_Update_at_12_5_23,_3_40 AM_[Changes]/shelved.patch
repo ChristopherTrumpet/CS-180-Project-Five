@@ -1,0 +1,99 @@
+Index: Marketplace/Server-Side/src/services/StoreService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\n\nimport org.json.JSONArray;\nimport org.json.JSONObject;\n\nimport java.io.File;\nimport java.util.ArrayList;\n\npublic class StoreService {\n\n    public boolean addStore(String userId, String storeId) {\n        AccountService as = new AccountService();\n        if (as.isSeller(userId)) {\n            JSONObject seller = as.getUserById(userId);\n            JSONArray idList = (JSONArray) seller.get(\"stores\");\n            idList.put(storeId);\n            seller.put(\"stores\", idList);\n            return true;\n        }\n        return false;\n    }\n\n    public boolean removeStore(String storeId) {\n\n        return false;\n    }\n\n    public boolean createStore(String name) {\n\n        return false;\n    }\n\n    public boolean updateStoreName(String storeId, String newName) {\n\n        return false;\n    }\n\n    public boolean importProducts(File csvFile) {\n\n        return false;\n    }\n\n    public boolean exportProducts() {\n\n        return false;\n    }\n\n    public boolean addProduct(String storeId, String productId, int qty, double price) {\n\n        return false;\n    }\n\n    public boolean removeProduct(String storeId, String productId) {\n\n        return false;\n    }\n\n    public boolean createProduct(String name, String description, String itemType) {\n\n        return false;\n    }\n\n    public boolean updateProductName(String productId, String newName) {\n\n        return false;\n    }\n\n    public boolean updateProductDescription(String productId, String newDescription) {\n\n        return false;\n    }\n\n    public boolean updateProductPrice(String storeId, String productId, double newPrice) {\n\n        return false;\n    }\n\n    public boolean updateProductQuantity(String storeId, String productId, int newQuantity) {\n\n        return false;\n    }\n\n    public String generateProductId() {\n\n        return null;\n    }\n\n    public String generateStoreId() {\n\n        return null;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Server-Side/src/services/StoreService.java b/Marketplace/Server-Side/src/services/StoreService.java
+--- a/Marketplace/Server-Side/src/services/StoreService.java	(revision 0ab8fe3ed23740e3e647bb123d2ad3c8e228db9b)
++++ b/Marketplace/Server-Side/src/services/StoreService.java	(date 1701540417484)
+@@ -45,11 +45,12 @@
+         return false;
+     }
+ 
+-    public boolean addProduct(String storeId, String productId, int qty, double price) {
++    public boolean addProduct(String storeId, String productId, int quantity, double price) {
+ 
+         return false;
+     }
+ 
++
+     public boolean removeProduct(String storeId, String productId) {
+ 
+         return false;
+Index: Marketplace/Client-Side/src/pages/OnboardingPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pages;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.ActionEvent;\nimport java.awt.event.ActionListener;\n\npublic class OnboardingPage extends JFrame implements ActionListener {\n\n    public OnboardingPage() {\n\n        // Set title of window\n        this.setTitle(\"Login Page\");\n\n        // Set behavior to \"destroy\" window when closed\n        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        this.setSize(800, 500);\n\n        // Set window to open in the center of the screen\n        this.setLocationRelativeTo(null);\n\n        this.setLayout(new FlowLayout());\n\n        JLabel identifierLabel = new JLabel(\"Email or Username\");\n        JTextField identifierField = new JTextField();\n\n        JLabel passwordLabel = new JLabel(\"Password\");\n        JPasswordField passwordField = new JPasswordField();\n\n        JButton loginBtn = new JButton(\"Login\");\n        JButton signUpBtn = new JButton(\"Sign Up\");\n\n        this.add(identifierLabel);\n        this.add(identifierField);\n\n        this.add(passwordLabel);\n        this.add(passwordField);\n\n        this.add(loginBtn);\n        this.add(signUpBtn);\n\n        this.setVisible(true);\n\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e) {\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/pages/OnboardingPage.java b/Marketplace/Client-Side/src/pages/OnboardingPage.java
+--- a/Marketplace/Client-Side/src/pages/OnboardingPage.java	(revision 0ab8fe3ed23740e3e647bb123d2ad3c8e228db9b)
++++ b/Marketplace/Client-Side/src/pages/OnboardingPage.java	(date 1701542283668)
+@@ -24,12 +24,17 @@
+         this.setLayout(new FlowLayout());
+ 
+         JLabel identifierLabel = new JLabel("Email or Username");
+-        JTextField identifierField = new JTextField();
++        JTextField identifierField = new JTextField(16);
+ 
+         JLabel passwordLabel = new JLabel("Password");
+-        JPasswordField passwordField = new JPasswordField();
++        JPasswordField passwordField = new JPasswordField(16);
+ 
+         JButton loginBtn = new JButton("Login");
++        loginBtn.setOpaque(true);
++        loginBtn.setBorderPainted(false);
++        loginBtn.setBackground(Color.blue);
++        loginBtn.setForeground(Color.white);
++
+         JButton signUpBtn = new JButton("Sign Up");
+ 
+         this.add(identifierLabel);
+Index: Marketplace/Server-Side/src/services/AccountService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package services;\n\nimport org.json.JSONArray;\nimport org.json.JSONObject;\n\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.Paths;\nimport java.util.Objects;\nimport java.util.Random;\n\n/**\n * Marketplace Application : Account Service\n *\n * <p>\n * This service handles each users account details as well as account creation / deletion\n * </p>\n *\n * @author [NAMES], CS 180 Lab\n * @version v0.0.1\n */\n\npublic class AccountService {\n\n    // Directory of the users.json file which stores all user data\n    public final String userFileDirectory;\n\n    /**\n     * Constructor initializes user file directory, creates a new one if one does not exist.\n     */\n    public AccountService() {\n\n        // TODO: Check if file exists, create a new one if it does not\n\n        this.userFileDirectory = Paths.get(System.getProperty(\"user.dir\") + \"\\\\data\\\\users.json\").toString();\n    }\n\n    /**\n     * Creates a new user object in the users.json, populated by the parameters.\n     *\n     * @param accountType Indicates whether user is a buyer or seller\n     * @param userName    Stores user's username\n     * @param password    Stores user's password, may encrypt later\n     * @param email       Stores user's email\n     * @param firstName   Stores user's first name\n     * @param lastName    Stores user's last name\n     * @return True if account was successfully created, false otherwise\n     */\n    public boolean createAccount(\n            char accountType,\n            String userName,\n            String password,\n            String email,\n            String firstName,\n            String lastName) {\n\n        // Creates a new user id\n        String userId = generateUserId(accountType);\n\n        JSONObject userObj = new JSONObject();\n\n        // Ensures users.json file exists\n        if (getJSONFile(getUserFileDirectory()) != null)\n            userObj = new JSONObject(getJSONFile(getUserFileDirectory()));\n\n        // Uses user email as it is unique, user id cannot be used as it generated upon creation\n        if (userExists(email))\n            return false;\n\n        JSONArray users = userObj.getJSONArray(\"users\");\n        JSONObject user = new JSONObject();\n\n        user.put(\"id\", userId);\n        user.put(\"username\", userName);\n        user.put(\"password\", password);\n        user.put(\"email\", email);\n        user.put(\"first_name\", firstName);\n        user.put(\"last_name\", lastName);\n\n        // Create an empty cart if the user is a buyer\n        if (accountType == 'b') {\n            user.put(\"cart\", new JSONArray());\n            user.put(\"product_history\", new JSONArray());\n            user.put(\"funds\", 0.0f);\n        }\n\n        if (accountType == 's') {\n            user.put(\"stores\", new JSONArray());\n        }\n\n        users.put(user);\n        userObj.put(\"users\", users);\n\n        return writeJSONObjectToFile(userObj, getUserFileDirectory());\n\n    }\n\n    /**\n     * Checks if user exists in users.json database by email\n     *\n     * @param email The email of the sought out user\n     * @return True if user exists, false otherwise\n     */\n    private boolean userExists(String email) {\n        return getUserByEmail(email) != null;\n    }\n\n    /**\n     * Checks if the user is a buyer\n     *\n     * @param userId Gets user from database using their unique user id\n     * @return True if the user is a buyer, false otherwise\n     */\n    public boolean isBuyer(String userId) {\n        return userId.charAt(userId.length() - 1) == 'b';\n    }\n\n    /**\n     * Checks if the user is a seller\n     *\n     * @param userId Gets user from database using their unique user id\n     * @return True if the user is a seller, false otherwise\n     */\n    public boolean isSeller(String userId) {\n        return userId.charAt(userId.length() - 1) == 's';\n    }\n\n\n    public String getUserFileDirectory() {\n        return userFileDirectory;\n    }\n\n    public JSONObject getUserById(String userId) {\n        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray(\"users\")) {\n            if (((JSONObject) user).get(\"id\").toString().equals(userId)) {\n                return (JSONObject) user;\n            }\n        }\n        return null;\n    }\n\n    private JSONObject getUserByEmail(String email) {\n        System.out.println(getJSONFile(getUserFileDirectory()));\n        for (Object user : new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory()))).getJSONArray(\"users\")) {\n            if (((JSONObject) user).get(\"email\").toString().equals(email)) {\n                return (JSONObject) user;\n            }\n        }\n        return null;\n    }\n\n    public boolean updateUserDetails(String userId, String key, Object value) {\n\n        JSONObject users = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));\n\n        for (Object user : users.getJSONArray(\"users\")) {\n            if (((JSONObject) user).get(\"id\").toString().equals(userId)) {\n                ((JSONObject) user).put(key, value);\n                writeJSONObjectToFile(users, getUserFileDirectory());\n                return true;\n            }\n        }\n\n        return false;\n    }\n\n    public boolean removeAccount(String userId) {\n\n        JSONObject userObj = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));\n        JSONArray users = userObj.getJSONArray(\"users\");\n        for (int i = 0; i < users.length(); i++) {\n            if (((JSONObject) users.get(i)).get(\"id\").toString().equals(userId)) {\n\n                users.remove(i);\n                return writeJSONObjectToFile(userObj, getUserFileDirectory());\n            }\n        }\n\n        return false;\n    }\n\n    private String getJSONFile(String fileDirectory) {\n        try {\n            System.out.println(getUserFileDirectory());\n            return Files.readString(Path.of(fileDirectory));\n        } catch (IOException e) {\n            System.out.println(\"Error occurred retrieving user file...\");\n        }\n\n        return null;\n    }\n\n    public boolean writeJSONObjectToFile(JSONObject userObj, String fileDirectory) {\n\n        try {\n\n            FileWriter file = new FileWriter(fileDirectory);\n            file.write(userObj.toString());\n            file.flush();\n            file.close();\n            return true;\n\n        } catch (IOException e) {\n            System.out.println(\"Error occurred writing json object to file...\\n\" + e.getMessage());\n        }\n\n        return false;\n    }\n\n    public String[] getAccountDetails(String userId) {\n\n        String[] accountDetails = new String[6];\n\n        JSONObject user = getUserById(userId);\n\n        if (user == null)\n            return null;\n\n        accountDetails[0] = user.get(\"username\").toString();\n        accountDetails[1] = user.get(\"password\").toString();\n        accountDetails[2] = user.get(\"email\").toString();\n        accountDetails[3] = user.get(\"first_name\").toString();\n        accountDetails[4] = user.get(\"last_name\").toString();\n        accountDetails[5] = userId.charAt(userId.length() - 1) == 'b' ? \"Buyer\" : \"Seller\";\n\n        return accountDetails;\n    }\n\n    /**\n     * Generates a unique user id string\n     * @param AccountType\n     * @return\n     */\n    public String generateUserId(char AccountType) {\n\n        String chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\"; // Potential characters for id\n        StringBuilder userId = new StringBuilder();\n        Random rnd = new Random();\n\n        while (userId.length() < 16) { // Creates a user id 16 characters long\n            int index = (int) (rnd.nextFloat() * chars.length());\n            userId.append(chars.charAt(index));\n        }\n\n        return userId.toString() + AccountType;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Server-Side/src/services/AccountService.java b/Marketplace/Server-Side/src/services/AccountService.java
+--- a/Marketplace/Server-Side/src/services/AccountService.java	(revision 0ab8fe3ed23740e3e647bb123d2ad3c8e228db9b)
++++ b/Marketplace/Server-Side/src/services/AccountService.java	(date 1701541615934)
+@@ -63,7 +63,7 @@
+ 
+         // Ensures users.json file exists
+         if (getJSONFile(getUserFileDirectory()) != null)
+-            userObj = new JSONObject(getJSONFile(getUserFileDirectory()));
++            userObj = new JSONObject(Objects.requireNonNull(getJSONFile(getUserFileDirectory())));
+ 
+         // Uses user email as it is unique, user id cannot be used as it generated upon creation
+         if (userExists(email))
+@@ -230,7 +230,7 @@
+ 
+     /**
+      * Generates a unique user id string
+-     * @param AccountType
++     * @param AccountType Appends a 'b' or 's' depending on provided account type
+      * @return
+      */
+     public String generateUserId(char AccountType) {
+Index: Marketplace/Client-Side/src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Marketplace/Client-Side/src/Main.java b/Marketplace/Client-Side/src/Main.java
+new file mode 100644
+--- /dev/null	(date 1701540896929)
++++ b/Marketplace/Client-Side/src/Main.java	(date 1701540896929)
+@@ -0,0 +1,7 @@
++import pages.OnboardingPage;
++
++public class Main {
++    public static void main(String[] args) {
++        new OnboardingPage();
++    }
++}
