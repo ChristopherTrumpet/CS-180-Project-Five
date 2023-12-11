@@ -7,15 +7,8 @@
 1. Clone the Repository with `git clone https://github.com/ChristopherTrumpet/CS-180-Project-Five.git`
 2. Compile the repository by running `javac *.java`
 3. Run the program by typing `java Program` into the terminal
-4. Enjoy!
-
-## Submissions by Person
-- Report - Vraj Patel
-- Vocareum Workplace Submission - Matthew Lee
-
-
+   
 VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
-
 1) In IntelliJ, in the top bar, on the left of the run button is a drop down arrow that says “Current File”. Click the down arrow and click “Edit Configurations”.
 2) Click on the “+” in the top left and select “Application”.
 3) Name the Application “Server”.
@@ -31,6 +24,10 @@ VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
 ![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/61b49a84-6401-48c0-ab95-de4281268f2d)
 ![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/0721c6ed-a7d5-4639-bf90-716c2293b215)
 
+
+## Submissions by Person
+- Report - Vraj Patel
+- Vocareum Workplace Submission - Matthew Lee
 
 ## Program Classes
 
