@@ -274,6 +274,23 @@ public class StoreService {
         return false;
     }
 
+    public void removeProductFromProducts(String productId) {
+
+        JSONObject productsObj = as.getJSONFromFile(productFileDirectory);
+        JSONArray products = productsObj.getJSONArray("products");
+
+        for (int i = 0; i < products.length(); i++) {
+
+            JSONObject product = (JSONObject) products.get(i);
+
+            if (product.getString("product_id").equals(productId)) {
+                products.remove(i);
+                productsObj.put("products", products);
+                writeJSONObjectToFile(productsObj, productFileDirectory);
+            }
+        }
+    }
+
     public JSONObject createProduct(String name, String description) {
 
         JSONObject productObj = as.getJSONFromFile(productFileDirectory);

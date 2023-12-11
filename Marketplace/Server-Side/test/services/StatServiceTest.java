@@ -2,13 +2,14 @@ package services;
 
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TransactionServiceTest {
+public class StatServiceTest {
 
+    private StatService statService;
     private TransactionService transactionService;
     private StoreService storeService;
     private AccountService accountService;
@@ -19,6 +20,7 @@ public class TransactionServiceTest {
 
     @Before
     public void setup() {
+        statService = new StatService();
         transactionService = new TransactionService();
         storeService = new StoreService();
         accountService = new AccountService();
@@ -35,18 +37,16 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addToCart() {
-        assertTrue(transactionService.addToCart(buyerId, productId, storeId,5,50.00));
+    public void productHistoryBeforePurchase() {
+        assertNull(statService.sortCustomersByItemForStore(sellerId, storeId));
     }
 
     @Test
-    public void clearCart() {
-        assertTrue(transactionService.clearCart(buyerId));
-    }
-
-    @Test
-    public void addFunds() {
-        assertTrue(transactionService.addFunds(buyerId, 100.00));
+    public void productHistoryAfterPurchase() {
+        transactionService.addFunds(buyerId, 100.00);
+        transactionService.addToCart(buyerId, productId, storeId,1,10.00);
+        transactionService.placeOrder(buyerId);
+        assertNotNull(statService.sortProductsBySalesForStore(buyerId, storeId));
     }
 
     @After
