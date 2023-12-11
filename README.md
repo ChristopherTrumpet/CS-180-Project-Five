@@ -1,13 +1,30 @@
 # Project 5: Purdue MarketPlace
-*Vraj Patel, Matthew Lee, Shrinand Perumal, Mohit Sachin Ambe, Christopher Trumpet*
+*Vraj Patel, Matthew Lee, Shrinand Perumal, Mohit Ambe, Christopher Trumpet*
 
 ---
 
 ## How to Compile and Run Program
 1. Clone the Repository with `git clone https://github.com/ChristopherTrumpet/CS-180-Project-Five.git`
 2. Compile the repository by running `javac *.java`
-3. Run the program by typing `java Program` into the terminal
-4. Enjoy!
+   
+VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
+1) In IntelliJ, in the top bar, on the left of the run button is a drop down arrow that says “Current File”. Click the down arrow and click “Edit Configurations”.
+2) Click on the “+” in the top left and select “Application”.
+3) Name the Application “Server”.
+4) Under “Build and Run” and “-cp” select “Server-Side” and for the SDK choose a version of Java.
+5) For the Main Class, choose “Server of server”. It should show up as “server.Server”. For the working directory, select .\Marketplace\Server-Side
+6) Click Apply
+7) Click on the “+” in the top left again and select “Application”.
+8) Name the Application “Client”.
+9) Select a version of Java for the SDK and under “-cp” select “Client-Side”.
+10) For the Main Class, choose “Client”. For the working directory, select .\Marketplace\Server-Side (note the working directory is still “Server-Side” even though this configuration is for the Client)
+11) Click Modify options and allow multiple instances
+12) Click Apply and Click "OK"
+13) To run the program, select the Server application you just created and run it. Then select the Client application that you just created and also run that. You can run the Client Application multiple times to connect multiple Clients to the Server at once.
+    
+![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/61b49a84-6401-48c0-ab95-de4281268f2d)
+![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/0721c6ed-a7d5-4639-bf90-716c2293b215)
+
 
 ## Submissions by Person
 - Report - Vraj Patel
