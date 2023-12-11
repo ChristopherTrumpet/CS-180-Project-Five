@@ -19,7 +19,8 @@ VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
 8) Name the Application “Client”.
 9) Select a version of Java for the SDK and under “-cp” select “Client-Side”.
 10) For the Main Class, choose “Client”. For the working directory, select .\Marketplace\Server-Side (note the working directory is still “Server-Side” even though this configuration is for the Client)
-11) Click Apply and Click "OK"
+11) Click Modify options and allow multiple instances
+12) Click Apply and Click "OK"
 
 ![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/61b49a84-6401-48c0-ab95-de4281268f2d)
 ![image](https://github.com/ChristopherTrumpet/CS-180-Project-Five/assets/143226000/0721c6ed-a7d5-4639-bf90-716c2293b215)
