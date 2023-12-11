@@ -60,14 +60,14 @@ For export data for a buyer or seller, this class converts the newly created JSO
 Handles all data statistics involving sorting products by popularity, sorting stores by amount of products sold, etc. for both the buyer and sellers.
 
 ### StoreService
-Handles all functionality for store in relation to sellers. Sellers can hold multipple stores. This class can add, remove, or modify stores in addition to those same functions for products that are added to the stores. Sellers and buyers can retrieve about the products price, quantity, and description.
+Handles all functionality for store in relation to sellers. Sellers can hold multiple stores. This class can add, remove, or modify stores in addition to those same functions for products that are added to the stores. Sellers and buyers can retrieve about the products price, quantity, and description.
 
 ### TransactionService
-Handles all functionality with shopping carts and placing orders. Both shopping cart methods and placing order methods run through a list of checks to determine whether the quantity for each product is valid and whether or not a customer has sufficient funds to purchase all items in the shoppinng cart. 
+Handles all functionality with shopping carts and placing orders. Both shopping cart methods and placing order methods run through a list of checks to determine whether the quantity for each product is valid and whether or not a customer has sufficient funds to purchase all items in the shopping cart. 
 
 ### SearchService
-Handles all logic for for customers to searh for products based on name, description, or store.
+Handles all logic for customers to search for products based on name, description, or store.
 
 ### Test Cases (for the main classes)
-Each Test class checks that the respective classes' function as intended and per the requirements of the Project 5 Handout.
-All cases for their respective classes and methods pass.
+Each Test class checks that the respective classes' function as intended and per the requirements of the Project 5 Handout. All 5 test classes contain various JUnit test cases that work with dummy data and use Assertions to make sure that the service class methods are functioning as expected.
+All cases for their respective classes and methods pass, indicating that all functionality of the application is working as intended.
