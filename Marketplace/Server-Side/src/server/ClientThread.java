@@ -13,6 +13,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * ClientThread
+ * <p>
+ * handles input information from each of the pages.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class ClientThread extends Thread {
 
     private final Socket socket;
@@ -23,7 +31,7 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-        try(BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
@@ -32,7 +40,8 @@ public class ClientThread extends Thread {
             StoreService ss = new StoreService();
             SearchService searchService = new SearchService();
 
-            loop: while (true) {
+            loop:
+            while (true) {
 
                 String clientData = input.readLine();
                 ArrayList<String> data = new ArrayList<>();
@@ -120,8 +129,7 @@ public class ClientThread extends Thread {
 
                             if (ss.updateStoreName(data.get(0), data.get(1)))
                                 System.out.println("[SERVER] Changed store name...");
-                            else
-                                System.out.println("[SERVER] Error occurred changing name.");
+                            else System.out.println("[SERVER] Error occurred changing name.");
                         }
                         case "removeStore" -> {
 
@@ -132,8 +140,7 @@ public class ClientThread extends Thread {
 
                             if (ss.removeStoreFromSeller(storeId, data.get(0)))
                                 System.out.println("[SERVER] Removed store...");
-                            else
-                                System.out.println("[SERVER] Problem occurred removing store...");
+                            else System.out.println("[SERVER] Problem occurred removing store...");
                         }
                         case "removeProduct" -> {
 
@@ -145,8 +152,7 @@ public class ClientThread extends Thread {
 
                             if (ss.removeProduct(data.get(0), productId))
                                 System.out.println("[SERVER] Removed product name...");
-                            else
-                                System.out.println("[SERVER] Product could not be removed...");
+                            else System.out.println("[SERVER] Product could not be removed...");
                         }
                         case "addProduct" -> {
 
@@ -285,10 +291,8 @@ public class ClientThread extends Thread {
                             // Username
                             data = read(input, 2);
 
-                            if (as.userExists(data.get(0), data.get(1)))
-                                writer.println("true");
-                            else
-                                writer.println("false");
+                            if (as.userExists(data.get(0), data.get(1))) writer.println("true");
+                            else writer.println("false");
 
                             writer.flush();
                         }

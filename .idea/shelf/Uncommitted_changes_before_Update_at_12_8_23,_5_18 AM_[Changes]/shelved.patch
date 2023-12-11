@@ -1,0 +1,484 @@
+Index: Marketplace/Client-Side/src/pages/OnboardingPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pages;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.HashMap;\n\npublic class OnboardingPage extends JFrame {\n    CardLayout cardLayout = new CardLayout();\n    Container container;\n    boolean firstTime;\n\n    JFrame reference;\n\n    HashMap<String, String> users = new HashMap<>();\n\n    public OnboardingPage(HashMap<String, String> users, boolean firstTime) {\n\n        this.reference = this;\n        this.firstTime = firstTime;\n        container = getContentPane();\n\n        // Set title of window\n        this.setTitle(\"Login Page\");\n\n        // Set behavior to \"destroy\" window when closed\n        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        this.setSize(800, 500);\n\n        // Does not allow user to resize window\n        this.setResizable(false);\n\n        // Set window to open in the center of the screen\n        this.setLocationRelativeTo(null);\n\n        this.setBackground(Color.decode(\"#f4f4f4\"));\n\n        JPanel login = new LoginPanel();\n        JPanel signUp = new SignUpPanel();\n\n        container.setLayout(cardLayout);\n        container.add(\"a\", login);\n        container.add(\"b\", signUp);\n\n        container.setVisible(true);\n        this.setVisible(true);\n\n    }\n\n    public class LoginPanel extends JPanel {\n        JLabel applicationNameLabel = new JLabel(\"Purdue Marketplace\");\n        JLabel loginLabel = new JLabel(\"Welcome back!\");\n        JLabel identifierLabel = new JLabel(\"Email or Username\");\n        JTextField identifierField = new JTextField(16);\n        JLabel passwordLabel = new JLabel(\"Password\");\n        JPasswordField passwordField = new JPasswordField(16);\n        JButton loginButton = new JButton(\"Login\");\n        JButton createAccountButton = new JButton(\"Create a new account\");\n\n        public LoginPanel() {\n\n            this.setLayout(null);\n\n            applicationNameLabel.setFont(new Font(\"Serif\", Font.PLAIN, 36));\n            applicationNameLabel.setBounds(250, 54, 300, 36);\n\n            loginLabel.setFont(new Font(\"sans-serif\", Font.PLAIN, 16));\n            loginLabel.setBounds(250, 90, 300, 24);\n\n            int start = 130;\n\n            identifierLabel.setBounds(250,start,300,24);\n            identifierField.setBounds(250, start + 24, 300, 24); // 24\n\n            passwordLabel.setBounds(250, start + 48, 300, 24); // 24\n            passwordField.setBounds(250, start + 72, 300, 24); // 24\n\n            loginButton.setBackground(Color.decode(\"#A77F20\"));\n            loginButton.setOpaque(true);\n            loginButton.setForeground(Color.white);\n            loginButton.setBorder(null);\n            loginButton.setBounds(250, start + 112, 300, 24); // 48\n            loginButton.setFocusable(false);\n\n            loginButton.addActionListener(e -> {\n                reference.dispose();\n                new SellerPage();\n                cardLayout.next(container);\n            });\n\n            createAccountButton.setBackground(Color.decode(\"#f4f4f4\"));\n            createAccountButton.setForeground(Color.decode(\"#A77F20\"));\n            createAccountButton.setBorder(null);\n            createAccountButton.setOpaque(false);\n            createAccountButton.setBounds(250, start + 112 + 32, 300, 24); // 48\n            createAccountButton.setFocusable(false);\n\n            createAccountButton.addActionListener(e -> {\n                cardLayout.next(container);\n            });\n\n            this.add(applicationNameLabel);\n            this.add(loginLabel);\n            this.add(identifierLabel);\n            this.add(identifierField);\n            this.add(passwordLabel);\n            this.add(passwordField);\n            this.add(loginButton);\n            this.add(createAccountButton);\n        }\n    }\n\n    public class SignUpPanel extends JPanel {\n        JLabel applicationNameLabel = new JLabel(\"Purdue Marketplace\");\n        JLabel signUpLabel = new JLabel(\"Let's create an account!\");\n        JLabel emailLabel = new JLabel(\"Email\");\n        JTextField emailField = new JTextField(16);\n        JLabel passwordLabel = new JLabel(\"Password\");\n        JPasswordField passwordField = new JPasswordField(16);\n        JLabel usernameLabel = new JLabel(\"Username\");\n        JTextField usernameField = new JTextField(16);\n        JButton signUpButton = new JButton(\"Sign up\");\n        JButton existingAccountButton = new JButton(\"Login to existing account\");\n        JRadioButton buyerType, sellerType;\n\n        public SignUpPanel() {\n\n            this.setLayout(null);\n\n            int start = 130;\n\n            applicationNameLabel.setFont(new Font(\"Serif\", Font.PLAIN, 36));\n            applicationNameLabel.setBounds(250, 54, 300, 36);\n\n            signUpLabel.setFont(new Font(\"sans-serif\", Font.PLAIN, 16));\n            signUpLabel.setBounds(250, 90, 300, 24);\n\n            emailLabel.setBounds(250,start,300,24);\n            emailField.setBounds(250, start + 24, 300, 24); // 24\n\n            usernameLabel.setBounds(250, start + 48, 300, 24); // 24\n            usernameField.setBounds(250, start + 72, 300, 24); // 24\n\n            passwordLabel.setBounds(250, start + 96, 300, 24);\n            passwordField.setBounds(250, start + 120, 300, 24);\n\n            ButtonGroup accountType = new ButtonGroup();\n\n            buyerType = new JRadioButton();\n            sellerType = new JRadioButton();\n\n            accountType.add(buyerType);\n            accountType.add(sellerType);\n\n            JLabel accountTypeLabel = new JLabel(\"Account Type\");\n            accountTypeLabel.setBounds(250, 274, 300, 24);\n\n            buyerType.setText(\"Buyer\");\n            buyerType.setBounds(250, 294, 75, 24);\n            sellerType.setText(\"Seller\");\n            sellerType.setBounds(250+75,294, 75, 24);\n\n            signUpButton.setBackground(Color.decode(\"#A77F20\"));\n            signUpButton.setOpaque(true);\n            signUpButton.setForeground(Color.white);\n            signUpButton.setBorder(null);\n            signUpButton.setBounds(250, 326, 300, 24); // 48\n            signUpButton.setFocusable(false);\n            signUpButton.addActionListener(e -> {\n                reference.dispose();\n                new SellerPage();\n            });\n\n            existingAccountButton.setBackground(Color.decode(\"#f4f4f4\"));\n            existingAccountButton.setForeground(Color.decode(\"#A77F20\"));\n            existingAccountButton.setBorder(null);\n            existingAccountButton.setOpaque(false);\n            existingAccountButton.setBounds(250, 326 + 32, 300, 24); // 48\n            existingAccountButton.setFocusable(false);\n            existingAccountButton.addActionListener(e -> {\n                cardLayout.next(container);\n            });\n\n            this.add(applicationNameLabel);\n            this.add(signUpLabel);\n            this.add(emailLabel);\n            this.add(emailField);\n            this.add(usernameLabel);\n            this.add(usernameField);\n            this.add(passwordLabel);\n            this.add(passwordField);\n            this.add(accountTypeLabel);\n            this.add(buyerType);\n            this.add(sellerType);\n            this.add(existingAccountButton);\n            this.add(signUpButton);\n        }\n    }\n}\n
+===================================================================
+diff --git a/Marketplace/Client-Side/src/pages/OnboardingPage.java b/Marketplace/Client-Side/src/pages/OnboardingPage.java
+--- a/Marketplace/Client-Side/src/pages/OnboardingPage.java	
++++ b/Marketplace/Client-Side/src/pages/OnboardingPage.java	
+@@ -85,7 +85,7 @@
+ 
+             loginButton.addActionListener(e -> {
+                 reference.dispose();
+-                new SellerPage();
++                new CustomerPage();
+                 cardLayout.next(container);
+             });
+ 
+@@ -169,7 +169,7 @@
+             signUpButton.setFocusable(false);
+             signUpButton.addActionListener(e -> {
+                 reference.dispose();
+-                new SellerPage();
++                new CustomerPage();
+             });
+ 
+             existingAccountButton.setBackground(Color.decode("#f4f4f4"));
+Index: Marketplace/Client-Side/src/pages/CustomerPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package pages;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.ActionEvent;\nimport java.awt.event.ActionListener;\n\npublic class CustomerPage extends JFrame implements ActionListener {\n\n    public CustomerPage(String username) {\n\n        // Set title of window\n        this.setTitle(\"Hey there, \" + username);\n\n        // Set behavior to \"destroy\" window when closed\n        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);\n\n        // Set dimensions of application\n        this.setSize(800, 500);\n\n        // Does not allow user to resize window\n        this.setResizable(false);\n\n        // Set window to open in the center of the screen\n        this.setLocationRelativeTo(null);\n\n        this.setLayout(null);\n\n        String[] stores = new String[3];\n        stores[0] = \"Apple\";\n        stores[1] = \"Samsung\";\n        stores[2] = \"Macy's\";\n\n        JLabel storesLabel = new JLabel(\"Your stores: \");\n        storesLabel.setBounds(250,26, 300, 24);\n\n        JList<String> storeList = new JList<>(stores);\n        storeList.setBounds(250, 50, 300, 350);\n\n        JButton addStore = new JButton(\"Add Store\");\n        addStore.setBounds(250, 400, 100, 24);\n        JButton editStore = new JButton(\"Edit Store\");\n        editStore.setBounds(250 + 100, 400, 100, 24);\n        JButton removeStore = new JButton(\"Remove Store\");\n        removeStore.setBounds(250 + 200, 400, 100, 24);\n\n        this.add(storesLabel);\n        this.add(storeList);\n\n        this.add(addStore);\n        this.add(editStore);\n        this.add(removeStore);\n\n        this.setVisible(true);\n\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e) {\n\n    }\n}\n
+===================================================================
+diff --git a/Marketplace/Client-Side/src/pages/CustomerPage.java b/Marketplace/Client-Side/src/pages/CustomerPage.java
+--- a/Marketplace/Client-Side/src/pages/CustomerPage.java	
++++ b/Marketplace/Client-Side/src/pages/CustomerPage.java	
+@@ -1,16 +1,30 @@
+ package pages;
+ 
+ import javax.swing.*;
++import javax.swing.filechooser.FileNameExtensionFilter;
++import javax.swing.table.DefaultTableModel;
++import javax.swing.table.TableModel;
++import javax.swing.table.TableRowSorter;
++import javax.swing.RowSorter;
++import javax.swing.SortOrder;
+ import java.awt.*;
+-import java.awt.event.ActionEvent;
+-import java.awt.event.ActionListener;
++import java.util.List;
++import java.awt.event.MouseAdapter;
++import java.awt.event.MouseEvent;
++import java.util.ArrayList;
+ 
+-public class CustomerPage extends JFrame implements ActionListener {
++public class CustomerPage extends JFrame {
++    CardLayout cardLayout = new CardLayout();
++    Container container = new Container();
++    JFrame reference;
++    JTable table;
+ 
+-    public CustomerPage(String username) {
++    public CustomerPage() {
++
++        this.reference = this;
+ 
+         // Set title of window
+-        this.setTitle("Hey there, " + username);
++        this.setTitle("Purdue Marketplace (BUYER)");
+ 
+         // Set behavior to "destroy" window when closed
+         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+@@ -24,39 +38,387 @@
+         // Set window to open in the center of the screen
+         this.setLocationRelativeTo(null);
+ 
+-        this.setLayout(null);
+-
+-        String[] stores = new String[3];
+-        stores[0] = "Apple";
+-        stores[1] = "Samsung";
+-        stores[2] = "Macy's";
+-
+-        JLabel storesLabel = new JLabel("Your stores: ");
+-        storesLabel.setBounds(250,26, 300, 24);
+-
+-        JList<String> storeList = new JList<>(stores);
+-        storeList.setBounds(250, 50, 300, 350);
++        this.setLayout(new BorderLayout());
+ 
+-        JButton addStore = new JButton("Add Store");
+-        addStore.setBounds(250, 400, 100, 24);
+-        JButton editStore = new JButton("Edit Store");
+-        editStore.setBounds(250 + 100, 400, 100, 24);
+-        JButton removeStore = new JButton("Remove Store");
+-        removeStore.setBounds(250 + 200, 400, 100, 24);
++        container.setLayout(cardLayout);
++        container.add("marketplace", Market());
++        container.add("settings", settings());
++        container.add("statistics", statistics());
++        container.setVisible(true);
+ 
+-        this.add(storesLabel);
+-        this.add(storeList);
+ 
+-        this.add(addStore);
+-        this.add(editStore);
+-        this.add(removeStore);
+-
++        this.add(SidePanel(), BorderLayout.WEST);
++        this.add(container, BorderLayout.CENTER);
+         this.setVisible(true);
++    }
++
++    public JPanel SidePanel() {
++
++        JPanel panel = new JPanel();
++        GridBagLayout gridLayout = new GridBagLayout();
++        GridBagConstraints c = new GridBagConstraints();
++        c.insets = new Insets(0,80,0,24);
++        c.fill = GridBagConstraints.HORIZONTAL;
++        c.anchor = GridBagConstraints.NORTH;
++        panel.setLayout(gridLayout);
++
++        JLabel welcomeMessage = new JLabel("Purdue Marketplace");
++        welcomeMessage.setFont(new Font("serif", Font.BOLD, 18));
++        c.gridy = 0;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(welcomeMessage, c);
++        panel.add(welcomeMessage);
++
++        c.insets = new Insets(0,80,8,24);
++
++        JLabel nameMessage = new JLabel("Hey, John Doe");
++        nameMessage.setFont(new Font("Serif", Font.PLAIN, 14));
++        c.gridy = 1;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(nameMessage,c);
++        nameMessage.setMaximumSize(new Dimension(300, 24));
++        panel.add(nameMessage);
++
++        c.insets = new Insets(4,80,4,24);
++
++        JButton storesButton = new JButton("Market");
++        storesButton.addActionListener(e -> cardLayout.show(container, "marketplace"));
++        c.gridy = 2;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(storesButton, c);
++        panel.add(storesButton);
++
++        JButton settingsButton = new JButton("Settings");
++        settingsButton.addActionListener(e -> cardLayout.show(container, "settings"));
++        c.gridy = 3;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(settingsButton, c);
++        panel.add(settingsButton);
++
++        JButton statisticsButton = new JButton("Statistics");
++        statisticsButton.addActionListener(e -> cardLayout.show(container, "statistics"));
++        c.gridy = 4;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(statisticsButton, c);
++        panel.add(statisticsButton);
++
++        JButton importProductsButton = new JButton("Export Product History");
++        importProductsButton.addActionListener(e -> {
++            JFileChooser chooser = new JFileChooser();
++            FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
++            chooser.setFileFilter(filter);
++            chooser.showSaveDialog(null);
++        });
++        c.gridy = 5;
++        c.gridwidth = 4;
++        gridLayout.setConstraints(importProductsButton, c);
++        panel.add(importProductsButton);
++
++        JButton logoutButton = new JButton("Logout");
++        logoutButton.addActionListener(e -> {
++            int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout");
++            if (input == 0) {
++                reference.dispose();
++                new OnboardingPage(null, true);
++            }
++        });
++        c.gridy = 6;
++        c.gridwidth = 2;
++        c.gridx = 0;
++        c.insets = new Insets(4,80,4,4);
++        gridLayout.setConstraints(logoutButton, c);
++        panel.add(logoutButton);
++
++        JButton exitButton = new JButton("Exit");
++        exitButton.addActionListener(e -> {
++            int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit");
++            if (input == 0) {
++                reference.dispose();
++            }
++        });
++        c.gridy = 6;
++        c.gridx = 2;
++        c.gridwidth = 2;
++        c.insets = new Insets(4,4,4,24);
++        gridLayout.setConstraints(exitButton, c);
++        panel.add(exitButton);
++
++        return panel;
++    }
++
++    public JPanel Market() {
++        JPanel panel = new JPanel(new BorderLayout());
++        JPanel storesPanel = new JPanel();
++        storesPanel.setLayout(null);
++
++        JLabel storesLabel = new JLabel("Market");
++        storesLabel.setFont(new Font("Serif", Font.BOLD, 18));
++        storesLabel.setBounds(24, 16, 400, 24);
++
++        JLabel helpfulLabel = new JLabel("Select a store to view");
++        helpfulLabel.setFont(new Font("serif", Font.PLAIN, 14));
++        helpfulLabel.setBounds(24, 36, 400, 24);
++
++        // Create a DefaultTableModel
++        DefaultTableModel model = new DefaultTableModel();
++
++        // Add some data to the model
++        model.addColumn("Product");
++        model.addColumn("Store");
++        model.addColumn("Quantity");
++        model.addColumn("Price");
++
++        model.addRow(new Object[]{"iPhone", "Apple", 150, 1923048.34});
++
++        // Create a JTable using the model
++        table = new JTable(model);
++
++        for (int c = 0; c < table.getColumnCount(); c++)
++        {
++            Class<?> col_class = table.getColumnClass(c);
++            table.setDefaultEditor(col_class, null);        // remove editor
++        }
++
++        table.addMouseListener(new MouseAdapter() {
++            public void mousePressed(MouseEvent mouseEvent) {
++                JTable table =(JTable) mouseEvent.getSource();
++                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
++                    editStore(table.getValueAt(table.getSelectedRow(), 0).toString());
++                }
++            }
++        });
++
++        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
++        table.setRowSorter(sorter);
++
++        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
++        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
++        sorter.setSortKeys(sortKeys);
++
++        JScrollPane scrollPane= new  JScrollPane(table);
++        scrollPane.setBounds(24, 66, 400, 330);
++
++        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
++        if (defaults.get("Table.alternateRowColor") == null)
++            defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
++
++        JButton sortStoreButton = new JButton("Select Store");
++        sortStoreButton.setBounds(24, 404, 400/2 - 4, 24);
++        sortStoreButton.addActionListener(e -> {
++            if(!table.getSelectionModel().isSelectionEmpty()) {
++                editStore(table.getValueAt(table.getSelectedRow(), 0).toString());
++            }
++
++        });
++
++        JButton cartButton = new JButton("Cart");
++        cartButton.setBounds(228, 404, 400/2 - 4, 24);
++        cartButton.addActionListener(e -> {
++            if(!table.getSelectionModel().isSelectionEmpty()) {
++                int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + table.getValueAt(table.getSelectedRow(), 0).toString() + "?");
++                if (input == 0) {
++                    ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
++                }
++            }
++        });
++
++        storesPanel.add(storesLabel);
++        storesPanel.add(helpfulLabel);
++        storesPanel.add(scrollPane);
++
++        storesPanel.add(sortStoreButton);
++        storesPanel.add(cartButton);
++
++        panel.add(storesPanel, BorderLayout.CENTER);
++        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
++        divider.setBackground(Color.decode("#dbdbdb"));
++        divider.setForeground(Color.decode("#dbdbdb"));
++        panel.add(divider, BorderLayout.LINE_START);
++
++        return panel;
++    }
++
++    public JPanel settings() {
++        JPanel panel = new JPanel(new BorderLayout());
++        JPanel settingsPanel = new JPanel();
++        settingsPanel.setLayout(null);
++
++        JLabel accountDetailsLabel = new JLabel("Account Details");
++        accountDetailsLabel.setFont(new Font("Serif", Font.BOLD, 18));
++        accountDetailsLabel.setBounds(24, 16, 200, 24);
++
++        JLabel supportLabel = new JLabel("View your account details");
++        supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
++        supportLabel.setBounds(24, 36, 400, 24);
++
++        JLabel usernameLabel = new JLabel("Username");
++        usernameLabel.setBounds(24, 60, 200, 24);
++
++        JTextField usernameField = new JTextField(12);
++        usernameField.setBounds(24, 84, 268, 24);
++        usernameField.setText("JDoe");
++
++        JButton usernameButton = new JButton("Change Username");
++        usernameButton.setOpaque(true);
++        usernameButton.setBorderPainted(false);
++        usernameButton.setBackground(Color.black);
++        usernameButton.setForeground(Color.white);
++        usernameButton.setBounds(300, 84, 174, 24);
++
++        settingsPanel.add(usernameLabel);
++        settingsPanel.add(usernameField);
++        settingsPanel.add(usernameButton);
++
++        JLabel emailLabel = new JLabel("Email");
++        emailLabel.setBounds(24, 108, 200, 24);
++
++        JTextField emailField = new JTextField(12);
++        emailField.setBounds(24, 132, 268, 24);
++        emailField.setText("jdoe@purdue.edu");
++
++        JButton emailButton = new JButton("Change Email");
++        emailButton.setOpaque(true);
++        emailButton.setBackground(Color.black);
++        emailButton.setForeground(Color.white);
++        emailButton.setBorderPainted(false);
++
++        emailButton.setBounds(300, 132, 174, 24);
++
++        settingsPanel.add(emailLabel);
++        settingsPanel.add(emailField);
++        settingsPanel.add(emailButton);
++
++        JLabel passwordLabel = new JLabel("Password");
++        passwordLabel.setBounds(24, 156, 200, 24);
++
++        JPasswordField passwordField = new JPasswordField(12);
++        passwordField.setBounds(24, 180, 268, 24);
++        passwordField.setText("secret_password");
++
++        JButton passwordButton = new JButton("Change Password");
++        passwordButton.setBorderPainted(false);
++        passwordButton.setOpaque(true);
++        passwordButton.setBackground(Color.black);
++        passwordButton.setForeground(Color.white);
++        passwordButton.setBounds(300, 180, 174, 24);
++
++        settingsPanel.add(passwordLabel);
++        settingsPanel.add(passwordField);
++        settingsPanel.add(passwordButton);
++
++        JSeparator accountDetailsDivider = new JSeparator(JSeparator.HORIZONTAL);
++        accountDetailsDivider.setBounds(24, 228, 450,24);
++        accountDetailsDivider.setBackground(Color.decode("#dbdbdb"));
++        accountDetailsDivider.setForeground(Color.decode("#dbdbdb"));
++
++        JButton deleteAccountButton = new JButton("Delete Account");
++        deleteAccountButton.setBackground(Color.decode("#f4f4f4"));
++        deleteAccountButton.setOpaque(false);
++        deleteAccountButton.setForeground(Color.decode("#d11111"));
++        deleteAccountButton.setBounds(24, 253, 150, 24);
++
++        settingsPanel.add(accountDetailsDivider);
++        settingsPanel.add(deleteAccountButton);
++
++        settingsPanel.add(accountDetailsLabel);
++        settingsPanel.add(supportLabel);
++
++        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
++        divider.setBackground(Color.decode("#dbdbdb"));
++        divider.setForeground(Color.decode("#dbdbdb"));
++
++        panel.add(settingsPanel, BorderLayout.CENTER);
++        panel.add(divider, BorderLayout.LINE_START);
+ 
++        return panel;
+     }
+ 
+-    @Override
+-    public void actionPerformed(ActionEvent e) {
++    public JPanel statistics() {
++        JPanel panel = new JPanel(new BorderLayout());
++        JPanel statisticsPanel = new JPanel();
++        statisticsPanel.setLayout(null);
++
++        JLabel statisticsLabel = new JLabel("Customer Statistics");
++        statisticsLabel.setFont(new Font("Serif", Font.BOLD, 18));
++        statisticsLabel.setBounds(24, 16, 200, 24);
++
++        JLabel supportLabel = new JLabel("View your buyer statistics");
++        supportLabel.setFont(new Font("serif", Font.PLAIN, 14));
++        supportLabel.setBounds(24, 36, 400, 24);
++
++        statisticsPanel.add(statisticsLabel);
++        statisticsPanel.add(supportLabel);
+ 
++        JSeparator divider = new JSeparator(JSeparator.VERTICAL);
++        divider.setBackground(Color.decode("#dbdbdb"));
++        divider.setForeground(Color.decode("#dbdbdb"));
++
++        panel.add(statisticsPanel, BorderLayout.CENTER);
++        panel.add(divider, BorderLayout.LINE_START);
++
++        return panel;
+     }
++
++    public void editStore(String storeName) {
++
++        JFrame storePage = new JFrame();
++
++        // Set title of window
++        storePage.setTitle("Store Details");
++
++        // Set behavior to "destroy" window when closed
++        storePage.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++
++        // Set dimensions of application
++        storePage.setSize(640, 480);
++
++        // Does not allow user to resize window
++        storePage.setResizable(false);
++
++        // Set window to open in the center of the screen
++        storePage.setLocationRelativeTo(null);
++
++        storePage.setLayout(null);
++
++        JLabel titleMessage = new JLabel(storeName);
++        titleMessage.setFont(new Font("serif", Font.BOLD, 18));
++        titleMessage.setBounds(233, 24, 365, 24);
++
++        JLabel optionsTitle = new JLabel("Options");
++        optionsTitle.setFont(new Font("serif", Font.BOLD, 18));
++        optionsTitle.setBounds(24, 24, 200, 24);
++
++        JButton addToCartButton = new JButton("Add to Cart");
++        addToCartButton.setBounds(24, 56, 185, 24);
++
++        JButton removeCartButton = new JButton("Remove from Cart");
++        removeCartButton.setBounds(24, 88, 185, 24);
++
++
++        JButton closeProduct = new JButton("Close");
++        closeProduct.setBounds(24, 397, 185, 24);
++        closeProduct.addActionListener(e -> storePage.dispose());
++
++        JLabel descriptionLabel = new JLabel("This is a product description");
++        descriptionLabel.setFont(new Font("sans-serif", Font.PLAIN, 12));
++        descriptionLabel.setBounds(233, 48, 365, 24);
++
++        JLabel priceLabel = new JLabel("Price: $28");
++        priceLabel.setFont(new Font("sans-serif", Font.BOLD, 12));
++        priceLabel.setBounds(233, 72, 365, 24);
++
++
++        storePage.add(optionsTitle);
++        storePage.add(addToCartButton);
++        storePage.add(removeCartButton);
++        storePage.add(closeProduct);
++        storePage.add(titleMessage);
++        storePage.add(descriptionLabel);
++        storePage.add()
++
++        storePage.setVisible(true);
++
++    }
+ }
++
++

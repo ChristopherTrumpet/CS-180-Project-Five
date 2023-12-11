@@ -9,14 +9,29 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * TransactionService
+ * <p>
+ * handles data and back end operations regarding transactions.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class TransactionService {
 
     private final AccountService as = new AccountService();
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     public boolean addToCart(String userId, String productId, String storeId, int quantity, double price) {
 
-        if (as.isBuyer(userId))
-        {
+        if (as.isBuyer(userId)) {
             JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             JSONObject product = new JSONObject();
 
@@ -31,10 +46,8 @@ public class TransactionService {
         return false;
     }
 
-
     public boolean removeFromCart(String userId, String productName, String storeId) {
-        if (as.isBuyer(userId))
-        {
+        if (as.isBuyer(userId)) {
             JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             StoreService ss = new StoreService();
             String productId = ss.getProduct("name", productName).getString("product_id");
@@ -42,8 +55,7 @@ public class TransactionService {
                 JSONObject product = (JSONObject) cart.get(i);
                 String currProductId = product.getString("product_id");
 
-                if (currProductId.equals(productId) && product.getString("store_id").equals(storeId))
-                {
+                if (currProductId.equals(productId) && product.getString("store_id").equals(storeId)) {
                     cart.remove(i);
                     System.out.println("Updating cart...");
                     return as.updateUserDetails(userId, "cart", cart);
@@ -55,8 +67,7 @@ public class TransactionService {
     }
 
     public boolean removeFromCart(String userId, String productName) {
-        if (as.isBuyer(userId))
-        {
+        if (as.isBuyer(userId)) {
             JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             StoreService ss = new StoreService();
             String productId = ss.getProduct("name", productName).getString("product_id");
@@ -64,8 +75,7 @@ public class TransactionService {
                 JSONObject product = (JSONObject) cart.get(i);
                 String currProductId = product.getString("product_id");
 
-                if (currProductId.equals(productId))
-                {
+                if (currProductId.equals(productId)) {
                     cart.remove(i);
                     System.out.println("Updating cart...");
                     return as.updateUserDetails(userId, "cart", cart);
@@ -77,8 +87,7 @@ public class TransactionService {
     }
 
     public boolean clearCart(String userId) {
-        if (as.isBuyer(userId))
-        {
+        if (as.isBuyer(userId)) {
             JSONArray cart = as.getUser("id", userId).getJSONArray("cart");
             cart.clear();
 
@@ -109,7 +118,7 @@ public class TransactionService {
         JSONObject buyer = as.getUser("id", buyerId);
         String csvString = CDL.toString(buyer.getJSONArray("product_history"));
 
-        try (FileWriter fileWriter = new FileWriter(filePath+".csv")) {
+        try (FileWriter fileWriter = new FileWriter(filePath + ".csv")) {
 
             fileWriter.write(csvString);
             fileWriter.flush();
@@ -159,7 +168,7 @@ public class TransactionService {
                                 if (((JSONObject) storeProduct).getString("id").equals(productObj.getString("product_id"))) {
 
                                     // Checks if store has sufficient quantity
-                                    if (((JSONObject) storeProduct).getInt("qty") >= productObj.getInt("quantity")){
+                                    if (((JSONObject) storeProduct).getInt("qty") >= productObj.getInt("quantity")) {
                                         ((JSONObject) storeProduct).put("qty", ((JSONObject) storeProduct).getInt("qty") - productObj.getInt("quantity"));
                                         Double sale = productObj.getDouble("price") * Double.parseDouble(String.valueOf(productObj.getInt("quantity")));
                                         ((JSONObject) storeProduct).put("sales", sale);
@@ -172,7 +181,7 @@ public class TransactionService {
                         }
 
                         // Updates stores object
-                        stores.getJSONArray("stores").put(j,store);
+                        stores.getJSONArray("stores").put(j, store);
 
                     }
 
@@ -196,14 +205,6 @@ public class TransactionService {
 
         return false;
 
-    }
-
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
     }
 
 }

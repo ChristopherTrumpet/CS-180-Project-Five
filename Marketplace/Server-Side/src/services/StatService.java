@@ -9,19 +9,17 @@ import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class StatService  {
+/**
+ * StatService
+ * <p>
+ * returns statistics respective to buyers and sellers
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
+public class StatService {
     private final AccountService accountService = new AccountService();
     private final StoreService storeService = new StoreService();
-    /**
-     *
-     * list of customer with items from store purchaeed: seller
-     * list of products with the number of sales: seller
-     * list of stores by number of products sold : buyer
-     * list of stores by the products purchased by that particular customer : buyer
-     *
-     *
-
-     */
 
     public JSONArray sortProductsBySalesForStore(String sellerId, String storeId) {
         if (!accountService.isBuyer(sellerId)) {
@@ -84,6 +82,7 @@ public class StatService  {
         }
         return null;
     }
+
     public int productsBoughtByCustomer(String buyerId, String storeId) {
         if (!accountService.isBuyer(buyerId)) {
             return -1;

@@ -7,6 +7,14 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * OnboardingPage
+ * <p>
+ * handles the UI for login and account creation
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class OnboardingPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
     Container container;
@@ -49,6 +57,33 @@ public class OnboardingPage extends JFrame {
 
     }
 
+    private void login(JPasswordField passwordField, JTextField identifierField) {
+        String password = new String(passwordField.getPassword());
+
+        if (!(identifierField.getText().isEmpty() || password.isEmpty())) {
+
+            Client.sendToServer("loginButton", identifierField.getText(), password);
+
+            ArrayList<String> data = Client.readFromServer(2);
+
+            assert data != null;
+            if (data.get(0).equals("true")) {
+                JSONObject user = new JSONObject(data.get(1));
+                if (user.getString("id").endsWith("b")) {
+                    new CustomerPage(user);
+                } else {
+                    new SellerPage(user);
+                }
+                reference.dispose();
+                cardLayout.next(container);
+            } else {
+                Client.showErrorMessage("User does not exist. " + "Make sure you have typed in your username and password correctly.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     public class LoginPanel extends JPanel {
         JLabel applicationNameLabel = new JLabel("Purdue Marketplace");
         JLabel loginLabel = new JLabel("Welcome back!");
@@ -71,7 +106,7 @@ public class OnboardingPage extends JFrame {
 
             int start = 130;
 
-            identifierLabel.setBounds(250,start,300,24);
+            identifierLabel.setBounds(250, start, 300, 24);
             identifierField.setBounds(250, start + 24, 300, 24); // 24
 
             passwordLabel.setBounds(250, start + 48, 300, 24); // 24
@@ -114,37 +149,6 @@ public class OnboardingPage extends JFrame {
         }
     }
 
-    private void login(JPasswordField passwordField, JTextField identifierField) {
-        String password = new String(passwordField.getPassword());
-
-        if(!(identifierField.getText().isEmpty() || password.isEmpty())) {
-
-            Client.sendToServer("loginButton",
-                    identifierField.getText(),
-                    password
-            );
-
-            ArrayList<String> data = Client.readFromServer(2);
-
-            assert data != null;
-            if (data.get(0).equals("true")) {
-                JSONObject user = new JSONObject(data.get(1));
-                if (user.getString("id").endsWith("b")) {
-                    new CustomerPage(user);
-                } else {
-                    new SellerPage(user);
-                }
-                reference.dispose();
-                cardLayout.next(container);
-            } else {
-                Client.showErrorMessage("User does not exist. " +
-                        "Make sure you have typed in your username and password correctly.");
-            }
-        } else {
-            JOptionPane.showMessageDialog (null, "Please make sure all fields are populated!", "Empty Fields", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
     public class SignUpPanel extends JPanel {
         JLabel applicationNameLabel = new JLabel("Purdue Marketplace");
         JLabel signUpLabel = new JLabel("Let's create an account!");
@@ -173,7 +177,7 @@ public class OnboardingPage extends JFrame {
             usernameLabel.setBounds(250, start + 48, 300, 24); // 24
             usernameField.setBounds(250, start + 72, 300, 24); // 24
 
-            emailLabel.setBounds(250,start,300,24);
+            emailLabel.setBounds(250, start, 300, 24);
             emailField.setBounds(250, start + 24, 300, 24); // 24
 
             passwordLabel.setBounds(250, start + 96, 300, 24);
@@ -193,7 +197,7 @@ public class OnboardingPage extends JFrame {
             buyerType.setText("Buyer");
             buyerType.setBounds(250, 294, 75, 24);
             sellerType.setText("Seller");
-            sellerType.setBounds(250+75,294, 75, 24);
+            sellerType.setBounds(250 + 75, 294, 75, 24);
 
             signUpButton.setBackground(Color.decode("#A77F20"));
             signUpButton.setOpaque(true);
@@ -203,7 +207,8 @@ public class OnboardingPage extends JFrame {
             signUpButton.setFocusable(false);
             signUpButton.addActionListener(e -> {
                 String password = String.valueOf(passwordField.getPassword());
-                outer: if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
+                outer:
+                if (!emailField.getText().isEmpty() && !usernameField.getText().isEmpty() && !password.isEmpty()) {
 
                     Client.sendToServer("userExists", emailField.getText(), usernameField.getText());
                     String result = Objects.requireNonNull(Client.readFromServer(1)).get(0);
@@ -238,13 +243,7 @@ public class OnboardingPage extends JFrame {
                             break outer;
                         }
 
-                        Client.sendToServer(
-                                "signUpButton",
-                                userAccountType,
-                                usernameField.getText(),
-                                password,
-                                emailField.getText()
-                        );
+                        Client.sendToServer("signUpButton", userAccountType, usernameField.getText(), password, emailField.getText());
 
                         String userString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
                         JSONObject user = new JSONObject(userString);
@@ -259,8 +258,7 @@ public class OnboardingPage extends JFrame {
                     } else {
                         Client.showErrorMessage("Please select account type!");
                     }
-                }
-                else {
+                } else {
                     Client.showErrorMessage("Please make sure no fields are empty");
                 }
             });

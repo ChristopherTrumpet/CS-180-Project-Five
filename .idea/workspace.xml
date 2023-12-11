@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ca00a0cc-bc4c-4aa3-a038-9ee6156110b9" name="Changes" comment="stats added." />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="client-side" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ChristopherTrumpet&quot;
+  }
+}</component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="390b24ab-564f-406b-8770-5a5478d0967b" />
+        <option name="url" value="https://github.com/ChristopherTrumpet/CS-180-Project-Five.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2YAaDar2P30N6qoYF2OGvC9WWxZ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;experimental&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-20&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Marketplace/Server-Side/data" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="server" />
+      <recent name="usertypes" />
+      <recent name="backend" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Client">
+    <configuration name="Client" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Client" />
+      <module name="Client-Side" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AccountServiceTest.createAccount" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Server-Side" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="services.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="services" />
+      <option name="MAIN_CLASS_NAME" value="services.AccountServiceTest" />
+      <option name="METHOD_NAME" value="createAccount" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.AccountServiceTest.createAccount" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ca00a0cc-bc4c-4aa3-a038-9ee6156110b9" name="Changes" comment="" />
+      <created>1699970718811</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699970718811</updated>
+      <workItem from="1699970719846" duration="562000" />
+      <workItem from="1699971291679" duration="10109000" />
+      <workItem from="1701275844973" duration="905000" />
+      <workItem from="1701278572024" duration="9000" />
+      <workItem from="1701279893677" duration="180000" />
+      <workItem from="1701535853905" duration="7869000" />
+      <workItem from="1701811331949" duration="30753000" />
+      <workItem from="1702165227298" duration="2426000" />
+      <workItem from="1702168238319" duration="2329000" />
+      <workItem from="1702170934749" duration="3572000" />
+      <workItem from="1702174736998" duration="14190000" />
+      <workItem from="1702329072675" duration="381000" />
+    </task>
+    <task id="LOCAL-00001" summary="Added javadocs.">
+      <option name="closed" value="true" />
+      <created>1699973019425</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1699973019425</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Changed folder structure, added tests">
+      <option name="closed" value="true" />
+      <created>1699974316867</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1699974316867</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Generalized write file">
+      <option name="closed" value="true" />
+      <created>1701538410049</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701538410049</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Changes stores.json structure">
+      <option name="closed" value="true" />
+      <created>1701538553443</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701538553443</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added funding data">
+      <option name="closed" value="true" />
+      <created>1701541291246</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701541291246</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added product history, generalized function">
+      <option name="closed" value="true" />
+      <created>1701541522341</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1701541522341</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fixed mac bug with button background color not showing">
+      <option name="closed" value="true" />
+      <created>1701765951660</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701765951660</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Mac consistancy fix">
+      <option name="closed" value="true" />
+      <created>1701812208527</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1701812208527</updated>
+    </task>
+    <task id="LOCAL-00009" summary="access fix">
+      <option name="closed" value="true" />
+      <created>1701848104305</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1701848104305</updated>
+    </task>
+    <task id="LOCAL-00010" summary="store export">
+      <option name="closed" value="true" />
+      <created>1701883785843</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1701883785843</updated>
+    </task>
+    <task id="LOCAL-00011" summary="store export fix">
+      <option name="closed" value="true" />
+      <created>1701883839917</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701883839917</updated>
+    </task>
+    <task id="LOCAL-00012" summary="mac fixes">
+      <option name="closed" value="true" />
+      <created>1702032940279</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1702032940279</updated>
+    </task>
+    <task id="LOCAL-00013" summary="mac fixes">
+      <option name="closed" value="true" />
+      <created>1702033093803</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1702033093803</updated>
+    </task>
+    <task id="LOCAL-00014" summary="mac fixes">
+      <option name="closed" value="true" />
+      <created>1702036772317</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1702036772317</updated>
+    </task>
+    <task id="LOCAL-00015" summary="mac fixes">
+      <option name="closed" value="true" />
+      <created>1702048640560</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1702048640560</updated>
+    </task>
+    <task id="LOCAL-00016" summary="mac fixes">
+      <option name="closed" value="true" />
+      <created>1702144165836</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1702144165836</updated>
+    </task>
+    <task id="LOCAL-00017" summary="added fixes">
+      <option name="closed" value="true" />
+      <created>1702173472811</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1702173472811</updated>
+    </task>
+    <task id="LOCAL-00018" summary="error handling">
+      <option name="closed" value="true" />
+      <created>1702175090220</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1702175090220</updated>
+    </task>
+    <task id="LOCAL-00019" summary="changes">
+      <option name="closed" value="true" />
+      <created>1702186769280</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1702186769280</updated>
+    </task>
+    <task id="LOCAL-00020" summary="seller statistics implemented">
+      <option name="closed" value="true" />
+      <created>1702233986776</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1702233986776</updated>
+    </task>
+    <task id="LOCAL-00021" summary="customer stats best selling done">
+      <option name="closed" value="true" />
+      <created>1702235659931</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1702235659931</updated>
+    </task>
+    <task id="LOCAL-00022" summary="fixes">
+      <option name="closed" value="true" />
+      <created>1702238173073</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1702238173073</updated>
+    </task>
+    <task id="LOCAL-00023" summary="fixes">
+      <option name="closed" value="true" />
+      <created>1702238508695</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1702238508695</updated>
+    </task>
+    <task id="LOCAL-00024" summary="stats added.">
+      <option name="closed" value="true" />
+      <created>1702239153129</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1702239153129</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added javadocs." />
+    <MESSAGE value="Changed folder structure, added tests" />
+    <MESSAGE value="Generalized write file" />
+    <MESSAGE value="Changes stores.json structure" />
+    <MESSAGE value="Added funding data" />
+    <MESSAGE value="Added product history, generalized function" />
+    <MESSAGE value="Fixed mac bug with button background color not showing" />
+    <MESSAGE value="Mac consistancy fix" />
+    <MESSAGE value="access fix" />
+    <MESSAGE value="store export" />
+    <MESSAGE value="store export fix" />
+    <MESSAGE value="mac fixes" />
+    <MESSAGE value="added fixes" />
+    <MESSAGE value="error handling" />
+    <MESSAGE value="changes" />
+    <MESSAGE value="seller statistics implemented" />
+    <MESSAGE value="customer stats best selling done" />
+    <MESSAGE value="fixes" />
+    <MESSAGE value="stats added." />
+    <option name="LAST_COMMIT_MESSAGE" value="stats added." />
+  </component>
+</project>

@@ -1,8 +1,17 @@
 package services;
 
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+/**
+ * SearchService
+ * <p>
+ * searches JSON files for a query and returns results.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class SearchService {
 
     public ArrayList<String> search(String searchQuery) {
@@ -36,7 +45,7 @@ public class SearchService {
                             // Ignore
                         }
 
-                        if (name.contains(searchQuery) || description.contains(searchQuery) ) {
+                        if (name.contains(searchQuery) || description.contains(searchQuery)) {
                             results.add(productObj.getString("name"));
                         }
                     }
@@ -44,8 +53,7 @@ public class SearchService {
             }
         }
 
-        if (!results.isEmpty())
-        {
+        if (!results.isEmpty()) {
             finalResults.add(String.valueOf(results.size()));
             finalResults.addAll(results);
             return finalResults;
