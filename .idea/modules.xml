@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/CS-180-Project-Five.iml" filepath="$PROJECT_DIR$/.idea/CS-180-Project-Five.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Marketplace/Client-Side/Client-Side.iml" filepath="$PROJECT_DIR$/Marketplace/Client-Side/Client-Side.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Marketplace/Server-Side/Server-Side.iml" filepath="$PROJECT_DIR$/Marketplace/Server-Side/Server-Side.iml" />
+    </modules>
+  </component>
+</project>
