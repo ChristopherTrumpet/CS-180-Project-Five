@@ -33,7 +33,7 @@ public class AccountService {
 
                 // TODO: Check if file exists, create a new one if it does not
 
-                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/users.json").toString();
+                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "/data/users.json").toString();
             }
 
             /**

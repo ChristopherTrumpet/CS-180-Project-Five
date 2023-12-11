@@ -27,13 +27,13 @@ public class StoreServiceTest {
 
     @Test
     public void getStoreFile() {
-        String storeFile = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/stores.json").toString();
+        String storeFile = Paths.get(System.getProperty("user.dir") + "/data/stores.json").toString();
         assertEquals(storeFile, storeService.getStoreFileDirectory());
     }
 
     @Test
     public void getProductFile() {
-        String storeFile = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/products.json").toString();
+        String storeFile = Paths.get(System.getProperty("user.dir") + "/data/products.json").toString();
         assertEquals(storeFile, storeService.getProductFileDirectory());
     }
 

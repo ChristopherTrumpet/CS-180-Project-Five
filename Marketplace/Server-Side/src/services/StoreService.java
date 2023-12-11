@@ -16,8 +16,8 @@ public class StoreService {
 
     public StoreService() {
 
-        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/stores.json").toString();
-        this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/products.json").toString();
+        this.storeFileDirectory = Paths.get(System.getProperty("user.dir") + "/data/stores.json").toString();
+        this.productFileDirectory = Paths.get(System.getProperty("user.dir") + "/data/products.json").toString();
 
     }
 

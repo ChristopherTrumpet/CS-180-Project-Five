@@ -22,7 +22,7 @@ public class AccountServiceTest {
 
     @Test
     public void getStoreFile() {
-        String storeFile = Paths.get(System.getProperty("user.dir") + "/Marketplace/Server-Side/data/users.json").toString();
+        String storeFile = Paths.get(System.getProperty("user.dir") + "/data/users.json").toString();
         assertEquals(storeFile, accountService.getUserFileDirectory());
     }
 
