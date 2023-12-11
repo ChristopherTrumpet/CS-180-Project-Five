@@ -2,10 +2,11 @@ package services;/* Summary: Converts a CSV file to a JSON file.*/
 
 //import java.util.*;
 
-import java.io.*;
-
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serial;
 
 /**
  * CSVtoJSON
@@ -16,8 +17,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @version December 11, 2023
  */
 public class CSVtoJSON extends JFrame {
+    @Serial
     private static final long serialVersionUID = 1L;
-    private static BufferedReader read;
     private final String CSVFile;
 
     public CSVtoJSON(String csvFile) {
@@ -27,7 +28,7 @@ public class CSVtoJSON extends JFrame {
     public String convert() {
         /*Converts a .csv file to .json. Assumes first line is header with columns*/
         try {
-            read = new BufferedReader(new FileReader(CSVFile));
+            BufferedReader read = new BufferedReader(new FileReader(CSVFile));
 
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -83,9 +84,8 @@ public class CSVtoJSON extends JFrame {
 
             read.close();
             return stringBuilder.toString();
-        } catch (IOException e) {
+        } catch (IOException ignore) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
         }
         return null;
     }

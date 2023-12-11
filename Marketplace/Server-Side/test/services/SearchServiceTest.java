@@ -2,11 +2,22 @@ package services;
 
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+
+/**
+ * Marketplace Application : Testing
+ *
+ * <p>
+ *     Tests the functions related to search algorithm
+ * </p>
+ *
+ * @author Christoher Trumpet, Matthew Lee, Shrinand Perunal, Mohit Ambe, Vraj Patel
+ */
 
 
 public class SearchServiceTest {

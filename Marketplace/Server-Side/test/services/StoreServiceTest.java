@@ -1,13 +1,23 @@
 package services;
 
-import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+
+/**
+ * Marketplace Application : Testing
+ *
+ * <p>
+ *     Tests the functions related to store details and products
+ * </p>
+ *
+ * @author Christoher Trumpet, Matthew Lee, Shrinand Perunal, Mohit Ambe, Vraj Patel
+ */
+
 
 public class StoreServiceTest {
 

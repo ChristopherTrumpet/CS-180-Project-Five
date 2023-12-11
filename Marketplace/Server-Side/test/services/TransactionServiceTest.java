@@ -2,10 +2,21 @@ package services;
 
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
+
+/**
+ * Marketplace Application : Testing
+ *
+ * <p>
+ *     Tests the functions related to cart purchases and transactions
+ * </p>
+ *
+ * @author Christoher Trumpet, Matthew Lee, Shrinand Perunal, Mohit Ambe, Vraj Patel
+ */
+
 
 public class TransactionServiceTest {
 
@@ -36,7 +47,7 @@ public class TransactionServiceTest {
 
     @Test
     public void addToCart() {
-        assertTrue(transactionService.addToCart(buyerId, productId, storeId,5,50.00));
+        assertTrue(transactionService.addToCart(buyerId, productId, storeId, 5, 50.00));
     }
 
     @Test
