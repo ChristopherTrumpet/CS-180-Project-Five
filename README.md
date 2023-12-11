@@ -16,6 +16,7 @@
 ## Program Classes
 
 ### AutoCompletion
+Functions as the primary front end class that displays the application and allows for key and mouse inputs.
 
 ### Client
 Central class that handles all client interactions with server, interface, and backend
