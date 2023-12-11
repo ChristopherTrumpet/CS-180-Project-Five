@@ -28,7 +28,8 @@ VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
 
 ## Submissions by Person
 - Report - Vraj Patel
-- Vocareum Workplace Submission - Matthew Lee
+- Vocareum Workplace Submission - Chris Trumpet
+- Presentation - Mohit Ambe
 
 ## Program Classes
 
