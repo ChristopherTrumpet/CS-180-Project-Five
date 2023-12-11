@@ -7,6 +7,14 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.Random;
 
+/**
+ * StoreService
+ * <p>
+ * handles data and back end operations regarding stores.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class StoreService {
 
     private final String storeFileDirectory;
@@ -59,8 +67,7 @@ public class StoreService {
 
                     String userStoreId = stores.get(i).toString();
 
-                    if (storeId.equals(userStoreId))
-                    {
+                    if (storeId.equals(userStoreId)) {
                         removeStore(storeId);
                         stores.remove(i);
                         return as.writeJSONObjectToFile(users, as.getUserFileDirectory());
@@ -145,7 +152,7 @@ public class StoreService {
             createProduct(productObj.getString("name"), productObj.getString("description"));
             String storeName = ((JSONObject) product).getString("store");
 
-            JSONObject storeObj =  as.getJSONFromFile(storeFileDirectory);
+            JSONObject storeObj = as.getJSONFromFile(storeFileDirectory);
             JSONArray storeArray = storeObj.getJSONArray("stores");
             JSONObject store = new JSONObject();
 
@@ -165,8 +172,7 @@ public class StoreService {
 
                 for (int i = 0; i < storeArray.length(); i++) {
                     JSONObject storeItem = (JSONObject) storeArray.get(i);
-                    if (storeItem.getString("name").equals(storeName))
-                    {
+                    if (storeItem.getString("name").equals(storeName)) {
                         store = storeItem;
                         index = i;
                     }
@@ -194,8 +200,7 @@ public class StoreService {
 
     public JSONObject getProduct(String identifier, String value) {
         for (Object product : as.getJSONFromFile(productFileDirectory).getJSONArray("products")) {
-            if (((JSONObject) product).getString(identifier).equals(value))
-                return (JSONObject) product;
+            if (((JSONObject) product).getString(identifier).equals(value)) return (JSONObject) product;
         }
         return null;
     }
@@ -206,8 +211,7 @@ public class StoreService {
         JSONArray storeProducts = store.getJSONArray("products");
 
         for (Object storeProduct : storeProducts) {
-            if (((JSONObject) storeProduct).getString("id").equals(productId))
-                return (JSONObject) storeProduct;
+            if (((JSONObject) storeProduct).getString("id").equals(productId)) return (JSONObject) storeProduct;
         }
 
         return null;
@@ -219,8 +223,7 @@ public class StoreService {
 
         for (Object store : stores.getJSONArray("stores")) {
             for (Object product : ((JSONObject) store).getJSONArray("products")) {
-                if (((JSONObject) product).getString("id").equals(productId))
-                    return (JSONObject) product;
+                if (((JSONObject) product).getString("id").equals(productId)) return (JSONObject) product;
             }
         }
 

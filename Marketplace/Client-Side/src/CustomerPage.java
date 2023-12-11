@@ -13,6 +13,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+/**
+ * CustomerPage
+ * <p>
+ * handles the UI for customer operations.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class CustomerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
     Container container = new Container();
@@ -54,6 +62,14 @@ public class CustomerPage extends JFrame {
         this.add(sidePanel, BorderLayout.WEST);
         this.add(container, BorderLayout.CENTER);
         this.setVisible(true);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public JPanel SidePanel() {
@@ -162,10 +178,7 @@ public class CustomerPage extends JFrame {
             if (funding != null) {
                 if (!funding.isEmpty()) {
 
-                    Client.sendToServer("addFunds",
-                            buyer.getString("id"),
-                            funding
-                    );
+                    Client.sendToServer("addFunds", buyer.getString("id"), funding);
 
                     balanceMessage.setText("Balance: $" + (buyer.getDouble("funds") + Double.parseDouble(funding)));
                     JOptionPane.showMessageDialog(null, "Successfully added $" + funding + " to your account!", "Funding Panel", JOptionPane.INFORMATION_MESSAGE);
@@ -330,8 +343,7 @@ public class CustomerPage extends JFrame {
         removeFromCartButton.setBounds(24 + 400 / 3 + 4, 404, 400 / 3 - 4, 24);
 
         removeFromCartButton.addActionListener(e -> {
-            if (cartTable.getSelectedRow() > 0)
-                removeFromCart(cartTable);
+            if (cartTable.getSelectedRow() > 0) removeFromCart(cartTable);
         });
 
         cartPanel.add(removeFromCartButton);
@@ -351,15 +363,6 @@ public class CustomerPage extends JFrame {
 
         return panel;
     }
-
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
-
 
     private void placeOrder(JTable cartTable, JLabel totalCostLabel) {
         if (cartTable.getRowCount() > 0) {
@@ -395,10 +398,7 @@ public class CustomerPage extends JFrame {
         if (cartTable.getRowCount() > 0) {
 
             // REMOVE CART ITEM FROM DATABASE
-            Client.sendToServer("removeFromCart",
-                    buyer.getString("id"),
-                    cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString()
-            );
+            Client.sendToServer("removeFromCart", buyer.getString("id"), cartTable.getValueAt(cartTable.getSelectedRow(), 0).toString());
 
             // REMOVE ITEM FROM CART TABLE
             ((DefaultTableModel) cartTable.getModel()).removeRow(cartTable.getSelectedRow());
@@ -516,10 +516,7 @@ public class CustomerPage extends JFrame {
 
                 if (chooser.getSelectedFile() != null) {
 
-                    Client.sendToServer("exportHistory",
-                            buyer.getString("id"),
-                            chooser.getSelectedFile().getAbsolutePath()
-                    );
+                    Client.sendToServer("exportHistory", buyer.getString("id"), chooser.getSelectedFile().getAbsolutePath());
 
                     JOptionPane.showMessageDialog(null, "Exported history successfully!", "Product History", JOptionPane.INFORMATION_MESSAGE);
 
@@ -661,11 +658,7 @@ public class CustomerPage extends JFrame {
         usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    buyer.getString("id"),
-                    "username",
-                    usernameField.getText()
-            );
+            Client.sendToServer("updateUserDetails", buyer.getString("id"), "username", usernameField.getText());
 
             // UPDATE GREETING
             for (Component jc : sidePanel.getComponents()) {
@@ -691,11 +684,7 @@ public class CustomerPage extends JFrame {
         JButton emailButton = new JButton("Change Email");
         emailButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    buyer.getString("id"),
-                    "email",
-                    emailField.getText()
-            );
+            Client.sendToServer("updateUserDetails", buyer.getString("id"), "email", emailField.getText());
 
             JOptionPane.showMessageDialog(null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -717,11 +706,7 @@ public class CustomerPage extends JFrame {
         passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    buyer.getString("id"),
-                    "password",
-                    String.valueOf(passwordField.getPassword())
-            );
+            Client.sendToServer("updateUserDetails", buyer.getString("id"), "password", String.valueOf(passwordField.getPassword()));
 
             JOptionPane.showMessageDialog(null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -868,8 +853,7 @@ public class CustomerPage extends JFrame {
                         String historyId = productToAdd.getString("product_id");
                         String productId = ((JSONObject) allProduct).getString("product_id");
 
-                        if (historyId.equals(productId))
-                        {
+                        if (historyId.equals(productId)) {
                             Client.sendToServer("getStoreById", productToAdd.getString("store_id"));
                             JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                             productToAdd.put("store", store.getString("name"));
@@ -898,7 +882,8 @@ public class CustomerPage extends JFrame {
                 String productStore = product.getString("store");
                 productModel.addRow(new Object[]{productStore, productName});
             }
-        } catch (JSONException ignore) {}
+        } catch (JSONException ignore) {
+        }
 
         // Create a JTable using the model
         JTable productTable = new JTable(productModel);
@@ -1126,13 +1111,7 @@ public class CustomerPage extends JFrame {
             if (Integer.parseInt(spinner.getValue().toString()) > 0) {
                 if (Integer.parseInt(spinner.getValue().toString()) <= storeProduct.getInt("qty")) {
 
-                    Client.sendToServer("addToCart",
-                            buyer.getString("id"),
-                            product.getString("product_id"),
-                            storeId,
-                            spinner.getValue().toString(),
-                            String.valueOf(storeProduct.getDouble("price"))
-                    );
+                    Client.sendToServer("addToCart", buyer.getString("id"), product.getString("product_id"), storeId, spinner.getValue().toString(), String.valueOf(storeProduct.getDouble("price")));
 
                     JOptionPane.showMessageDialog(null, "Successfully added to cart!", "Cart Panel", JOptionPane.INFORMATION_MESSAGE);
                 } else {

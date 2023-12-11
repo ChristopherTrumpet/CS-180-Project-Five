@@ -12,53 +12,42 @@ import java.util.Random;
 
 /**
  * Marketplace Application : Account Service
- *
  * <p>
  * This service handles each users account details as well as account creation / deletion
- * </p>
  *
- * @author [NAMES], CS 180 Lab
- * @version v0.0.1
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
  */
-
 public class AccountService {
 
-            // Directory of the users.json file which stores all user data
-            public final String userFileDirectory;
+    // Directory of the users.json file which stores all user data
+    public final String userFileDirectory;
 
-            /**
-             * Constructor initializes user file directory, creates a new one if one does not exist.
-             */
+    /**
+     * Constructor initializes user file directory, creates a new one if one does not exist.
+     */
     public AccountService() {
+        this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "/data/users.json").toString();
+    }
 
-                // TODO: Check if file exists, create a new one if it does not
+    /**
+     * Creates a new user object in the users.json, populated by the parameters.
+     *
+     * @param accountType Indicates whether user is a buyer or seller
+     * @param userName    Stores user's username
+     * @param password    Stores user's password, may encrypt later
+     * @param email       Stores user's email
+     * @return True if account was successfully created, false otherwise
+     */
+    public boolean createAccount(char accountType, String userName, String password, String email) {
 
-                this.userFileDirectory = Paths.get(System.getProperty("user.dir") + "/data/users.json").toString();
-            }
+        // Creates a new user id
+        String userId = generateUserId(accountType);
 
-            /**
-             * Creates a new user object in the users.json, populated by the parameters.
-             *
-             * @param accountType Indicates whether user is a buyer or seller
-             * @param userName    Stores user's username
-             * @param password    Stores user's password, may encrypt later
-             * @param email       Stores user's email
-             * @return True if account was successfully created, false otherwise
-             */
-            public boolean createAccount(
-            char accountType,
-            String userName,
-            String password,
-            String email) {
+        JSONObject userObj = new JSONObject();
 
-                // Creates a new user id
-                String userId = generateUserId(accountType);
-
-                JSONObject userObj = new JSONObject();
-
-                // Ensures users.json file exists
-                if (getJSONFromFile(getUserFileDirectory()) != null)
-            userObj = getJSONFromFile(userFileDirectory);
+        // Ensures users.json file exists
+        if (getJSONFromFile(getUserFileDirectory()) != null) userObj = getJSONFromFile(userFileDirectory);
 
         JSONArray users = userObj.getJSONArray("users");
         JSONObject user = new JSONObject();
@@ -92,7 +81,7 @@ public class AccountService {
      * @return True if user exists, false otherwise
      */
     public boolean userExists(String email, String username) {
-        return getUser("email",email) != null || getUser("username", username) != null;
+        return getUser("email", email) != null || getUser("username", username) != null;
     }
 
     /**
@@ -111,13 +100,12 @@ public class AccountService {
 
     public JSONObject getUser(String identifier, String value) {
 
-        JSONObject users =getJSONFromFile(userFileDirectory);
+        JSONObject users = getJSONFromFile(userFileDirectory);
 
         for (Object user : users.getJSONArray("users")) {
 
             String indexedUserUsername = ((JSONObject) user).get(identifier).toString();
-            if (indexedUserUsername.equals(value))
-                return (JSONObject) user;
+            if (indexedUserUsername.equals(value)) return (JSONObject) user;
         }
         return null;
     }
@@ -156,7 +144,6 @@ public class AccountService {
     }
 
 
-
     public JSONObject getJSONFromFile(String fileDirectory) {
         try {
             return new JSONObject(Files.readString(Path.of(fileDirectory)));
@@ -185,6 +172,7 @@ public class AccountService {
 
     /**
      * Generates a unique user id string
+     *
      * @param AccountType appends either 'b' or 's' to signify whether account is buyer or seller
      * @return unique randomized id of user
      */
@@ -207,16 +195,13 @@ public class AccountService {
 
         JSONObject user = getUser("username", identifier);
 
-        if (user == null)
-        {
+        if (user == null) {
             user = getUser("email", identifier);
 
-            if (user == null)
-                return null;
+            if (user == null) return null;
         }
 
-        if(user.getString("password").equals(password))
-            return user;
+        if (user.getString("password").equals(password)) return user;
 
         return null;
     }

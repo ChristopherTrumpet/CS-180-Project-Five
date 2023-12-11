@@ -8,11 +8,19 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Client
+ * <p>
+ * sends UI input data to the Server.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class Client {
-    private static BufferedReader reader;
-    private static PrintWriter stringToServer;
     public static Socket clientSocket;
     public static Scanner scanner;
+    private static BufferedReader reader;
+    private static PrintWriter stringToServer;
 
     public static void main(String[] args) {
 
@@ -27,17 +35,13 @@ public class Client {
 
             try {
                 // Set cross-platform Java L&F (also called "Metal")
-                UIManager.setLookAndFeel(
-                        UIManager.getSystemLookAndFeelClassName());
-            }
-            catch (UnsupportedLookAndFeelException e) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (UnsupportedLookAndFeelException e) {
                 System.out.println("System does not support this library");
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 // handle exception
                 System.out.println("Library could not be found..");
-            }
-            catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 System.out.println("Error occurred.");
             }
 
@@ -73,6 +77,7 @@ public class Client {
 
         stringToServer.flush();
     }
+
     public static ArrayList<String> readFromServer(int numLines) {
         try {
             ArrayList<String> data = new ArrayList<>();
@@ -81,7 +86,7 @@ public class Client {
                 data.add(reader.readLine());
             }
             return data;
-        } catch(IOException e) {
+        } catch (IOException e) {
             showErrorMessage("An error has occurred trying to read from the server");
             return null;
         }
