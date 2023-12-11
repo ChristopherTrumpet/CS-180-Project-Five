@@ -15,6 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * SellerPage
+ * <p>
+ * handles the UI for seller operations.
+ *
+ * @author Chris Trumpet, Matthew Lee, Mohit Ambe, Shrinand Perumal, Vraj Patel
+ * @version December 11, 2023
+ */
 public class SellerPage extends JFrame {
     CardLayout cardLayout = new CardLayout();
     Container container = new Container();
@@ -120,10 +128,7 @@ public class SellerPage extends JFrame {
 
             if (chooser.getSelectedFile() != null) {
 
-                Client.sendToServer("importProducts",
-                        seller.toString(),
-                        chooser.getSelectedFile().getAbsolutePath()
-                );
+                Client.sendToServer("importProducts", seller.toString(), chooser.getSelectedFile().getAbsolutePath());
 
                 // UPDATE SELLER DATA
                 Client.sendToServer("getUser", seller.getString("id"));
@@ -200,8 +205,7 @@ public class SellerPage extends JFrame {
 
         String allStoresString = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
-        if (allStoresString.equals("empty"))
-            System.out.println("User has no stores");
+        if (allStoresString.equals("empty")) System.out.println("User has no stores");
         else {
             JSONArray allStores = new JSONArray(allStoresString);
             for (Object storeGeneric : allStores) {
@@ -218,8 +222,7 @@ public class SellerPage extends JFrame {
                                 storeExists = true;
                             }
                         }
-                        if (!storeExists)
-                        {
+                        if (!storeExists) {
                             DecimalFormat decimalFormat = new DecimalFormat("###,###,###.##");
                             model.addRow(new Object[]{storeGenericObj.getString("name"), "$" + decimalFormat.format(storeGenericObj.getDouble("sales"))});
                         }
@@ -241,9 +244,7 @@ public class SellerPage extends JFrame {
                 JTable table = (JTable) mouseEvent.getSource();
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
 
-                    Client.sendToServer("getStore",
-                            table.getModel().getValueAt(table.getSelectedRow(), 0).toString()
-                    );
+                    Client.sendToServer("getStore", table.getModel().getValueAt(table.getSelectedRow(), 0).toString());
 
                     JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                     editStore(store, storesTable, storesTable.getSelectedRow());
@@ -265,9 +266,7 @@ public class SellerPage extends JFrame {
         selectStoreButton.addActionListener(e -> {
             if (!storesTable.getSelectionModel().isSelectionEmpty()) {
 
-                Client.sendToServer("getStore",
-                        storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString()
-                );
+                Client.sendToServer("getStore", storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString());
 
                 JSONObject store = new JSONObject(Objects.requireNonNull(Client.readFromServer(1)).get(0));
                 editStore(store, storesTable, storesTable.getSelectedRow());
@@ -288,10 +287,7 @@ public class SellerPage extends JFrame {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + storesTable.getValueAt(storesTable.getSelectedRow(), 0).toString() + "?");
                 if (input == 0) {
 
-                    Client.sendToServer("removeStore",
-                            seller.getString("id"),
-                            storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString()
-                    );
+                    Client.sendToServer("removeStore", seller.getString("id"), storesTable.getModel().getValueAt(storesTable.getSelectedRow(), 0).toString());
 
                     ((DefaultTableModel) storesTable.getModel()).removeRow(storesTable.getSelectedRow());
                 }
@@ -339,11 +335,7 @@ public class SellerPage extends JFrame {
         usernameButton.setBounds(300, 88, 174, 24);
         usernameButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    seller.getString("id"),
-                    "username",
-                    usernameField.getText()
-            );
+            Client.sendToServer("updateUserDetails", seller.getString("id"), "username", usernameField.getText());
 
 
             for (Component jc : sidePanel.getComponents()) {
@@ -369,11 +361,7 @@ public class SellerPage extends JFrame {
         JButton emailButton = new JButton("Change Email");
         emailButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    seller.getString("id"),
-                    "email",
-                    emailField.getText()
-            );
+            Client.sendToServer("updateUserDetails", seller.getString("id"), "email", emailField.getText());
 
             JOptionPane.showMessageDialog(null, "Email changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -395,11 +383,7 @@ public class SellerPage extends JFrame {
         passwordButton.setBounds(300, 192, 174, 24);
         passwordButton.addActionListener(e -> {
 
-            Client.sendToServer("updateUserDetails",
-                    seller.getString("id"),
-                    "password",
-                    String.valueOf(passwordField.getPassword())
-            );
+            Client.sendToServer("updateUserDetails", seller.getString("id"), "password", String.valueOf(passwordField.getPassword()));
 
             JOptionPane.showMessageDialog(null, "Password changed successfully!", "Updated Account Details", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -586,10 +570,7 @@ public class SellerPage extends JFrame {
         if (storeName != null) {
             if (storeName.length() <= 16) {
 
-                Client.sendToServer("createStore",
-                        seller.getString("id"),
-                        storeName
-                );
+                Client.sendToServer("createStore", seller.getString("id"), storeName);
 
                 String storeId = Objects.requireNonNull(Client.readFromServer(1)).get(0);
 
@@ -645,8 +626,7 @@ public class SellerPage extends JFrame {
         JSONArray allProducts = new JSONArray(allProductsString);
 
         // Removes products already in store list from being added again.
-        if (allProductsString.equals("empty"))
-            System.out.println("Store has no products");
+        if (allProductsString.equals("empty")) System.out.println("Store has no products");
         else {
             for (Object product : allProducts) {
                 for (Object storeProduct : products) {
@@ -658,7 +638,7 @@ public class SellerPage extends JFrame {
                     int quantity = ((JSONObject) storeProduct).getInt("qty");
                     double price = ((JSONObject) storeProduct).getDouble("price");
 
-                    if(indexedProductId.equals(productId)) {
+                    if (indexedProductId.equals(productId)) {
                         productModel.addRow(new Object[]{name, quantity, price});
                     }
                 }
@@ -678,20 +658,13 @@ public class SellerPage extends JFrame {
 
                 // Type
                 switch (column) {
-                    case 1 -> Client.sendToServer("updateProduct",
-                            store.getString("id"),
-                            productModel.getValueAt(row, 0).toString(),
-                            "quantity",
-                            valueStr
-                    );
-                    case 2 -> Client.sendToServer("updateProduct",
-                            store.getString("id"),
-                            productModel.getValueAt(row, 0).toString(),
-                            "price",
-                            valueStr.substring(1)
-                    );
+                    case 1 ->
+                            Client.sendToServer("updateProduct", store.getString("id"), productModel.getValueAt(row, 0).toString(), "quantity", valueStr);
+                    case 2 ->
+                            Client.sendToServer("updateProduct", store.getString("id"), productModel.getValueAt(row, 0).toString(), "price", valueStr.substring(1));
                 }
-            } catch (ArrayIndexOutOfBoundsException ignore) {}
+            } catch (ArrayIndexOutOfBoundsException ignore) {
+            }
 
         });
 
@@ -730,10 +703,7 @@ public class SellerPage extends JFrame {
                         Client.showErrorMessage("Store already exists!");
                     } else {
 
-                        Client.sendToServer("changeStoreName",
-                                store.getString("id"),
-                                storeName
-                        );
+                        Client.sendToServer("changeStoreName", store.getString("id"), storeName);
 
                         // UPDATE TITLE NAME
                         titleMessage.setText(storeName + "'s Products");
@@ -752,8 +722,7 @@ public class SellerPage extends JFrame {
         ArrayList<String> productNames = new ArrayList<>();
 
         // Removes products already in store list from being added again.
-        if (allProductsString.equals("empty"))
-            System.out.println("Store has no products");
+        if (allProductsString.equals("empty")) System.out.println("Store has no products");
         else {
             for (Object product : allProducts) {
                 for (Object storeProduct : products) {
@@ -763,7 +732,7 @@ public class SellerPage extends JFrame {
 
                     String name = ((JSONObject) product).getString("name");
 
-                    if(!indexedProductId.equals(productId)) {
+                    if (!indexedProductId.equals(productId)) {
                         productNames.add(name);
                     }
                 }
@@ -787,11 +756,7 @@ public class SellerPage extends JFrame {
 
                 JTextField quantity = new JTextField();
                 JTextField price = new JTextField();
-                Object[] message = {
-                        "Select a Product: ", productList,
-                        "Quantity (1-9999):", quantity,
-                        "Price: $", price
-                };
+                Object[] message = {"Select a Product: ", productList, "Quantity (1-9999):", quantity, "Price: $", price};
 
                 int option = JOptionPane.showConfirmDialog(null, message, "Add a product", JOptionPane.OK_CANCEL_OPTION);
 
@@ -809,12 +774,7 @@ public class SellerPage extends JFrame {
                                     productId = productObj.getString("product_id");
                             }
 
-                            Client.sendToServer("addProduct",
-                                    store.getString("id"),
-                                    productId,
-                                    quantity.getText(),
-                                    price.getText()
-                            );
+                            Client.sendToServer("addProduct", store.getString("id"), productId, quantity.getText(), price.getText());
 
                             productModel.addRow(new Object[]{productName, quantity.getText(), String.format("$%.2f", Double.parseDouble(price.getText()))});
 
@@ -851,20 +811,14 @@ public class SellerPage extends JFrame {
 
             JTextField productQuantity = new JTextField();
             JTextField productPrice = new JTextField();
-            Object[] message = {
-                    "Product Name: ", productName,
-                    "Description: ", descriptionScroll,
-                    "Quantity (1-9999): ", productQuantity,
-                    "Price: $", productPrice
-            };
+            Object[] message = {"Product Name: ", productName, "Description: ", descriptionScroll, "Quantity (1-9999): ", productQuantity, "Price: $", productPrice};
 
             int input;
             boolean validResponse;
             do {
                 input = JOptionPane.showConfirmDialog(null, message, "Create a product", JOptionPane.OK_CANCEL_OPTION);
 
-                if (input == JOptionPane.CANCEL_OPTION)
-                    break;
+                if (input == JOptionPane.CANCEL_OPTION) break;
 
                 if (productName.getText() == null || productDescription.getText() == null || productQuantity.getText() == null) {
                     Client.showErrorMessage("Please ensure all fields are filled out!");
@@ -883,7 +837,7 @@ public class SellerPage extends JFrame {
                 }
 
                 try {
-                    if (Double.parseDouble(productPrice.getText()) < 0 ||  Double.parseDouble(productPrice.getText()) > 999999999) {
+                    if (Double.parseDouble(productPrice.getText()) < 0 || Double.parseDouble(productPrice.getText()) > 999999999) {
                         throw new NumberFormatException();
                     }
                 } catch (NumberFormatException ex) {
@@ -900,13 +854,7 @@ public class SellerPage extends JFrame {
             if (input == JOptionPane.OK_OPTION) {
                 System.out.println("Create product request...");
 
-                Client.sendToServer("createProduct",
-                        productName.getText(),
-                        productDescription.getText(),
-                        productQuantity.getText(),
-                        productPrice.getText(),
-                        store.getString("id")
-                );
+                Client.sendToServer("createProduct", productName.getText(), productDescription.getText(), productQuantity.getText(), productPrice.getText(), store.getString("id"));
 
                 boolean success = Objects.requireNonNull(Client.readFromServer(1)).get(0).equals("true");
 
@@ -929,10 +877,7 @@ public class SellerPage extends JFrame {
                 int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + productTable.getValueAt(productTable.getSelectedRow(), 0) + "?");
                 if (input == 0) {
 
-                    Client.sendToServer("removeProduct",
-                            store.getString("id"),
-                            productTable.getValueAt(productTable.getSelectedRow(), 0).toString()
-                    );
+                    Client.sendToServer("removeProduct", store.getString("id"), productTable.getValueAt(productTable.getSelectedRow(), 0).toString());
 
                     ((DefaultTableModel) productTable.getModel()).removeRow(productTable.getSelectedRow());
                 }
