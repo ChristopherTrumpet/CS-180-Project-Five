@@ -6,7 +6,6 @@
 ## How to Compile and Run Program
 1. Clone the Repository with `git clone https://github.com/ChristopherTrumpet/CS-180-Project-Five.git`
 2. Compile the repository by running `javac *.java`
-3. Run the program by typing `java Program` into the terminal
    
 VERY IMPORTANT! THESE STEPS MUST BE COMPLETED FOR THE PROGRAM TO RUN PROPERLY:
 1) In IntelliJ, in the top bar, on the left of the run button is a drop down arrow that says “Current File”. Click the down arrow and click “Edit Configurations”.
